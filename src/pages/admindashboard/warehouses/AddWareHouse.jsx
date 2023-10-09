@@ -2,28 +2,32 @@ import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/materia
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { tokens } from "../theme";
-import Header from "../components/Header";
+import { tokens } from "../../../theme";
+import Header from "../../../components/Header";
 import Axios from 'axios';
-import { useState } from "react";
-const AddSpacifications = () => {
+import { useEffect, useState } from "react";
+const AddWareHouse = () => {
+  const [itemType , setItemType] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values) => {
-   Axios.post('http://localhost:8000/api/type/add', {
+   Axios.post('http://localhost:8000/api/warehouse/add', {
+    specification: values.spacification,
     type: values.itemtype,
    }).then((response) => {
     console.log(response.data);
     console.log('Adding successfull');
-    setMessage('Item Type Added Successfully!');
+    setMessage('Spacification Added Successfully!');
    }).catch((error) => {
     console.log(error);
-    setMessage('Error happens while adding item type!');
+    setMessage('Error happens while adding pacification!');
    })
     console.log(values);
   };
+
+
 
   return (
     <Box m="20px">
@@ -62,36 +66,37 @@ const AddSpacifications = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
-                label="Add Spacifications"
+                label="Warehouse Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.spacification}
-                name="spacification"
-                error={!!touched.spacification && !!errors.spacification}
-                helperText={touched.spacification && errors.spacification}
+                value={values.warehouse}
+                name="warehouse"
+                error={!!touched.warehouse && !!errors.warehouse}
+                helperText={touched.warehouse && errors.warehouse}
                 sx={{ gridColumn: "span 4" }}
               />
               <Select
                fullWidth
                variant="outlined"
-               error={!!touched.itemtype && !!errors.itemtype}
-               helperText={touched.itemtype && errors.itemtype}
+               error={!!touched.type && !!errors.type}
+               helperText={touched.type && errors.type}
                sx={{ gridColumn: "span 4" ,color: "white"}}
-               value={values.itemtype}
-               name="itemtype"
-               label="Item Type"
+               value={values.type}
+               name="type"
+               label="Store Type"
                onBlur={handleBlur}
                onChange={handleChange}
               >
-                <MenuItem value=''>Select Item Type</MenuItem>
-                <MenuItem value='item1'>item1</MenuItem>
-                <MenuItem value='item2'>item2</MenuItem>
+                <MenuItem value=''>Select Warehouse</MenuItem>
+                <MenuItem value='Main Store'>Main Store</MenuItem>
+                <MenuItem value='Sub Store'>Sub Store</MenuItem>
+                <MenuItem value='Shope'>Shope</MenuItem>
               </Select>
     
               
               <Box display="flex" justifyContent="end" mt="10px" width= '800px'>
               <Button type="submit" color="secondary" variant="contained">
-                Add Spacifications
+                ADD WAREHOUSE
               </Button>
             </Box>
             </Box>
@@ -105,12 +110,12 @@ const AddSpacifications = () => {
 
 
 const checkoutSchema = yup.object().shape({
-  spacification: yup.string().required("required"),
-  itemtype: yup.string().required("required"),
+  warehouse: yup.string().required("required"),
+  type: yup.string().required("required"),
 });
 const initialValues = {
-  itemtype: "",
+  type: "",
  
 };
 
-export default AddSpacifications;
+export default AddWareHouse;

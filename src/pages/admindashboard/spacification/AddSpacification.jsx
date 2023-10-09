@@ -4,18 +4,42 @@ import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../theme";
 import Header from "../components/Header";
-
-const AddItems = () => {
+import Axios from 'axios';
+import { useEffect, useState } from "react";
+const AddSpacifications = () => {
+  const [itemType , setItemType] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [message, setMessage] = useState('');
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values) => {
+   Axios.post('http://localhost:8000/api/specification/add', {
+    specification: values.spacification,
+    type: values.itemtype,
+   }).then((response) => {
+    console.log(response.data);
+    console.log('Adding successfull');
+    setMessage('Spacification Added Successfully!');
+   }).catch((error) => {
+    console.log(error);
+    setMessage('Error happens while adding pacification!');
+   })
     console.log(values);
   };
 
+  useEffect(() => {
+    Axios.get('http://localhost:8000/api/type/getall').then((response) => {
+        setItemType(response.data);
+        console.log(itemType);
+       }).catch((error) => {
+        console.log(error);
+       })
+}, []);
+
+
   return (
     <Box m="20px">
-      <Header title="CREATE USER" subtitle="" />
+      <Header title="ADD ITEM TYPE" subtitle= {message} />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -50,29 +74,16 @@ const AddItems = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
-                label="Item Code"
+                label="Spacifications Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.itemcode}
-                name="itemcode"
-                error={!!touched.itemcode && !!errors.itemcode}
-                helperText={touched.itemcode && errors.itemcode}
+                value={values.spacification}
+                name="spacification"
+                error={!!touched.spacification && !!errors.spacification}
+                helperText={touched.spacification && errors.spacification}
                 sx={{ gridColumn: "span 4" }}
               />
-               <TextField
-                fullWidth
-                variant="outlined"
-                type="text"
-                label="Item Name"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.itemname}
-                name="itemname"
-                error={!!touched.itemname && !!errors.itemname}
-                helperText={touched.itemname && errors.itemname}
-                sx={{ gridColumn: "span 4" }}
-              />
-               <Select
+              <Select
                fullWidth
                variant="outlined"
                error={!!touched.itemtype && !!errors.itemtype}
@@ -85,68 +96,18 @@ const AddItems = () => {
                onChange={handleChange}
               >
                 <MenuItem value=''>Select Item Type</MenuItem>
-                <MenuItem value='item1'>item1</MenuItem>
-                <MenuItem value='item2'>item2</MenuItem>
+                {
+                 itemType.map((item) => (
+                    <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
+                  ))
+                }
+                
               </Select>
-              <div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="checkbox"
-    id="checkbox1"
-    value="option1"
-  />
-  <label className="form-check-label" htmlFor="checkbox1">
-    Option 1
-  </label>
-</div>
-<div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="checkbox"
-    id="checkbox2"
-    value="option2"
-  />
-  <label className="form-check-label" htmlFor="checkbox2">
-    Option 2
-  </label>
-</div>
-<div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="checkbox"
-    id="checkbox3"
-    value="option3"
-  />
-  <label className="form-check-label" htmlFor="checkbox3">
-    Option 3
-  </label>
-</div>
-<div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="checkbox"
-    id="checkbox3"
-    value="option3"
-  />
-  <label className="form-check-label" htmlFor="checkbox3">
-    Option 3
-  </label>
-</div>
-<div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="checkbox"
-    id="checkbox3"
-    value="option3"
-  />
-  <label className="form-check-label" htmlFor="checkbox3">
-    Option 3
-  </label>
-</div>
+    
               
-              <Box display="flex" justifyContent="end" mt="10px" >
+              <Box display="flex" justifyContent="end" mt="10px" width= '800px'>
               <Button type="submit" color="secondary" variant="contained">
-                Add New Items
+                Add Spacifications
               </Button>
             </Box>
             </Box>
@@ -160,17 +121,12 @@ const AddItems = () => {
 
 
 const checkoutSchema = yup.object().shape({
-  itemcode: yup.string().required("required"),
-  itemname: yup.string().required("required"),
-
-  itemtype: yup.string().required("required"),
   spacification: yup.string().required("required"),
+  itemtype: yup.string().required("required"),
 });
 const initialValues = {
-  itemcode: "",
-  itemname: "",
   itemtype: "",
-  spacification: "",
+ 
 };
 
-export default AddItems;
+export default AddSpacifications;

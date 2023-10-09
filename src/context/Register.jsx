@@ -110,7 +110,7 @@ const Register = () => {
                onBlur={handleBlur}
                onChange={handleChange}
               >
-                 <MenuItem value=''>Select User Type</MenuItem>
+                <MenuItem value=''>Select User Type</MenuItem>
                 <MenuItem value='admin'>Admin</MenuItem>
                 <MenuItem value='casher'>Casher</MenuItem>
               </Select>

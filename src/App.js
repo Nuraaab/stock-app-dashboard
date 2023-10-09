@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import Topbar from "./scenes/global/Topbar";
-import Sidebar from "./scenes/global/Sidebar";
+import Topbar from "./components/admincomponents/Topbar";
+import Sidebar from "./components/admincomponents/Sidebar";
 import Dashboard from "./scenes/dashboard";
 import Team from "./scenes/team";
 import Invoices from "./scenes/invoices";
@@ -15,15 +15,16 @@ import Geography from "./scenes/geography";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Calendar from "./scenes/calendar/calendar";
-import Login from "./auth/Login";
-import Casher from "./casherdashboard";
-import Register from "./auth/Register";
-import AddItems from "./items/AddItems";
-import ViewItems from "./items/ViewItems";
-import AddTest from "./items/AddTest";
+import Login from "./context/Login";
+import Casher from "./pages/casherdashboard";
+import Register from "./context/Register";
+import AddItems from "./pages/admindashboard/items/AddItems";
+import ViewItems from "./pages/admindashboard/items/ViewItems";
 import AddItemType from "./itemtype/AddItemType";
 import ViewItemType from "./itemtype/ViewItemType";
 import AddSpacifications from "./spacification/AddSpacification";
+import ViewSpacifications from "./spacification/ViewSpacification";
+import AddWareHouse from "./pages/admindashboard/warehouses/AddWareHouse";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -54,6 +55,8 @@ function App() {
                  <Route path="/add_item_type" element = {<AddItemType />}></Route>
                  <Route path="/view_item_type" element = {<ViewItemType />}></Route>
                  <Route path="/add_spacification" element = {<AddSpacifications />}></Route>
+                 <Route path="/view_spacification" element = {<ViewSpacifications />}></Route>
+                 <Route path="/add_ware_house" element = {<AddWareHouse />}></Route>
                   <Route path="/team" element={<Team />} />
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/invoices" element={<Invoices />} />

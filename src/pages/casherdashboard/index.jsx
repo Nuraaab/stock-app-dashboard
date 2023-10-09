@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Sidebar from './Sidebar';
-import Topbar from './Topbar';
+import Sidebar from '../../components/cashercomponents/Sidebar';
+import Topbar from '../../components/cashercomponents/Topbar';
 import Axios from 'axios';
 import axios from 'axios';
 axios.defaults.withCredentials = true;

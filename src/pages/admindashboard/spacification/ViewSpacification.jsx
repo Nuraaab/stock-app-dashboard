@@ -4,10 +4,13 @@ import { tokens } from "../theme";
 import { mockDataContacts } from "../data/mockData";
 import Header from "../components/Header";
 import { useTheme } from "@mui/material";
-
-const ViewItems = () => {
+import Axios from 'axios';
+import { useEffect, useState } from "react";
+const ViewSpacifications = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [specification , setSpacification] = useState([]);
+
   const handleEdit = (row) => {
     // Open a modal dialog with the current row data
     const modal = new Modal(row);
@@ -25,90 +28,30 @@ const ViewItems = () => {
     //   setMockDataContacts(updatedTableRows);
     // });
   };
-  // const columns = [
-  //   { field: "id", headerName: "ID", flex: 0.5 },
-  //   { field: "registrarId", headerName: "Registrar ID" },
-  //   {
-  //     field: "name",
-  //     headerName: "Name",
-  //     flex: 1,
-  //     cellClassName: "name-column--cell",
-  //   },
-  //   {
-  //     field: "age",
-  //     headerName: "Age",
-  //     type: "number",
-  //     headerAlign: "left",
-  //     align: "left",
-  //   },
-  //   {
-  //     field: "phone",
-  //     headerName: "Phone Number",
-  //     flex: 1,
-  //   },
-  //   {
-  //     field: "email",
-  //     headerName: "Email",
-  //     flex: 1,
-  //   },
-  //   {
-  //     field: "address",
-  //     headerName: "Address",
-  //     flex: 1,
-  //   },
-  //   {
-  //     field: "city",
-  //     headerName: "City",
-  //     flex: 1,
-  //   },
-  //   {
-  //     field: "zipCode",
-  //     headerName: "Zip Code",
-  //     flex: 1,
-  //   },
-  // ];
-
+  useEffect(() => {
+    Axios.get('http://localhost:8000/api/specification/getall').then((response) => {
+        setSpacification(response.data);
+        console.log(specification);
+       }).catch((error) => {
+        console.log(error);
+       })
+}, []);
+const getRowId = (row) => {
+    return row._id;
+  };
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "registrarId", headerName: "Registrar ID" },
     {
-      field: "name",
-      headerName: "Name",
+      field: "specification",
+      headerName: "Specification",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "address",
-      headerName: "Address",
-      flex: 1,
-    },
-    {
-      field: "city",
-      headerName: "City",
-      flex: 1,
-    },
-    {
-      field: "zipCode",
-      headerName: "Zip Code",
-      flex: 1,
-    },
+        field: "type",
+        headerName: "Item Type",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
     {
       field: "edit",
       headerName: "Edit",
@@ -129,7 +72,7 @@ const ViewItems = () => {
   return (
     <Box m="20px">
       <Header
-        title="VIEW ITEMS"
+        title="VIEW SPECIFICATIONS"
       />
       <Box
         m="40px 0 0 0"
@@ -163,15 +106,11 @@ const ViewItems = () => {
           },
         }}
       >
-        {/* <DataGrid
-          rows={mockDataContacts}
-          columns={columns}
-          components={{ Toolbar: GridToolbar }}
-        /> */}
         <DataGrid
-            rows={mockDataContacts}
+            rows={specification}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
+            getRowId={getRowId}
             onCellClick={(params) => {
               const row = params.row;
 
@@ -187,4 +126,4 @@ const ViewItems = () => {
   );
 };
 
-export default ViewItems;
+export default ViewSpacifications;
