@@ -6,7 +6,7 @@ import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
-const ViewItemType = () => {
+const ViewItems = () => {
   const [itemList , setItemList] = useState([]);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -131,4 +131,4 @@ const getRowId = (row) => {
   );
 };
 
-export default ViewItemType;
+export default ViewItems;

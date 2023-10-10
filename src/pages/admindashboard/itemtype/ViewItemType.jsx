@@ -1,8 +1,7 @@
 import { Box, Modal } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { tokens } from "../theme";
-import { mockDataContacts } from "../data/mockData";
-import Header from "../components/Header";
+import { tokens } from "../../../theme";
+import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
@@ -19,14 +18,6 @@ const ViewItemType = () => {
   
   const handleDelete = (row) => {
     console.log(row);
-    // Delete the current row from the table and the backend database
-    // For example, you could use the following code:
-  
-    // axios.delete(`/api/contacts/${row.id}`).then(() => {
-    //   // Update the table data
-    //   const updatedTableRows = mockDataContacts.filter(contact => contact.id !== row.id);
-    //   setMockDataContacts(updatedTableRows);
-    // });
   };
   useEffect(() => {
     Axios.get('http://localhost:8000/api/type/getall').then((response) => {

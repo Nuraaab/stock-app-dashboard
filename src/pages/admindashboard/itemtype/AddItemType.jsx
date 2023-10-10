@@ -2,10 +2,10 @@ import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/materia
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { tokens } from "../theme";
-import Header from "../components/Header";
 import Axios from 'axios';
 import { useState } from "react";
+import { tokens } from "../../../theme";
+import Header from "../../../components/Header";
 const AddItemType = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');

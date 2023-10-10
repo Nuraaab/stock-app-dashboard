@@ -18,14 +18,13 @@ import Calendar from "./scenes/calendar/calendar";
 import Login from "./context/Login";
 import Casher from "./pages/casherdashboard";
 import Register from "./context/Register";
+import AddSpacifications from "./pages/admindashboard/spacification/AddSpacification";
+import ViewSpacifications from "./pages/admindashboard/spacification/ViewSpacification";
 import AddItems from "./pages/admindashboard/items/AddItems";
 import ViewItems from "./pages/admindashboard/items/ViewItems";
-import AddItemType from "./itemtype/AddItemType";
-import ViewItemType from "./itemtype/ViewItemType";
-import AddSpacifications from "./spacification/AddSpacification";
-import ViewSpacifications from "./spacification/ViewSpacification";
+import AddItemType from "./pages/admindashboard/itemtype/AddItemType";
+import ViewItemType from "./pages/admindashboard/itemtype/ViewItemType";
 import AddWareHouse from "./pages/admindashboard/warehouses/AddWareHouse";
-
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);

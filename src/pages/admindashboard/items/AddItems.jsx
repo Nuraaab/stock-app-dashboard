@@ -8,7 +8,7 @@ import Axios from 'axios';
 import { useRef, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-const AddSpacifications = () => {
+const AddItems = () => {
   const [itemType, setItemType] = useState([]);
   const [specification, setSpecification] = useState([]);
   const [selectedSpecifications, setSelectedSpecifications] = useState([]);
@@ -206,6 +206,6 @@ const initialValues = {
   itemtype: "",
 };
 
-export default AddSpacifications;
+export default AddItems;
 
 

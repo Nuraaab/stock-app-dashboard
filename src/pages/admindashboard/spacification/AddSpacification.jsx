@@ -2,8 +2,8 @@ import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/materia
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { tokens } from "../theme";
-import Header from "../components/Header";
+import { tokens } from "../../../theme";
+import Header from "../../../components/Header";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 const AddSpacifications = () => {
