@@ -1,5 +1,5 @@
 import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Axios from 'axios';
@@ -11,16 +11,17 @@ const AddItemType = () => {
   const [message, setMessage] = useState('');
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const handleFormSubmit = (values) => {
-   Axios.post('http://localhost:8000/api/type/add', {
+  const handleFormSubmit = (values, {resetForm}) => {
+   Axios.post('/type/add', {
     type: values.itemtype,
    }).then((response) => {
     console.log(response.data);
     console.log('Adding successfull');
     setMessage('Item Type Added Successfully!');
+    resetForm();
    }).catch((error) => {
     console.log(error);
-    setMessage('Error happens while adding item type!');
+    setMessage(error.response.data);
    })
     console.log(values);
   };

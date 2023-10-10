@@ -1,28 +1,30 @@
 import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
+
 const AddWareHouse = () => {
-  const [itemType , setItemType] = useState([]);
+  // const [warehouseList , setwarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const handleFormSubmit = (values) => {
-   Axios.post('http://localhost:8000/api/warehouse/add', {
-    specification: values.spacification,
-    type: values.itemtype,
+  const handleFormSubmit = (values, {resetForm}) => {
+   Axios.post('/warehouse/add', {
+    name: values.name,
+    type: values.type,
    }).then((response) => {
     console.log(response.data);
     console.log('Adding successfull');
-    setMessage('Spacification Added Successfully!');
+    setMessage('Warehouse Added Successfully!');
+    resetForm();
    }).catch((error) => {
     console.log(error);
-    setMessage('Error happens while adding pacification!');
+    setMessage(error.response.data);
    })
     console.log(values);
   };
@@ -31,7 +33,7 @@ const AddWareHouse = () => {
 
   return (
     <Box m="20px">
-      <Header title="ADD ITEM TYPE" subtitle= {message} />
+      <Header title="ADD WAREHOUSE" subtitle= {message} />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -69,10 +71,10 @@ const AddWareHouse = () => {
                 label="Warehouse Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.warehouse}
-                name="warehouse"
-                error={!!touched.warehouse && !!errors.warehouse}
-                helperText={touched.warehouse && errors.warehouse}
+                value={values.name}
+                name="name"
+                error={!!touched.name && !!errors.name}
+                helperText={touched.name && errors.name}
                 sx={{ gridColumn: "span 4" }}
               />
               <Select
@@ -110,7 +112,7 @@ const AddWareHouse = () => {
 
 
 const checkoutSchema = yup.object().shape({
-  warehouse: yup.string().required("required"),
+  name: yup.string().required("required"),
   type: yup.string().required("required"),
 });
 const initialValues = {

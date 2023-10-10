@@ -1,17 +1,16 @@
 import { Box, Modal } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { tokens } from "../../../theme";
-import Header from "../../../components/Header";
+import { tokens } from "../../../../theme";
+import Header from "../../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
-const ViewItemType = () => {
+const ViewMainStores = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [itemType , setItemType] = useState([]);
+  const [mainStoreItems , setMainStoreItems] = useState([]);
 
   const handleEdit = (row) => {
-    // Open a modal dialog with the current row data
     const modal = new Modal(row);
     modal.open();
   };
@@ -19,10 +18,12 @@ const ViewItemType = () => {
   const handleDelete = (row) => {
     console.log(row);
   };
+  const handleSale = (row) => {
+    console.log(row);
+  };
   useEffect(() => {
-    Axios.get('/type/getall').then((response) => {
-        setItemType(response.data);
-        console.log(itemType);
+    Axios.get('/mainstore/getall').then((response) => {
+        setMainStoreItems(response.data);
        }).catch((error) => {
         console.log(error);
        })
@@ -32,12 +33,53 @@ const getRowId = (row) => {
   };
   const columns = [
     {
-      field: "type",
-      headerName: "Item Type",
+        field: "company",
+        headerName: "Company Name",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+    {
+      field: "name",
+      headerName: "Item Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
-   
+    {
+        field: "itemCode",
+        headerName: "Item Code",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "specification",
+        headerName: "Item Specification",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "type",
+        headerName: "Item Type",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "expireDate",
+        headerName: "Expire Date",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "warehouseName",
+        headerName: "Warehouse Name",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "quantity",
+        headerName: "Quantity",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
     {
       field: "edit",
       headerName: "Edit",
@@ -54,11 +96,19 @@ const getRowId = (row) => {
         return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
+    {
+        field: "sale",
+        headerName: "Sale",
+        renderCell: ({ row }) => {
+          // Render the delete button here
+          return <button onClick={() => handleSale(row)} className="btn btn-primary mx-1 ">Sale</button>;
+        },
+      },
   ];
   return (
     <Box m="20px">
       <Header
-        title="VIEW ITEM TYPE"
+        title="VIEW MAIN STORE ITEMS"
       />
       <Box
         m="40px 0 0 0"
@@ -93,7 +143,7 @@ const getRowId = (row) => {
         }}
       >
         <DataGrid
-            rows={itemType}
+            rows={mainStoreItems}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
@@ -104,6 +154,8 @@ const getRowId = (row) => {
                 handleEdit(row);
               } else if (params.field === "delete") {
                 handleDelete(row);
+              } else if (params.field === "sale") {
+                handleSale(row);
               }
             }}
           />
@@ -112,4 +164,4 @@ const getRowId = (row) => {
   );
 };
 
-export default ViewItemType;
+export default ViewMainStores;

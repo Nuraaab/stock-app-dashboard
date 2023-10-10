@@ -25,6 +25,9 @@ import ViewItems from "./pages/admindashboard/items/ViewItems";
 import AddItemType from "./pages/admindashboard/itemtype/AddItemType";
 import ViewItemType from "./pages/admindashboard/itemtype/ViewItemType";
 import AddWareHouse from "./pages/admindashboard/warehouses/AddWareHouse";
+import ViewWareHouses from "./pages/admindashboard/warehouses/ViewWareHouse";
+import AddMainStoreItems from "./pages/admindashboard/itemstore/mainstores/AddMainStores";
+import ViewMainStores from "./pages/admindashboard/itemstore/mainstores/ViewMainStores";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -56,6 +59,9 @@ function App() {
                  <Route path="/add_spacification" element = {<AddSpacifications />}></Route>
                  <Route path="/view_spacification" element = {<ViewSpacifications />}></Route>
                  <Route path="/add_ware_house" element = {<AddWareHouse />}></Route>
+                 <Route path="/view_ware_house" element = {<ViewWareHouses />}></Route>
+                 <Route path="/add_main_store_items" element ={<AddMainStoreItems />}></Route>
+                 <Route path="/view_main_store_items" element = {<ViewMainStores />}></Route>
                   <Route path="/team" element={<Team />} />
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/invoices" element={<Invoices />} />

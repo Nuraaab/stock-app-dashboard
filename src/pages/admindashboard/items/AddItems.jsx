@@ -1,5 +1,5 @@
 import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
@@ -17,8 +17,8 @@ const AddItems = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const handleFormSubmit = (values) => {
-    Axios.post('http://localhost:8000/api/items/add', {
+  const handleFormSubmit = (values, {resetForm}) => {
+    Axios.post('/items/add', {
       name: values.itemname,
       type: values.itemtype,
       itemCode: values.itemcode,
@@ -27,9 +27,10 @@ const AddItems = () => {
       console.log(response.data);
       console.log('Adding successful');
       setMessage('Item Added Successfully!');
+      resetForm();
     }).catch((error) => {
       console.log(error);
-      setMessage('Error occurred while adding Item!');
+      setMessage(error.response.data);
     });
     console.log(values);
   };
@@ -63,9 +64,9 @@ const AddItems = () => {
     console.log(filteredSpecifications);
   };
   useEffect(() => {
-    Axios.get('http://localhost:8000/api/type/getall').then((response) => {
+    Axios.get('/type/getall').then((response) => {
       setItemType(response.data);
-      Axios.get('http://localhost:8000/api/specification/getall').then((response) => {
+      Axios.get('/specification/getall').then((response) => {
         setSpecification(response.data);
         console.log('hi');
         console.log(specification);
@@ -172,9 +173,9 @@ const AddItems = () => {
                 ))}
               </Select>
 
-              <div>
+              <div className="row">
                 {selectedSpecifications.map((specification) => (
-                  <div key={specification} className="d-flex align-items-center">
+                  <div key={specification} className="col-auto d-flex align-items-center">
                     <Button variant="primary" className="me-2">
                       {specification}
                     </Button>

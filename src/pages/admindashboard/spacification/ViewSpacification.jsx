@@ -11,24 +11,15 @@ const ViewSpacifications = () => {
   const [specification , setSpacification] = useState([]);
 
   const handleEdit = (row) => {
-    // Open a modal dialog with the current row data
     const modal = new Modal(row);
     modal.open();
   };
   
   const handleDelete = (row) => {
     console.log(row);
-    // Delete the current row from the table and the backend database
-    // For example, you could use the following code:
-  
-    // axios.delete(`/api/contacts/${row.id}`).then(() => {
-    //   // Update the table data
-    //   const updatedTableRows = mockDataContacts.filter(contact => contact.id !== row.id);
-    //   setMockDataContacts(updatedTableRows);
-    // });
   };
   useEffect(() => {
-    Axios.get('http://localhost:8000/api/specification/getall').then((response) => {
+    Axios.get('/specification/getall').then((response) => {
         setSpacification(response.data);
         console.log(specification);
        }).catch((error) => {
@@ -55,7 +46,6 @@ const getRowId = (row) => {
       field: "edit",
       headerName: "Edit",
       renderCell: ({ row }) => {
-        // Render the edit button here
         return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
       },
     },
@@ -63,7 +53,6 @@ const getRowId = (row) => {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        // Render the delete button here
         return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },

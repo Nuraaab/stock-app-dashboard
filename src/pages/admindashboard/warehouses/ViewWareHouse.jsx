@@ -5,13 +5,13 @@ import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
-const ViewItemType = () => {
+import { Warehouse } from "@mui/icons-material";
+const ViewWareHouses = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [itemType , setItemType] = useState([]);
+  const [warehouse , setWarehouse] = useState([]);
 
   const handleEdit = (row) => {
-    // Open a modal dialog with the current row data
     const modal = new Modal(row);
     modal.open();
   };
@@ -20,9 +20,9 @@ const ViewItemType = () => {
     console.log(row);
   };
   useEffect(() => {
-    Axios.get('/type/getall').then((response) => {
-        setItemType(response.data);
-        console.log(itemType);
+    Axios.get('/warehouse/getall').then((response) => {
+        setWarehouse(response.data);
+        console.log(warehouse);
        }).catch((error) => {
         console.log(error);
        })
@@ -32,17 +32,21 @@ const getRowId = (row) => {
   };
   const columns = [
     {
-      field: "type",
-      headerName: "Item Type",
+      field: "name",
+      headerName: "Warehouse Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
-   
+    {
+        field: "type",
+        headerName: "Store Type",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
     {
       field: "edit",
       headerName: "Edit",
       renderCell: ({ row }) => {
-        // Render the edit button here
         return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
       },
     },
@@ -50,7 +54,6 @@ const getRowId = (row) => {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        // Render the delete button here
         return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
@@ -58,7 +61,7 @@ const getRowId = (row) => {
   return (
     <Box m="20px">
       <Header
-        title="VIEW ITEM TYPE"
+        title="VIEW WAREHOUSE"
       />
       <Box
         m="40px 0 0 0"
@@ -93,7 +96,7 @@ const getRowId = (row) => {
         }}
       >
         <DataGrid
-            rows={itemType}
+            rows={warehouse}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
@@ -112,4 +115,4 @@ const getRowId = (row) => {
   );
 };
 
-export default ViewItemType;
+export default ViewWareHouses;

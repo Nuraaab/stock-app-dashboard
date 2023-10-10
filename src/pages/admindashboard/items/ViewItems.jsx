@@ -1,7 +1,6 @@
 import { Box, Modal } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
-import { mockDataContacts } from "../../../data/mockData";
 import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
@@ -22,7 +21,7 @@ const ViewItems = () => {
     console.log(row);
   };
   useEffect(() => {
-    Axios.get('http://localhost:8000/api/items/getall').then((response) => {
+    Axios.get('/items/getall').then((response) => {
       setItemList(response.data);
         console.log(itemType);
        }).catch((error) => {

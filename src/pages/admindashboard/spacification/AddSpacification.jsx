@@ -1,5 +1,5 @@
 import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
@@ -12,23 +12,24 @@ const AddSpacifications = () => {
   const [message, setMessage] = useState('');
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const handleFormSubmit = (values) => {
-   Axios.post('http://localhost:8000/api/specification/add', {
+  const handleFormSubmit = (values, {resetForm}) => {
+   Axios.post('/specification/add', {
     specification: values.spacification,
     type: values.itemtype,
    }).then((response) => {
     console.log(response.data);
     console.log('Adding successfull');
     setMessage('Spacification Added Successfully!');
+    resetForm();
    }).catch((error) => {
     console.log(error);
-    setMessage('Error happens while adding pacification!');
+    setMessage(error.response.data);
    })
     console.log(values);
   };
 
   useEffect(() => {
-    Axios.get('http://localhost:8000/api/type/getall').then((response) => {
+    Axios.get('/type/getall').then((response) => {
         setItemType(response.data);
         console.log(itemType);
        }).catch((error) => {
