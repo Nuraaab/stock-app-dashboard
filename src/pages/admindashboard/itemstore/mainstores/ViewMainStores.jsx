@@ -137,12 +137,7 @@ const getRowId = (row) => {
     return row._id;
   };
   const columns = [
-    {
-        field: "company",
-        headerName: "Company Name",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
+ 
     {
       field: "name",
       headerName: "Item Name",

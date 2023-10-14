@@ -37,8 +37,20 @@ const Pending = () => {
 })
     }
   };
-  const handleSale = (selectedrow) => {
-   
+  const handleApprove = (selectedrow) => {
+    Axios.post(`/pending/approve/${selectedrow._id}`, {
+        warehouseName: warehouseName,
+       }).then((response) => {
+        setOpen(false);
+        console.log(response.data);
+        console.log('Adding successfull');
+        setMessage(`Adding ${response.data.name} is successfull!`);
+        navigate('/view_main_store_items');
+       }).catch((error) => {
+        setOpen(true);
+        console.log(error);
+        setErrorMessage(error.response.data);
+       })
     }
   const handleClickOpen = (row) => {
     Axios.get('/warehouse/getall').then((response) => {
@@ -50,7 +62,8 @@ const Pending = () => {
             setSelectedRow(row);
     }).catch((error) => {
         console.log(error);
-        setErrorMessage("Warehouse Name can not be loadded!");
+        setErrorMessage(error.response.data);
+        setSelectedRow(null);
     })
   };
 
@@ -183,7 +196,7 @@ const getRowId = (row) => {
           <Button style={{ color: 'white' }} onClick={handleClose}>
             Cancel
           </Button>
-          <Button style={{ color: 'white' }} onClick={() => handleSale(selectedRow)} >
+          <Button style={{ color: 'white' }} onClick={() => handleApprove(selectedRow)} >
             Sale
           </Button>
         </DialogActions>
