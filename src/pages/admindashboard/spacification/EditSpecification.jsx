@@ -2,22 +2,32 @@ import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/materia
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Axios from 'axios';
-import { useState } from "react";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
-const AddItemType = () => {
+import Axios from 'axios';
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+const EditSpecifications = () => {
+  const [itemType , setItemType] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const location = useLocation();
+  const rowData = location.state.rowData;
+  const initialValues = {
+    itemtype: rowData.type,
+    spacification: rowData.specification,
+   
+  };
   const handleFormSubmit = (values, {resetForm}) => {
-   Axios.post('/type/add', {
+   Axios.post(`/specification/update/${rowData._id}`, {
+    specification: values.spacification,
     type: values.itemtype,
    }).then((response) => {
     console.log(response.data);
-    console.log('Adding successfull');
-    setMessage('Item Type Added Successfully!');
+    console.log('Updating  successfull');
+    setMessage('Spacification Updated Successfully!');
     resetForm();
    }).catch((error) => {
     console.log(error);
@@ -26,9 +36,19 @@ const AddItemType = () => {
     console.log(values);
   };
 
+  useEffect(() => {
+    Axios.get('/type/getall').then((response) => {
+        setItemType(response.data);
+        console.log(itemType);
+       }).catch((error) => {
+        console.log(error);
+       })
+}, []);
+
+
   return (
     <Box m="20px">
-      <Header title="ADD ITEM TYPE" subtitle= {message} />
+      <Header title="EDIT SPECIFICATIONS" subtitle= {message} />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -63,21 +83,40 @@ const AddItemType = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
-                label="Add Item Type"
+                label="Spacifications Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.itemtype}
-                name="itemtype"
-                error={!!touched.itemtype && !!errors.itemtype}
-                helperText={touched.itemtype && errors.itemtype}
+                value={values.spacification}
+                name="spacification"
+                error={!!touched.spacification && !!errors.spacification}
+                helperText={touched.spacification && errors.spacification}
                 sx={{ gridColumn: "span 4" }}
               />
-              
+              <Select
+               fullWidth
+               variant="outlined"
+               error={!!touched.itemtype && !!errors.itemtype}
+               helperText={touched.itemtype && errors.itemtype}
+               sx={{ gridColumn: "span 4" ,color: "white"}}
+               value={values.itemtype}
+               name="itemtype"
+               label="Item Type"
+               onBlur={handleBlur}
+               onChange={handleChange}
+              >
+                <MenuItem value=''>Select Item Type</MenuItem>
+                {
+                 itemType.map((item) => (
+                    <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
+                  ))
+                }
+                
+              </Select>
     
               
-              <Box display="flex" justifyContent="end" mt="10px" width= '800px'>
+              <Box display="flex" justifyContent="end" mt="10px" >
               <Button type="submit" color="secondary" variant="contained">
-                ADD ITEM TYPE
+                EDIT SPECIFICATIONS
               </Button>
             </Box>
             </Box>
@@ -91,11 +130,8 @@ const AddItemType = () => {
 
 
 const checkoutSchema = yup.object().shape({
+  spacification: yup.string().required("required"),
   itemtype: yup.string().required("required"),
 });
-const initialValues = {
-  itemtype: "",
- 
-};
 
-export default AddItemType;
+export default EditSpecifications;

@@ -2,14 +2,22 @@ import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/materia
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { tokens } from "../theme";
-import Header from "../components/Header";
-
-const Register = () => {
+import { tokens } from "../../../theme";
+import Header from "../../../components/Header";
+import Axios from 'axios';
+const AddUsers = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values) => {
+    Axios.post('/auth/add', {
+      adminName:values.fullname,
+      email: values.email,
+      phone: values.phone,
+      profile: values.upload,
+      type: values.type,
+      password: values.password,
+    })
     console.log(values);
   };
 
@@ -170,9 +178,9 @@ const Register = () => {
                   Choose Files
                 </Button>
               </label>
-              <Box display="flex" justifyContent="end" mt="10px"  width='800px'>
+              <Box display="flex" justifyContent="end" mt="10px"  >
               <Button type="submit" color="secondary" variant="contained">
-                Add New User
+                ADD NEW USERS
               </Button>
             </Box>
             </Box>
@@ -195,6 +203,7 @@ const checkoutSchema = yup.object().shape({
     .string()
     .matches(phoneRegExp, "Phone number is not valid")
     .required("required"),
+  upload: yup.string().required("required"),
   password: yup.string().required("required"),
   rpassword: yup.string().required("required"),
 });
@@ -202,9 +211,10 @@ const initialValues = {
   fullname: "",
   email: "",
   phone: "",
+  upload: "",
   password: "",
   rpassword: "",
   type: "",
 };
 
-export default Register;
+export default AddUsers;

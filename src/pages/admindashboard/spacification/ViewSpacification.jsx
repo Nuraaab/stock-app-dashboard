@@ -3,16 +3,16 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 const ViewSpacifications = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [specification , setSpacification] = useState([]);
-
+  const navigate = useNavigate();
   const handleEdit = (row) => {
-    const modal = new Modal(row);
-    modal.open();
+    navigate(`/edit_spacification`, { state: { rowData: row } });
   };
   
   const handleDelete = (row) => {

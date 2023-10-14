@@ -4,23 +4,25 @@ import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
-const ViewItemType = () => {
+const ViewUsers = () => {
+  const [itemList , setItemList] = useState([]);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [itemType , setItemType] = useState([]);
-  const navigate = useNavigate();
+
   const handleEdit = (row) => {
-    navigate(`/edit_item_type`, { state: { rowData: row } });
+    // Open a modal dialog with the current row data
+    const modal = new Modal(row);
+    modal.open();
   };
   
   const handleDelete = (row) => {
     console.log(row);
   };
   useEffect(() => {
-    Axios.get('/type/getall').then((response) => {
-        setItemType(response.data);
+    Axios.get('/items/getall').then((response) => {
+      setItemList(response.data);
         console.log(itemType);
        }).catch((error) => {
         console.log(error);
@@ -31,12 +33,29 @@ const getRowId = (row) => {
   };
   const columns = [
     {
+      field: "name",
+      headerName: "Item Name",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
       field: "type",
       headerName: "Item Type",
       flex: 1,
       cellClassName: "name-column--cell",
     },
-   
+    {
+      field: "itemCode",
+      headerName: "Item Code",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "specification",
+      headerName: "Item Specification",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
     {
       field: "edit",
       headerName: "Edit",
@@ -57,7 +76,7 @@ const getRowId = (row) => {
   return (
     <Box m="20px">
       <Header
-        title="VIEW ITEM TYPE"
+        title="VIEW USERS"
       />
       <Box
         m="40px 0 0 0"
@@ -92,7 +111,7 @@ const getRowId = (row) => {
         }}
       >
         <DataGrid
-            rows={itemType}
+            rows={itemList}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
@@ -111,4 +130,4 @@ const getRowId = (row) => {
   );
 };
 
-export default ViewItemType;
+export default ViewUsers;

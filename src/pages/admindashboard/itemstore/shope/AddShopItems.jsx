@@ -6,7 +6,7 @@ import Header from "../../../../components/Header";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 import { tokens } from "../../../../theme";
-const AddSubStoreItems = () => {
+const AddShopItems = () => {
   const [itemType , setItemType] = useState([]);
   const [itemList, setItemList] = useState([]);
   const [filteredItemList, setFilteredItemList] = useState([]);
@@ -91,7 +91,7 @@ const AddSubStoreItems = () => {
 
   return (
     <Box m="20px">
-      <Header title="ADD ITEMS TO SUB STORE" subtitle= {message} />
+      <Header title="ADD ITEMS TO SHOP" subtitle= {message} />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -130,11 +130,11 @@ const AddSubStoreItems = () => {
                sx={{ gridColumn: "span 4" ,color: "white"}}
                value={values.warehouseName}
                name="warehouseName"
-               label="Select Warehouses From Main Store"
+               label="Select Warehouses From Sub Store"
                onBlur={handleBlur}
                onChange={handleChange}
               >
-                <MenuItem value=''>Select Warehouses From Main Store</MenuItem>
+                <MenuItem value=''>Select Warehouses From Sub Store</MenuItem>
                 {
                  filteredWarehouseList.map((warehouse) => (
                     <MenuItem key={warehouse.id} value={warehouse.name}>{warehouse.name}</MenuItem>
@@ -215,7 +215,7 @@ const AddSubStoreItems = () => {
               />
               <Box display="flex" justifyContent="end" mt="10px" >
               <Button type="submit" color="secondary" variant="contained">
-                ADD ITEMS TO SUB STORES
+                ADD ITEMS TO SHOP
               </Button>
             </Box>
             </Box>
@@ -247,4 +247,4 @@ const initialValues = {
  
 };
 
-export default AddSubStoreItems;
+export default AddShopItems;

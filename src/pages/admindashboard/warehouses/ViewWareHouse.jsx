@@ -5,15 +5,15 @@ import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Warehouse } from "@mui/icons-material";
 const ViewWareHouses = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [warehouse , setWarehouse] = useState([]);
-
+  const navigate = useNavigate();
   const handleEdit = (row) => {
-    const modal = new Modal(row);
-    modal.open();
+    navigate(`/edit_ware_house`, { state: { rowData: row } });
   };
   
   const handleDelete = (row) => {

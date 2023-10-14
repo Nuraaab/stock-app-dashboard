@@ -2,22 +2,32 @@ import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/materia
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Axios from 'axios';
-import { useState } from "react";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
-const AddItemType = () => {
+import Axios from 'axios';
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+const EditWareHouse = () => {
+  // const [warehouseList , setwarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const location = useLocation();
+  const  rowData = location.state.rowData;
+  const initialValues = {
+    type: rowData.type,
+    name: rowData.name,
+   
+  };
   const handleFormSubmit = (values, {resetForm}) => {
-   Axios.post('/type/add', {
-    type: values.itemtype,
+   Axios.post(`/warehouse/update/${rowData._id}`, {
+    name: values.name,
+    type: values.type,
    }).then((response) => {
     console.log(response.data);
-    console.log('Adding successfull');
-    setMessage('Item Type Added Successfully!');
+    console.log('Updating successfull');
+    setMessage('Warehouse Updated Successfully!');
     resetForm();
    }).catch((error) => {
     console.log(error);
@@ -26,9 +36,11 @@ const AddItemType = () => {
     console.log(values);
   };
 
+
+
   return (
     <Box m="20px">
-      <Header title="ADD ITEM TYPE" subtitle= {message} />
+      <Header title="EDIT WAREHOUSE" subtitle= {message} />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -63,21 +75,37 @@ const AddItemType = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
-                label="Add Item Type"
+                label="Warehouse Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.itemtype}
-                name="itemtype"
-                error={!!touched.itemtype && !!errors.itemtype}
-                helperText={touched.itemtype && errors.itemtype}
+                value={values.name}
+                name="name"
+                error={!!touched.name && !!errors.name}
+                helperText={touched.name && errors.name}
                 sx={{ gridColumn: "span 4" }}
               />
-              
+              <Select
+               fullWidth
+               variant="outlined"
+               error={!!touched.type && !!errors.type}
+               helperText={touched.type && errors.type}
+               sx={{ gridColumn: "span 4" ,color: "white"}}
+               value={values.type}
+               name="type"
+               label="Store Type"
+               onBlur={handleBlur}
+               onChange={handleChange}
+              >
+                <MenuItem value=''>Select Warehouse</MenuItem>
+                <MenuItem value='Main Store'>Main Store</MenuItem>
+                <MenuItem value='Sub Store'>Sub Store</MenuItem>
+                <MenuItem value='Shope'>Shope</MenuItem>
+              </Select>
     
               
-              <Box display="flex" justifyContent="end" mt="10px" width= '800px'>
+              <Box display="flex" justifyContent="end" mt="10px">
               <Button type="submit" color="secondary" variant="contained">
-                ADD ITEM TYPE
+                EDIT WAREHOUSE
               </Button>
             </Box>
             </Box>
@@ -91,11 +119,9 @@ const AddItemType = () => {
 
 
 const checkoutSchema = yup.object().shape({
-  itemtype: yup.string().required("required"),
+  name: yup.string().required("required"),
+  type: yup.string().required("required"),
 });
-const initialValues = {
-  itemtype: "",
- 
-};
 
-export default AddItemType;
+
+export default EditWareHouse;

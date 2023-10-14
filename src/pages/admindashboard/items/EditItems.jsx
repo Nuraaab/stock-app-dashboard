@@ -8,7 +8,8 @@ import Axios from 'axios';
 import { useRef, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-const AddItems = () => {
+import { useLocation } from "react-router-dom";
+const EditItems = () => {
   const [itemType, setItemType] = useState([]);
   const [specification, setSpecification] = useState([]);
   const [selectedSpecifications, setSelectedSpecifications] = useState([]);
@@ -16,17 +17,32 @@ const AddItems = () => {
   const [message, setMessage] = useState('');
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
+  const location = useLocation();
+  const rowData = location.state.rowData;
+  const checkoutSchema = yup.object().shape({
+    itemcode: yup.string().required("required"),
+    itemname: yup.string().required("required"),
+    itemtype: yup.string().required("required"),
+    specification: yup.string().required("required"),
+  });
+  
+  const initialValues = {
+    itemtype: rowData.type,
+    itemname: rowData.name,
+    itemcode: rowData.itemCode,
+    specification: rowData.specification,
+  };
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values, {resetForm}) => {
-    Axios.post('/items/add', {
+    Axios.post('/items/edit', {
       name: values.itemname,
       type: values.itemtype,
       itemCode: values.itemcode,
       specification: selectedSpecifications.join("/"),
     }).then((response) => {
       console.log(response.data);
-      console.log('Adding successful');
-      setMessage('Item Added Successfully!');
+      console.log('Updating  successful');
+      setMessage('Item Updated Successfully!');
       resetForm();
     }).catch((error) => {
       console.log(error);
@@ -64,6 +80,13 @@ const AddItems = () => {
     console.log(filteredSpecifications);
   };
   useEffect(() => {
+   
+    const selectedSpecificationsppp = [...rowData.specification.split('/')];
+    //  setSelectedSpecifications([...selectedSpecifications, selectedSpecificationsppp]);
+    console.log('selected specifications ');
+    console.log(selectedSpecifications);
+    console.log('row data');
+    console.log(selectedSpecificationsppp);
     Axios.get('/type/getall').then((response) => {
       setItemType(response.data);
       Axios.get('/specification/getall').then((response) => {
@@ -76,11 +99,13 @@ const AddItems = () => {
     }).catch((error) => {
       console.log(error);
     });
+    console.log('from view page');
+    console.log(rowData);
   }, []);
   
   return (
     <Box m="20px">
-      <Header title="ADD ITEM " subtitle={message} />
+      <Header title="EDIT ITEM " subtitle={message} />
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
@@ -142,7 +167,7 @@ const AddItems = () => {
                 error={!!touched.itemtype && !!errors.itemtype}
                 helperText={touched.itemtype && errors.itemtype}
                 sx={{ gridColumn: "span 4", color: "white" }}
-                value={values.itemtype}
+                value={values.itemtype || ""}
                 name="itemtype"
                 label="Item Type"
                 onBlur={handleBlur}
@@ -153,15 +178,13 @@ const AddItems = () => {
                   <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
                 ))}
               </Select>
-              
-          
-                          <Select
+                <Select
                 fullWidth
                 variant="outlined"
                 error={!!touched.specification && !!errors.specification}
                 helperText={touched.specification && errors.specification}
                 sx={{ gridColumn: "span 4", color: "white" }}
-                value={values.specification}
+                value={values.specification || ""}
                 name="specification"
                 label="Item Type"
                 onBlur={handleBlur}
@@ -196,17 +219,8 @@ const AddItems = () => {
   );
 };
 
-const checkoutSchema = yup.object().shape({
-  itemcode: yup.string().required("required"),
-  itemname: yup.string().required("required"),
-  itemtype: yup.string().required("required"),
-  specification: yup.string().required("required"),
-});
 
-const initialValues = {
-  itemtype: "",
-};
 
-export default AddItems;
+export default EditItems;
 
 

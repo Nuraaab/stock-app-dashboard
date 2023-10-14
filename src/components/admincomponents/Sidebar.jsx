@@ -234,20 +234,20 @@ const Sidebar = () => {
                     <Link to="/add_sub_store_items" />
                   </MenuItem>
                   <MenuItem
-                    active={selected === "View Shope Items"}
+                    active={selected === "View Shop Items"}
                     icon ={<i class="fa-solid fa-eye"></i>}
-                    onClick={() => setSelected("View Shope Items")}
+                    onClick={() => setSelected("View Shop Items")}
                   >
-                    <Typography>Add Shope Items</Typography>
-                    <Link to="/Add_shope_items" />
+                    <Typography>View Shop Items</Typography>
+                    <Link to="/view_shop_items" />
                   </MenuItem>
                   <MenuItem
-                    active={selected === "Add Shope Items"}
+                    active={selected === "Add Shop Items"}
                     icon ={<i class="fa-solid fa-plus"></i>}
-                    onClick={() => setSelected("Add Shope Items")}
+                    onClick={() => setSelected("Add Shop Items")}
                   >
-                    <Typography>Add Shope Items</Typography>
-                    <Link to="/add_shope_items" />
+                    <Typography>Add Shop Items</Typography>
+                    <Link to="/add_shop_items" />
                   </MenuItem>
                 </Menu>
               }
@@ -268,7 +268,7 @@ const Sidebar = () => {
                     onClick={() => setSelected("View Users")}
                   >
                     <Typography>View Users</Typography>
-                    <Link to="/view_user" />
+                    <Link to="/view_users" />
                   </MenuItem>
                   <MenuItem
                     active={selected === "Add Users"}

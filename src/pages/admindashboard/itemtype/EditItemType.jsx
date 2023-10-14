@@ -6,18 +6,25 @@ import Axios from 'axios';
 import { useState } from "react";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
-const AddItemType = () => {
+import { useLocation } from "react-router-dom";
+const EditItemType = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
   const theme = useTheme();
+  const location = useLocation();
+  const rowData = location.state.rowData;
   const colors = tokens(theme.palette.mode);
+  const initialValues = {
+    itemtype: rowData.type,
+   
+  };
   const handleFormSubmit = (values, {resetForm}) => {
-   Axios.post('/type/add', {
+   Axios.post(`/type/update/${rowData._id}`, {
     type: values.itemtype,
    }).then((response) => {
     console.log(response.data);
-    console.log('Adding successfull');
-    setMessage('Item Type Added Successfully!');
+    console.log('Updating successfull');
+    setMessage('Item Type Updated Successfully!');
     resetForm();
    }).catch((error) => {
     console.log(error);
@@ -28,7 +35,7 @@ const AddItemType = () => {
 
   return (
     <Box m="20px">
-      <Header title="ADD ITEM TYPE" subtitle= {message} />
+      <Header title="EDIT ITEM TYPE" subtitle= {message} />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -75,9 +82,9 @@ const AddItemType = () => {
               
     
               
-              <Box display="flex" justifyContent="end" mt="10px" width= '800px'>
+              <Box display="flex" justifyContent="end" mt="10px" >
               <Button type="submit" color="secondary" variant="contained">
-                ADD ITEM TYPE
+                EDIT ITEM TYPE
               </Button>
             </Box>
             </Box>
@@ -93,9 +100,6 @@ const AddItemType = () => {
 const checkoutSchema = yup.object().shape({
   itemtype: yup.string().required("required"),
 });
-const initialValues = {
-  itemtype: "",
- 
-};
 
-export default AddItemType;
+
+export default EditItemType;

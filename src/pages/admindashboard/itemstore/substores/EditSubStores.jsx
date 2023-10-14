@@ -6,7 +6,7 @@ import Header from "../../../../components/Header";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 import { tokens } from "../../../../theme";
-const AddSubStoreItems = () => {
+const EditSubStoreItems = () => {
   const [itemType , setItemType] = useState([]);
   const [itemList, setItemList] = useState([]);
   const [filteredItemList, setFilteredItemList] = useState([]);
@@ -91,7 +91,7 @@ const AddSubStoreItems = () => {
 
   return (
     <Box m="20px">
-      <Header title="ADD ITEMS TO SUB STORE" subtitle= {message} />
+      <Header title="EDIT SUB STORE ITEMS" subtitle= {message} />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -215,7 +215,7 @@ const AddSubStoreItems = () => {
               />
               <Box display="flex" justifyContent="end" mt="10px" >
               <Button type="submit" color="secondary" variant="contained">
-                ADD ITEMS TO SUB STORES
+                EDIT SUB STORE ITEMS
               </Button>
             </Box>
             </Box>
@@ -247,4 +247,4 @@ const initialValues = {
  
 };
 
-export default AddSubStoreItems;
+export default EditSubStoreItems;

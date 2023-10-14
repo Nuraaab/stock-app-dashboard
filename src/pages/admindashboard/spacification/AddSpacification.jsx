@@ -40,7 +40,7 @@ const AddSpacifications = () => {
 
   return (
     <Box m="20px">
-      <Header title="ADD ITEM TYPE" subtitle= {message} />
+      <Header title="ADD ITEMS SPECIFICATION" subtitle= {message} />
 
       <Formik
         onSubmit={handleFormSubmit}
