@@ -42,6 +42,7 @@ import EditItemType from "./pages/admindashboard/itemtype/EditItemType";
 import EditSpecifications from "./pages/admindashboard/spacification/EditSpecification";
 import EditWareHouse from "./pages/admindashboard/warehouses/EditWarehouse";
 import Pending from "./pages/admindashboard/pending/Pending";
+import History from "./pages/admindashboard/history/History";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -78,18 +79,19 @@ function App() {
                  <Route path="/add_ware_house" element = {<AddWareHouse />}></Route>
                  <Route path="/view_ware_house" element = {<ViewWareHouses />}></Route>
                  <Route path="/edit_ware_house" element= {<EditWareHouse />}></Route>
-                 <Route path="/add_main_store_items" element ={<AddMainStoreItems />}></Route>
-                 <Route path="/view_main_store_items" element = {<ViewMainStores />}></Route>
+                 <Route path="/import" element ={<AddMainStoreItems />}></Route>
+                 <Route path="/mainstore" element = {<ViewMainStores />}></Route>
                  <Route path="/add_sub_store_items" element= {<AddSubStoreItems />}></Route>
-                 <Route path="/view_sub_store_items" element= {<ViewSubStoreItems />}></Route>
+                 <Route path="/sub_store_items" element= {<ViewSubStoreItems />}></Route>
                  <Route path="/add_shop_items" element= {<AddShopItems />}></Route>
-                 <Route path="/view_shop_items" element= {<ViewShopItems />}></Route>
+                 <Route path="/shop_items" element= {<ViewShopItems />}></Route>
                  <Route path="/edit_main_store_items" element= {<EditMainStoreItems />}></Route>
                  <Route path="/edit_sub_store_items" element= {<EditSubStoreItems />}></Route>
                  <Route path="/edit_shop_items" element= {<EditShopItems />}></Route>
                  <Route path="/edit_items" element= {<EditItems />}></Route>
                  <Route path="/edit_item_type" element= {<EditItemType />}></Route>
                  <Route path="/pending" element ={<Pending />}></Route>
+                 <Route path="/history" element ={<History />}></Route>
                   <Route path="/team" element={<Team />} />
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/invoices" element={<Invoices />} />

@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import * as React from 'react';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
+import LinearProgress from '@mui/material/LinearProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 const Pending = () => {
   const [open, setOpen] = React.useState(false);
   const [openAlert, setOpenAlert] = useState(true);
@@ -23,6 +25,9 @@ const Pending = () => {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [isApproved, setIsApproved] = useState(false);
+  const [warehouseLoading, setWarehouseLoading] = useState(true);
 //   const handleEdit = (row) => {
 //     navigate(`/edit_main_store_items`, { state: { rowData: row } });
 //   };
@@ -33,36 +38,53 @@ const Pending = () => {
         setMessage("Sale Deleted successfully!");
         window.location.reload();
      }).catch((error) => {
-   setErrorMessage(error.response.data);
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+      }
 })
     }
   };
   const handleApprove = (selectedrow) => {
+    setIsApproved(true);
     Axios.post(`/pending/approve/${selectedrow._id}`, {
         warehouseName: warehouseName,
        }).then((response) => {
         setOpen(false);
         console.log(response.data);
         console.log('Adding successfull');
+        setIsApproved(false);
         setMessage(`Adding ${response.data.name} is successfull!`);
-        navigate('/view_main_store_items');
+        navigate('/mainstore');
        }).catch((error) => {
         setOpen(true);
         console.log(error);
-        setErrorMessage(error.response.data);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setIsApproved(false);
        })
     }
   const handleClickOpen = (row) => {
+            setOpen(true);
+            setSelectedRow(row);
     Axios.get('/warehouse/getall').then((response) => {
         const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Main Store");
         setFilteredWarehouseList(filteredWarehouse);
+        setWarehouseLoading(false);
         console.log('warehouse');
         console.log(filteredWarehouseList);
-            setOpen(true);
-            setSelectedRow(row);
     }).catch((error) => {
         console.log(error);
-        setErrorMessage(error.response.data);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setWarehouseLoading(false);
         setSelectedRow(null);
     })
   };
@@ -75,8 +97,14 @@ const Pending = () => {
   useEffect(() => {
     Axios.get('/pending/getall').then((response) => {
         setPendingList(response.data);
+        setLoading(false);
        }).catch((error) => {
-        console.log(error);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setLoading(false);
        })
 }, []);
 const getRowId = (row) => {
@@ -171,7 +199,29 @@ const getRowId = (row) => {
       Fill the information below
     </DialogTitle>
         <DialogTitle>
-        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+        {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="warning"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
+        {warehouseLoading && <LinearProgress  color="secondary"/>}
         </DialogTitle>
         <DialogContent>
         <Select
@@ -196,16 +246,38 @@ const getRowId = (row) => {
           <Button style={{ color: 'white' }} onClick={handleClose}>
             Cancel
           </Button>
-          <Button style={{ color: 'white' }} onClick={() => handleApprove(selectedRow)} >
-            Sale
+          <Button style={{ color: 'white' }} onClick={() => handleApprove(selectedRow)}  disabled ={isApproved}>
+            {isApproved ? <CircularProgress color="secondary" size={30}/> : 'Approve'}
           </Button>
         </DialogActions>
       </Dialog>
     </div>
     <Box m="20px">
       <Header
-        title="VIEW MAIN STORE ITEMS" 
+        title="VIEW PENDING ITEMS" 
       />
+       {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="warning"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
       {message && <Box sx={{ width: '100%' }}>
       <Collapse in={openAlert}>
         <Alert
@@ -227,6 +299,7 @@ const getRowId = (row) => {
         </Alert>
       </Collapse>
     </Box>}
+    {loading && <LinearProgress color="secondary" />}
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -264,6 +337,13 @@ const getRowId = (row) => {
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                style: { color: "red" },
+              },
+            }}
+            checkboxSelection
             onCellClick={(params) => {
               const row = params.row;
 

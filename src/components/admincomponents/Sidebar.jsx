@@ -202,53 +202,53 @@ const Sidebar = () => {
               subMenu={
                 <Menu>
                   <MenuItem
-                    active={selected === "View Main Store Items"}
-                    icon= {<i class="fa-solid fa-eye"></i>}
-                    onClick={() => setSelected("View Main Store Itemss")}
+                    active={selected === "Main Store"}
+                    icon= {<i class="fas fa-store"></i>}
+                    onClick={() => setSelected("Main Store")}
                   >
-                    <Typography>View Main Store Items</Typography>
-                    <Link to="/view_main_store_items" />
+                    <Typography>Main Store Items</Typography>
+                    <Link to="/mainstore" />
                   </MenuItem>
                   <MenuItem
-                    active={selected === "Add Main Store Items"}
-                    icon= {<i class="fa-solid fa-plus"></i>}
-                    onClick={() => setSelected("Add Main Store Itemss")}
+                    active={selected === "Order"}
+                    icon= {<i class="fas fa-download"></i>}
+                    onClick={() => setSelected("Order")}
                   >
-                    <Typography>Add Main Store Items</Typography>
-                    <Link to="/add_main_store_items" />
+                    <Typography>New Order</Typography>
+                    <Link to="/import" />
                   </MenuItem>
                   <MenuItem
-                    active={selected === "View Sub Store Items"}
-                    icon ={<i class="fa-solid fa-eye"></i>}
-                    onClick={() => setSelected("View Sub Store Items")}
+                    active={selected === "Sub Store Items"}
+                    icon ={<i class="fas fa-building"></i>}
+                    onClick={() => setSelected("Sub Store Items")}
                   >
-                    <Typography>View Sub Store Items</Typography>
-                    <Link to="/view_sub_store_items" />
+                    <Typography>Sub Store Items</Typography>
+                    <Link to="/sub_store_items" />
                   </MenuItem>
-                  <MenuItem
+                  {/* <MenuItem
                     active={selected === "Add Sub Store Items"}
                     icon ={<i class="fa-solid fa-plus"></i>}
                     onClick={() => setSelected("Add Sub Store Items")}
                   >
                     <Typography>Add Sub Store Items</Typography>
                     <Link to="/add_sub_store_items" />
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem
-                    active={selected === "View Shop Items"}
-                    icon ={<i class="fa-solid fa-eye"></i>}
-                    onClick={() => setSelected("View Shop Items")}
+                    active={selected === "Shop Items"}
+                    icon ={<i class="fas fa-shopping-bag"></i>}
+                    onClick={() => setSelected("Shop Items")}
                   >
-                    <Typography>View Shop Items</Typography>
-                    <Link to="/view_shop_items" />
+                    <Typography>Shop Items</Typography>
+                    <Link to="/shop_items" />
                   </MenuItem>
-                  <MenuItem
+                  {/* <MenuItem
                     active={selected === "Add Shop Items"}
                     icon ={<i class="fa-solid fa-plus"></i>}
                     onClick={() => setSelected("Add Shop Items")}
                   >
                     <Typography>Add Shop Items</Typography>
                     <Link to="/add_shop_items" />
-                  </MenuItem>
+                  </MenuItem> */}
                 </Menu>
               }
             />

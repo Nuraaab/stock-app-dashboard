@@ -1,4 +1,4 @@
-import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -6,87 +6,55 @@ import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import Axios from 'axios';
 import { useRef, useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { useLocation } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useLocation, useNavigate } from "react-router-dom";
+import CloseIcon from '@mui/icons-material/Close';
 const EditItems = () => {
   const [itemType, setItemType] = useState([]);
   const [specification, setSpecification] = useState([]);
   const [selectedSpecifications, setSelectedSpecifications] = useState([]);
   const [filteredSpecifications, setFilteredSpecifications] = useState([]);
   const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isEddited, setIsEddited] = useState(false);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
+  const [openAlert, setOpenAlert] = useState(true);
   const location = useLocation();
   const rowData = location.state.rowData;
-  const checkoutSchema = yup.object().shape({
-    itemcode: yup.string().required("required"),
-    itemname: yup.string().required("required"),
-    itemtype: yup.string().required("required"),
-    specification: yup.string().required("required"),
-  });
+  const navigate = useNavigate();
   
   const initialValues = {
-    itemtype: rowData.type,
-    itemname: rowData.name,
     itemcode: rowData.itemCode,
-    specification: rowData.specification,
+    itemname: rowData.name,
   };
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values, {resetForm}) => {
-    Axios.post('/items/edit', {
+    setIsEddited(true);
+    Axios.post(`/items/update/${rowData._id}`, {
+      initialItemcode: rowData.itemCode,
       name: values.itemname,
-      type: values.itemtype,
       itemCode: values.itemcode,
-      specification: selectedSpecifications.join("/"),
     }).then((response) => {
       console.log(response.data);
       console.log('Updating  successful');
-      setMessage('Item Updated Successfully!');
+      setMessage(`Item Updated Successfully!`);
       resetForm();
+      setIsEddited(false);
+      navigate('/view_items');
     }).catch((error) => {
       console.log(error);
-      setMessage(error.response.data);
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+      }
+      setIsEddited(false);
     });
     console.log(values);
   };
-  const handleItemTypeChange = (event, handleChange) => {
-    const selectedItemType = event.target.value;
-    const filteredSpecs = specification
-      .filter((spec) => spec.type === selectedItemType)
-      .map((spec) => spec.specification);
-      console.log('hello');
-    console.log(filteredSpecs);
-    console.log(specification);
-    setFilteredSpecifications(filteredSpecs);
-    handleChange(event); 
-  };
-  const handleSpecificationChange = (event, handleChange) => {
-    const selectedSpec = event.target.value;
-    const updatedSpecs = filteredSpecifications.filter(
-      (spec) => spec !== selectedSpec
-    );
-    setSelectedSpecifications([...selectedSpecifications, selectedSpec]);
-    setFilteredSpecifications(updatedSpecs);
-    handleChange(event); 
-  };
-  const handleRemoveSpecification = (specification) => {
-    const updatedSpecifications = selectedSpecifications.filter(
-      (spec) => spec !== specification
-    );
-    setSelectedSpecifications(updatedSpecifications);
-    setFilteredSpecifications([...filteredSpecifications, specification]);
-    console.log(filteredSpecifications);
-    console.log(filteredSpecifications);
-  };
+ 
   useEffect(() => {
-   
-    const selectedSpecificationsppp = [...rowData.specification.split('/')];
-    //  setSelectedSpecifications([...selectedSpecifications, selectedSpecificationsppp]);
-    console.log('selected specifications ');
-    console.log(selectedSpecifications);
-    console.log('row data');
-    console.log(selectedSpecificationsppp);
     Axios.get('/type/getall').then((response) => {
       setItemType(response.data);
       Axios.get('/specification/getall').then((response) => {
@@ -105,7 +73,50 @@ const EditItems = () => {
   
   return (
     <Box m="20px">
-      <Header title="EDIT ITEM " subtitle={message} />
+      <Header title="EDIT ITEM "  />
+      {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
+      {message && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {message}
+        </Alert>
+      </Collapse>
+    </Box>}
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
@@ -161,54 +172,10 @@ const EditItems = () => {
                 helperText={touched.itemname && errors.itemname}
                 sx={{ gridColumn: "span 4" }}
               />
-              <Select
-                fullWidth
-                variant="outlined"
-                error={!!touched.itemtype && !!errors.itemtype}
-                helperText={touched.itemtype && errors.itemtype}
-                sx={{ gridColumn: "span 4", color: "white" }}
-                value={values.itemtype || ""}
-                name="itemtype"
-                label="Item Type"
-                onBlur={handleBlur}
-                onChange={(event) => handleItemTypeChange(event, handleChange)}
-              >
-                <MenuItem value=''>Select Item Type</MenuItem>
-                {itemType.map((item) => (
-                  <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
-                ))}
-              </Select>
-                <Select
-                fullWidth
-                variant="outlined"
-                error={!!touched.specification && !!errors.specification}
-                helperText={touched.specification && errors.specification}
-                sx={{ gridColumn: "span 4", color: "white" }}
-                value={values.specification || ""}
-                name="specification"
-                label="Item Type"
-                onBlur={handleBlur}
-                onChange={(event) => handleSpecificationChange(event, handleChange)}
-              >
-                <MenuItem value=''>Select Specification</MenuItem>
-                {filteredSpecifications.map((spec) => (
-                  <MenuItem key={spec} value={spec}>{spec}</MenuItem>
-                ))}
-              </Select>
-
-              <div className="row">
-                {selectedSpecifications.map((specification) => (
-                  <div key={specification} className="col-auto d-flex align-items-center">
-                    <Button variant="primary" className="me-2">
-                      {specification}
-                    </Button>
-                    <FontAwesomeIcon onClick={() => handleRemoveSpecification(specification)} icon={faTimes} />
-                  </div>
-                ))}
-              </div>
+             
               <Box display="flex" justifyContent="end" mt="10px">
-                <Button type="submit" color="secondary" variant="contained">
-                  ADD NEW ITEMS
+                <Button type="submit" color="secondary" variant="contained" disabled ={isEddited}>
+                 {isEddited ? <CircularProgress color="secondary" size={30} /> : 'EDIT ITEMS'}
                 </Button>
               </Box>
             </Box>
@@ -219,7 +186,10 @@ const EditItems = () => {
   );
 };
 
-
+const checkoutSchema = yup.object().shape({
+  itemcode: yup.string().required("required"),
+  itemname: yup.string().required("required"),
+});
 
 export default EditItems;
 

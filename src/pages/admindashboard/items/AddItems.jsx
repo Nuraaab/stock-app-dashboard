@@ -1,4 +1,4 @@
-import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -8,30 +8,56 @@ import Axios from 'axios';
 import { useRef, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+import LinearProgress from "@mui/material/LinearProgress";
+import CloseIcon from '@mui/icons-material/Close';
 const AddItems = () => {
   const [itemType, setItemType] = useState([]);
   const [specification, setSpecification] = useState([]);
   const [selectedSpecifications, setSelectedSpecifications] = useState([]);
   const [filteredSpecifications, setFilteredSpecifications] = useState([]);
   const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isAdded, setIsAdded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [openAlert, setOpenAlert] = useState(true);
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values, {resetForm}) => {
-    Axios.post('/items/add', {
-      name: values.itemname,
-      type: values.itemtype,
-      itemCode: values.itemcode,
-      specification: selectedSpecifications.join("/"),
-    }).then((response) => {
-      console.log(response.data);
-      console.log('Adding successful');
-      setMessage('Item Added Successfully!');
-      resetForm();
-    }).catch((error) => {
-      console.log(error);
-      setMessage(error.response.data);
-    });
+    setIsAdded(true);
+    if(values.itemcode === ""){
+      setErrorMessage('Item Code can not be empty!');
+      setIsAdded(false);
+    }else if(values.itemname === ""){
+      setErrorMessage('Item Code can not be empty!');
+      setIsAdded(false);
+    }{
+      Axios.post('/items/add', {
+        name: values.itemname,
+        type: values.itemtype,
+        itemCode: values.itemcode,
+        specification: selectedSpecifications.join("/"),
+      }).then((response) => {
+        console.log(response.data);
+        console.log('Adding successful');
+        setMessage('Item Added Successfully!');
+        setIsAdded(false);
+        resetForm();
+        navigate('/view_items');
+      }).catch((error) => {
+        console.log(error);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setIsAdded(false);
+      });
+    }
+   
     console.log(values);
   };
   const handleItemTypeChange = (event, handleChange) => {
@@ -70,17 +96,73 @@ const AddItems = () => {
         setSpecification(response.data);
         console.log('hi');
         console.log(specification);
+        setLoading(false);
       }).catch((error) => {
-        console.log(error);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setLoading(false);
       });
     }).catch((error) => {
-      console.log(error);
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+      }
+      setLoading(false);
     });
   }, []);
   
   return (
     <Box m="20px">
-      <Header title="ADD ITEM " subtitle={message} />
+      <Header title="ADD ITEM " />
+     
+      {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
+    {message && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {message}
+        </Alert>
+      </Collapse>
+    </Box>}
+     {loading && <LinearProgress color="secondary"/>}
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
@@ -100,8 +182,6 @@ const AddItems = () => {
               gap="30px"
               gridTemplateColumns="repeat(4, minmax(0, 1fr))"
               sx={{
-                marginLeft: '20px',
-                marginRight: '20px',
                 marginBottom: '30px',
                 boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
                 borderRadius: '10px',
@@ -184,8 +264,8 @@ const AddItems = () => {
                 ))}
               </div>
               <Box display="flex" justifyContent="end" mt="10px">
-                <Button type="submit" color="secondary" variant="contained">
-                  ADD NEW ITEMS
+                <Button type="submit" color="secondary" variant="contained" disabled ={isAdded}>
+                 {isAdded ? <CircularProgress color="secondary" size={30}/> : 'ADD NEW ITEMS'}
                 </Button>
               </Box>
             </Box>
@@ -197,14 +277,17 @@ const AddItems = () => {
 };
 
 const checkoutSchema = yup.object().shape({
-  itemcode: yup.string().required("required"),
-  itemname: yup.string().required("required"),
+  itemcode: yup.string().required("Item Code Required"),
+  itemname: yup.string().required("Item Name Required"),
   itemtype: yup.string().required("required"),
   specification: yup.string().required("required"),
 });
 
 const initialValues = {
+  itemcode: "",
+  itemname: "",
   itemtype: "",
+  specification: ""
 };
 
 export default AddItems;

@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, MenuItem, Modal, Select, TextField, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button,  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton,  MenuItem, Modal, Select, TextField, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -9,8 +9,12 @@ import { useNavigate } from "react-router-dom";
 import * as React from 'react';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
+import LinearProgress from '@mui/material/LinearProgress';
+import CircularProgress from '@mui/material/CircularProgress';
+import { faL } from "@fortawesome/free-solid-svg-icons";
 const ViewMainStores = () => {
   const [open, setOpen] = React.useState(false);
+  const [openMove, setOpenMove] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -26,25 +30,79 @@ const ViewMainStores = () => {
   const [phone, setPhone] = useState('');
   const [creditDate, setCreditDate] = useState('');
   const [selectedRow, setSelectedRow] = React.useState(null);
+  const [selectedMoveRow, setSelectedMoveRow] = useState(null);
+  const [warehouseNameList, setwarehouseNameList] = useState([]);
+  const [warehouseName, setWarehouseName] = useState('');
+  const [storeType, setStoreType] = useState('');
   const [transfer, setTransfer] = useState(false);
   const [credit, setCredit] = useState(false);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const handleEdit = (row) => {
-    navigate(`/edit_main_store_items`, { state: { rowData: row } });
+  const [isSelected, setIsSelected] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saleLoading, setSaleLoading] = useState(false);
+  const [moveLoading, setMoveLoading] = useState(false)
+  const [initialMoveLoading, setInitialMoveLoading] = useState(false);
+  const handleMove = (row) => {
+    setMoveLoading(true);
+    if(storeType === "Main Store"){
+       Axios.post(`/mainstore/maintransaction/${row._id}`, {
+          quantity: row.quantity,  
+          warehouseName: warehouseName,
+       }).then((response) => {
+        setOpenMove(false);
+        setMessage(`Item ${row.name} is succesfully moved to Main Store  ${warehouseName}`);
+        setMoveLoading(false);
+        window.location.reload();
+       }).catch((error) => {
+        setOpenMove(true);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setMoveLoading(false);
+       })
+    }else if(storeType === "Sub Store"){
+        Axios.post(`/mainstore/transaction/${row._id}`, {
+          quantity: row.quantity,  
+          warehouseName: warehouseName,
+        }).then((response) => {
+          setOpenMove(false);
+          setMessage(`Item ${row.name} is succesfully moved to Sub Store ${warehouseName}`);
+          setMoveLoading(false);
+          window.location.reload();
+        }).catch((error) => {
+          if (error.response && error.response.data) {
+            setErrorMessage(error.response.data);
+          } else {
+            setErrorMessage("An error occurred");
+          }
+          setMoveLoading(false);
+          setOpenMove(true);
+        })
+    }else{
+      setErrorMessage("Error happening!!");
+      setMoveLoading(false);
+    }
   };
   
   const handleDelete = (row) => {
-    if(window.confirm('Are you sure you want to delete this sale?')){
+    if(window.confirm(`Are you sure you want to delete ${row.name}?`)){
       Axios.delete(`/mainstore/delete/${row._id}`).then((response) => {
         setMessage("Sale Deleted successfully!");
         window.location.reload();
      }).catch((error) => {
-   setErrorMessage(error.response.data);
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+      }
 })
     }
   };
   const handleSale = (selectedrow) => {
+    setSaleLoading(true);
     if(transactionType ==='credit'){
       Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
         quantity: quantity,
@@ -62,12 +120,23 @@ const ViewMainStores = () => {
         }).then((response) => {
           window.location.reload();
           setMessage("Credit Added succesfully!!");
+          setSaleLoading(false);
           setOpen(false);
         }).catch((error) => {
-          setErrorMessage(error.response.data);
+          if (error.response && error.response.data) {
+            setErrorMessage(error.response.data);
+          } else {
+            setErrorMessage("An error occurred");
+          }
+          setSaleLoading(false);
         })
       }).catch((error) => {
-        setErrorMessage(error.response.data);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setSaleLoading(false);
       })
     }else if(transactionType ==='transfer'){
       Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
@@ -79,7 +148,11 @@ const ViewMainStores = () => {
         setOpen(false);
         setMessage("Sale Adedded successfully!! ");
       }).catch((error) => {
-        setErrorMessage(error.response.data);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
       })
     }else{
       Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
@@ -91,7 +164,11 @@ const ViewMainStores = () => {
         setOpen(false);
         setMessage("Sale Adedded successfully!! " + response.data);
       }).catch((error) => {
-        setErrorMessage(error.response.data);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
       })
     }
     }
@@ -99,11 +176,49 @@ const ViewMainStores = () => {
     setOpen(true);
     setSelectedRow(row);
   };
-
+  const handleMoveClickOpen = (row) => {
+    setOpenMove(true);
+    setSelectedMoveRow(row);
+  };
+  const handleMoveClose = () => {
+    setOpenMove(false);
+    setSelectedMoveRow(null);
+  };
   const handleClose = () => {
     setOpen(false);
     setSelectedRow(null);
   };
+  const handleStoreType = (value) => {
+    setInitialMoveLoading(true);
+   setStoreType(value);
+   if(value === ''){
+   setErrorMessage("The selected store type is invalid!!");
+   setIsSelected(false);
+   setInitialMoveLoading(false);
+  }else{
+    Axios.get('/warehouse/getall').then((response) => {
+      const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === value);
+  
+  if (filteredWarehouse.length === 0) {
+    setErrorMessage("No warehouses found for the selected Store Type!!");
+    setIsSelected(false);
+    setInitialMoveLoading(false);
+  } else {
+    setwarehouseNameList(filteredWarehouse);
+    setIsSelected(true);
+    setInitialMoveLoading(false);
+  }
+    }).catch((error) => {
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+      }
+      setInitialMoveLoading(false);
+      setIsSelected(false);
+    })
+  }
+  }
   const handleTransactionType = (value) => {
     console.log('value'+ value);
         if(value === "transfer"){
@@ -129,8 +244,14 @@ const ViewMainStores = () => {
   useEffect(() => {
     Axios.get('/mainstore/getall').then((response) => {
         setMainStoreItems(response.data);
+        setLoading(false);
        }).catch((error) => {
-        console.log(error);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setLoading(false);
        })
 }, []);
 const getRowId = (row) => {
@@ -181,11 +302,11 @@ const getRowId = (row) => {
         cellClassName: "name-column--cell",
       },
     {
-      field: "edit",
-      headerName: "Edit",
+      field: "move",
+      headerName: "Move Item",
       renderCell: ({ row }) => {
         // Render the edit button here
-        return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
+        return <button onClick={() => handleMoveClickOpen(row)} className="btn btn-primary mx-1 ">Move</button>;
       },
     },
     {
@@ -208,9 +329,86 @@ const getRowId = (row) => {
   return (
     <>
      <div>
-      {/* <Button variant="outlined" onClick={handleClickOpen}>
-        Open responsive dialog
-      </Button> */}
+    
+       <Dialog
+        fullScreen={fullScreen}
+        open={openMove}
+        onClose={handleMoveClose}
+        aria-labelledby="responsive-dialog-title"
+        fullWidth
+      >
+       <DialogTitle
+      id="responsive-dialog-title"
+      style={{ textAlign: 'center' }}
+    >
+      Fill the information below
+    </DialogTitle>
+        <DialogTitle>
+        {isSelected || errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="warning"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
+        {initialMoveLoading && <LinearProgress color="secondary"/>}
+     </DialogTitle>
+    <DialogContent>
+    <Select
+            label="Move To Where"
+            value={storeType}
+            onChange={(e) => handleStoreType(e.target.value)}
+            fullWidth
+            margin="normal"
+          >
+            <MenuItem value="">Select store you want to move the item </MenuItem>
+            <MenuItem value="Main Store">To Main Store</MenuItem>
+            <MenuItem value="Sub Store">To Sub Store</MenuItem>
+          </Select>
+
+         { isSelected && <Select
+               fullWidth
+               variant="outlined"
+               sx={{ gridColumn: "span 4" ,color: "white"}}
+               value={warehouseName}
+               name="warehouse"
+               label="Warehouse Name"
+               onChange={(e) => setWarehouseName(e.target.value)}
+              >
+                <MenuItem value=''>Select Warehouse Name</MenuItem>
+                {
+                 warehouseNameList.map((warehouse) => (
+                    <MenuItem key={warehouse.id} value={warehouse.name}>{warehouse.name}</MenuItem>
+                  ))
+                }
+           </Select>}
+    </DialogContent>
+    <DialogActions>
+          <Button style={{ color: 'white' }} onClick={handleMoveClose}>
+            Cancel
+          </Button>
+          <Button style={{ color: 'white' }} onClick={() => handleMove(selectedMoveRow)}  disabled ={moveLoading}>
+            {moveLoading ? <CircularProgress color="secondary" size={24}/> :  'Move'}
+          </Button>
+        </DialogActions>
+ </Dialog>
+
+
      <Dialog
         fullScreen={fullScreen}
         open={open}
@@ -224,7 +422,28 @@ const getRowId = (row) => {
       Fill the information below
     </DialogTitle>
         <DialogTitle>
-        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+        {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="warning"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
         </DialogTitle>
         <DialogContent>
           <TextField
@@ -304,19 +523,43 @@ const getRowId = (row) => {
           <Button style={{ color: 'white' }} onClick={handleClose}>
             Cancel
           </Button>
-          <Button style={{ color: 'white' }} onClick={() => handleSale(selectedRow)} >
-            Sale
+          <Button style={{ color: 'white' }} onClick={() => handleSale(selectedRow)}  disabled ={saleLoading}>
+            {saleLoading ? <CircularProgress color="secondary" size={24}/> : 'Sale'}
           </Button>
         </DialogActions>
       </Dialog>
     </div>
     <Box m="20px">
       <Header
-        title="VIEW MAIN STORE ITEMS" subtitle = {message}
+        title="VIEW MAIN STORE ITEMS" 
       />
+      {loading && <LinearProgress color="secondary" />}
+      {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="warning"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
       {message && <Box sx={{ width: '100%' }}>
       <Collapse in={openAlert}>
         <Alert
+        severity="success"
           action={
             <IconButton
               aria-label="close"
@@ -367,23 +610,30 @@ const getRowId = (row) => {
           },
         }}
       >
-        <DataGrid
+      {<DataGrid
             rows={mainStoreItems}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                style: { color: "red" },
+              },
+            }}
+            checkboxSelection
             onCellClick={(params) => {
               const row = params.row;
 
-              if (params.field === "edit") {
-                handleEdit(row);
+              if (params.field === "move") {
+                handleMoveClickOpen(row);
               } else if (params.field === "delete") {
                 handleDelete(row);
               } else if (params.field === "sale") {
                 handleClickOpen(row);
               }
             }}
-          />
+          />}
       </Box>
     </Box>
     </>

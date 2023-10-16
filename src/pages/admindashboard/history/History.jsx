@@ -3,39 +3,26 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
-const ViewUsers = () => {
-  const [itemList , setItemList] = useState([]);
+const History = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [userList , setUserList] = useState([]);
-  const [message, setMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(true);
-  const handleEdit = (row) => {
-    // Open a modal dialog with the current row data
-    const modal = new Modal(row);
-    modal.open();
-  };
+  const [historyList , setHistoryList] = useState([]);
+  const navigate = useNavigate();
+//   const handleEdit = (row) => {
+//     navigate(`/edit_spacification`, { state: { rowData: row } });
+//   };
   
   const handleDelete = (row) => {
     console.log(row);
   };
   useEffect(() => {
-    Axios.post('/auth/refresh', {
-      withCredentials: true,
-    }).then((response) => {
-      console.log('hi'+ response.data.adminName);
-      setUserList(response.data);
-        setLoading(false);
+    Axios.get('/history/getall').then((response) => {
+        setHistoryList(response.data);
        }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setLoading(false);
+        console.log(error);
        })
 }, []);
 const getRowId = (row) => {
@@ -43,48 +30,64 @@ const getRowId = (row) => {
   };
   const columns = [
     {
-      field: "adminName",
-      headerName: "Name",
+      field: "name",
+      headerName: "Item Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "profile",
-      headerName: "Profile",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "type",
-      headerName: "User Type",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "edit",
-      headerName: "Edit",
-      renderCell: ({ row }) => {
-        // Render the edit button here
-        return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
+        field: "itemCode",
+        headerName: "Item Code",
+        flex: 1,
+        cellClassName: "name-column--cell",
       },
-    },
+      {
+        field: "specification",
+        headerName: "Item Specification",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "type",
+        headerName: "Item Type",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "from",
+        headerName: "From",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "to",
+        headerName: "To",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "paymentMethod",
+        headerName: "Payment Method",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "quantity",
+        headerName: "Quantity",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+    // {
+    //   field: "edit",
+    //   headerName: "Edit",
+    //   renderCell: ({ row }) => {
+    //     return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
+    //   },
+    // },
     {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        // Render the delete button here
         return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
@@ -92,7 +95,7 @@ const getRowId = (row) => {
   return (
     <Box m="20px">
       <Header
-        title="VIEW USERS"
+        title="VIEW SPECIFICATIONS"
       />
       <Box
         m="40px 0 0 0"
@@ -127,23 +130,13 @@ const getRowId = (row) => {
         }}
       >
         <DataGrid
-            rows={userList}
+            rows={historyList}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                style: { color: "red" },
-              },
-            }}
-            checkboxSelection
             onCellClick={(params) => {
               const row = params.row;
-
-              if (params.field === "edit") {
-                handleEdit(row);
-              } else if (params.field === "delete") {
+              if (params.field === "delete") {
                 handleDelete(row);
               }
             }}
@@ -153,4 +146,4 @@ const getRowId = (row) => {
   );
 };
 
-export default ViewUsers;
+export default History;

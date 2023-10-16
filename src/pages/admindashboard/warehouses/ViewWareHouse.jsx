@@ -1,4 +1,4 @@
-import { Box, Modal } from "@mui/material";
+import { Alert, Box, Collapse, IconButton, Modal } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -6,25 +6,48 @@ import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Warehouse } from "@mui/icons-material";
+import { Warehouse } from "@mui/icons-material/";
+import CloseIcon from '@mui/icons-material/Close';
+import LinearProgress from "@mui/material/LinearProgress";
 const ViewWareHouses = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [warehouse , setWarehouse] = useState([]);
+  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [openAlert, setOpenAlert] = useState(true);
   const navigate = useNavigate();
   const handleEdit = (row) => {
     navigate(`/edit_ware_house`, { state: { rowData: row } });
   };
   
   const handleDelete = (row) => {
-    console.log(row);
+    if(window.confirm(`Are you sure you want to delete ${row.name}?`)){
+      Axios.delete(`/warehouse/delete/${row._id}`).then((response) => {
+        setMessage(`${row.name} deleted successfully!`);
+        window.location.reload();
+      }).catch((error) => {
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+      })
+    }
   };
   useEffect(() => {
     Axios.get('/warehouse/getall').then((response) => {
         setWarehouse(response.data);
+        setLoading(false);
         console.log(warehouse);
        }).catch((error) => {
-        console.log(error);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setLoading(false);
        })
 }, []);
 const getRowId = (row) => {
@@ -63,6 +86,50 @@ const getRowId = (row) => {
       <Header
         title="VIEW WAREHOUSE"
       />
+       {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="warning"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
+       {message && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {message}
+        </Alert>
+      </Collapse>
+    </Box>}
+      {loading && <LinearProgress color="secondary"/>}
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -100,6 +167,13 @@ const getRowId = (row) => {
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                style: { color: "red" },
+              },
+            }}
+            checkboxSelection
             onCellClick={(params) => {
               const row = params.row;
 

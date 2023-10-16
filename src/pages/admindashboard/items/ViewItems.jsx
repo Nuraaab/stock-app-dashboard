@@ -1,4 +1,4 @@
-import { Box, Modal } from "@mui/material";
+import { Alert, Box, CircularProgress, IconButton, Modal } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -6,25 +6,49 @@ import { useTheme } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import { useEffect, useState } from "react";
+import Collapse from '@mui/material/Collapse';
+import CloseIcon from '@mui/icons-material/Close';
+import LinearProgress from '@mui/material/LinearProgress';
 const ViewItems = () => {
   const [itemList , setItemList] = useState([]);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [itemType , setItemType] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [openAlert, setOpenAlert] = useState(true);
   const navigate = useNavigate();
   const handleEdit = (row) => {
     navigate(`/edit_items`, { state: { rowData: row } });
   };
   
   const handleDelete = (row) => {
-    console.log(row);
+    if(window.confirm(`Are you sure you want to delete ${row.name}?`)){
+      Axios.delete(`/items/delete/${row._id}`).then((response) => {
+        setMessage(`${row.name} deleted successfully!`);
+        window.location.reload();
+      }).catch((error) => {
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+      })
+    }
   };
   useEffect(() => {
     Axios.get('/items/getall').then((response) => {
       setItemList(response.data);
+      setLoading(false);
         console.log(itemType);
        }).catch((error) => {
-        console.log(error);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setLoading(false);
        })
 }, []);
 const getRowId = (row) => {
@@ -68,7 +92,7 @@ const getRowId = (row) => {
       headerName: "Delete",
       renderCell: ({ row }) => {
         // Render the delete button here
-        return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
+        return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 " >Delete</button>;
       },
     },
   ];
@@ -77,6 +101,51 @@ const getRowId = (row) => {
       <Header
         title="VIEW ITEM TYPE"
       />
+       {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
+       {message && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="success"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {message}
+        </Alert>
+      </Collapse>
+    </Box>}
+    {loading && <LinearProgress color="secondary"/>}
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -114,6 +183,13 @@ const getRowId = (row) => {
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                style: { color: "red" },
+              },
+            }}
+            checkboxSelection
             onCellClick={(params) => {
               const row = params.row;
 

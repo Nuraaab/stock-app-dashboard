@@ -7,6 +7,8 @@ import Axios from 'axios';
 import { useEffect, useState } from "react";
 import { tokens } from "../../../../theme";
 import CloseIcon from '@mui/icons-material/Close';
+import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 const AddMainStoreItems = () => {
   const [itemType , setItemType] = useState([]);
   const [itemList, setItemList] = useState([]);
@@ -22,7 +24,10 @@ const AddMainStoreItems = () => {
   const [openAlert, setOpenAlert] = useState(true);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const handleFormSubmit = (values, { resetForm }) => {
+    setLoading(true);
    Axios.post('/pending/add', {
     name: itemName,
     itemCode: itemCode,
@@ -35,12 +40,16 @@ const AddMainStoreItems = () => {
     console.log(response.data);
     console.log('Adding successfull');
     setMessage(`Adding ${response.data.name} is in pending!`);
+    setLoading(false);
     resetForm();
    }).catch((error) => {
-    console.log(error);
-    setErrorMessage(error.response.data);
+    if (error.response && error.response.data) {
+      setErrorMessage(error.response.data);
+    } else {
+      setErrorMessage("An error occurred");
+    }
+    setLoading(false);
    })
-    console.log(values);
   };
   const handleItemTypeChange = (event, handleChange) => {
     const selectedItemType = event.target.value;
@@ -77,27 +86,60 @@ const AddMainStoreItems = () => {
         Axios.get('/warehouse/getall').then((response) => {
             const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Main Store");
             setFilteredWarehouseList(filteredWarehouse);
+            setInitialLoading(false);
             console.log('warehouse');
             console.log(filteredWarehouseList);
         }).catch((error) => {
             console.log(error);
+            setErrorMessage(error.response.data);
+            setInitialLoading(false);
         })
         }).catch((error) => {
             console.log(error);
+            setErrorMessage(error.response.data);
+            setInitialLoading(false);
         })
        }).catch((error) => {
-        console.log(error);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setInitialLoading(false);
        })
 }, []);
 
 
   return (
     <Box m="20px">
-      <Header title="ADD ITEMS TO MAIN STORE" />
-      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+      <Header title="IMPORT NEW ITEMS" />
+      {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
+      {initialLoading && <LinearProgress color="secondary" />}
       {message && <Box sx={{ width: '100%' }}>
       <Collapse in={openAlert}>
         <Alert
+        severity="success"
           action={
             <IconButton
               aria-label="close"
@@ -135,8 +177,6 @@ const AddMainStoreItems = () => {
               gap="30px"
               gridTemplateColumns="repeat(4, minmax(0, 1fr))"
               sx={{
-                marginLeft: '20px',
-                marginRight: '20px',
                 marginBottom:'30px',
                 boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
                 borderRadius: '10px',
@@ -249,9 +289,12 @@ const AddMainStoreItems = () => {
                 sx={{ gridColumn: "span 2" }}
               />
               <Box display="flex" justifyContent="end" mt="10px" >
-              <Button type="submit" color="secondary" variant="contained">
-                ADD ITEMS TO MAIN STORES
-              </Button>
+              {/* <Button type="submit" color="secondary" variant="contained">
+                ADD ITEMS
+              </Button> */}
+              <Button type="submit" color="secondary" variant="contained" disabled={loading}>
+              {loading ? <CircularProgress color="secondary" size={24} /> : 'ADD ITEMS'}
+            </Button>
             </Box>
             </Box>
             

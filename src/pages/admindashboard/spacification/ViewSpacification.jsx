@@ -1,4 +1,4 @@
-import { Box, Modal } from "@mui/material";
+import { Alert, Box, Collapse, IconButton, Modal } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -6,24 +6,47 @@ import { useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
+import CloseIcon from '@mui/icons-material/Close';
+import LinearProgress from "@mui/material/LinearProgress";
 const ViewSpacifications = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [loading, setloading] = useState(true);
+  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [specification , setSpacification] = useState([]);
+  const [openAlert, setOpenAlert] = useState(true);
   const navigate = useNavigate();
   const handleEdit = (row) => {
     navigate(`/edit_spacification`, { state: { rowData: row } });
   };
   
   const handleDelete = (row) => {
-    console.log(row);
+    if(window.confirm(`Are you sure you want to delete ${row.specification}?`)){
+      Axios.delete(`/specification/delete/${row._id}`).then((response) => {
+        setMessage(`${row.specification} deleted successfully!`);
+        window.location.reload();
+      }).catch((error) => {
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+      })
+    }
   };
   useEffect(() => {
     Axios.get('/specification/getall').then((response) => {
         setSpacification(response.data);
+        setloading(false);
         console.log(specification);
        }).catch((error) => {
-        console.log(error);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setloading(false);
        })
 }, []);
 const getRowId = (row) => {
@@ -62,6 +85,50 @@ const getRowId = (row) => {
       <Header
         title="VIEW SPECIFICATIONS"
       />
+      {loading && <LinearProgress color="secondary"/>}
+      {errorMessage && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+        severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="warning"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {errorMessage}
+        </Alert>
+      </Collapse>
+    </Box>}
+       {message && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {message}
+        </Alert>
+      </Collapse>
+    </Box>}
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -99,6 +166,13 @@ const getRowId = (row) => {
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                style: { color: "red" },
+              },
+            }}
+            checkboxSelection
             onCellClick={(params) => {
               const row = params.row;
 

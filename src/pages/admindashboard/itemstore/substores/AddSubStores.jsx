@@ -1,4 +1,4 @@
-import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -6,6 +6,7 @@ import Header from "../../../../components/Header";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 import { tokens } from "../../../../theme";
+import CloseIcon from '@mui/icons-material/Close';
 const AddSubStoreItems = () => {
   const [itemType , setItemType] = useState([]);
   const [itemList, setItemList] = useState([]);
@@ -17,26 +18,27 @@ const AddSubStoreItems = () => {
   const [filteredWarehouseList, setFilteredWarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [openAlert, setOpenAlert] = useState(true);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values, { resetForm }) => {
-   Axios.post('/mainstore/add', {
+   Axios.post('/Substore/add', {
     name: itemName,
     itemCode: itemCode,
     specification: specification,
     type: values.itemtype,
     expireDate: values.expireDate,
-    company: values.company,
     warehouseName: values.warehouseName,
     quantity: values.quantity,
    }).then((response) => {
     console.log(response.data);
     console.log('Adding successfull');
-    setMessage('Items  Added to Main Store  Successfully!');
+    setMessage(`Adding ${response.data.name} is Successfull!`);
     resetForm();
    }).catch((error) => {
     console.log(error);
-    setMessage('Error happens while adding Items To Main Store!');
+    setErrorMessage(error.response.data);
    })
     console.log(values);
   };
@@ -79,20 +81,44 @@ const AddSubStoreItems = () => {
             console.log(filteredWarehouseList);
         }).catch((error) => {
             console.log(error);
+            setErrorMessage(error.response.data);
         })
         }).catch((error) => {
             console.log(error);
+            setErrorMessage(error.response.data);
         })
        }).catch((error) => {
         console.log(error);
+        setErrorMessage(error.response.data);
        })
 }, []);
 
 
   return (
     <Box m="20px">
-      <Header title="ADD ITEMS TO SUB STORE" subtitle= {message} />
-
+      <Header title="ADD ITEMS TO SUB STORE"  />
+      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+      {message && <Box sx={{ width: '100%' }}>
+      <Collapse in={openAlert}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpenAlert(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          {message}
+        </Alert>
+      </Collapse>
+    </Box>}
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
