@@ -171,11 +171,21 @@ const Dashboard = () => {
      
     ];
   return (
-    <Box m="10px" sx={{
-      height: '100vh',
-      flexGrow: '1',
-      overflowY: 'auto'
-    }}>
+    <Box m="0px"
+    // sx={{
+    //   height: '100vh',
+    //   flexGrow: '1',
+    //   overflowY: 'auto',
+    //   scrollbarWidth: 'none', // Hide scrollbar for Firefox
+    //   msOverflowStyle: 'none', // Hide scrollbar for IE and Edge
+    //   '&::-webkit-scrollbar': {
+    //     width: '0.4em', // Customize scrollbar width
+    //   },
+    //   '&::-webkit-scrollbar-thumb': {
+    //     backgroundColor: 'transparent', // Customize scrollbar color
+    //   },
+    // }}
+    >
       <Box
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"

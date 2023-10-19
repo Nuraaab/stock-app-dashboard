@@ -16,7 +16,9 @@ const Topbar = () => {
 
   return (
     <Box 
-    display="flex" justifyContent={{sm: "end", xs: 'end'}} p={2}>
+    display="flex" justifyContent={{sm: "end", xs: 'end'}} p={2}
+   
+    >
       {/* SEARCH BAR */}
       {/* <Box
         display={{ xs: "none", sm: "flex" }}

@@ -5,11 +5,15 @@ body,
 #root,
 .app,
 .content {
-  height: 100%;
+ 
   width: 100%;
   font-family: "Source Sans Pro", sans-serif;
-  /* flex-grow: 1;
-  overflow-y: auto; */
+ 
+}
+.content {
+height: 100vh;
+flex-grow: 1;
+overflow-y: auto;
 }
 .app {
   display: flex;
