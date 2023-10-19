@@ -171,7 +171,11 @@ const Dashboard = () => {
      
     ];
   return (
-    <Box m="10px">
+    <Box m="10px" sx={{
+      height: '100vh',
+      flexGrow: '1',
+      overflowY: 'auto'
+    }}>
       <Box
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
