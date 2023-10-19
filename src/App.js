@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Topbar from "./components/admincomponents/Topbar";
 import Sidebar from "./components/admincomponents/Sidebar";
-import Dashboard from "./scenes/dashboard";
 import Team from "./scenes/team";
 import Invoices from "./scenes/invoices";
 import Contacts from "./scenes/contacts";
@@ -43,6 +42,12 @@ import EditSpecifications from "./pages/admindashboard/spacification/EditSpecifi
 import EditWareHouse from "./pages/admindashboard/warehouses/EditWarehouse";
 import Pending from "./pages/admindashboard/pending/Pending";
 import History from "./pages/admindashboard/history/History";
+import SalesHistory from "./pages/admindashboard/history/SalesHistory";
+import Credit from "./pages/admindashboard/credit/Credit";
+import Dashboard from "./pages/admindashboard/dashboard";
+import PendingShopSale from "./pages/admindashboard/pending/PendingShopSale";
+import PendingShopItem from "./pages/admindashboard/pending/PendingShopItems";
+import SignIn from "./pages/auth/Login";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -57,7 +62,7 @@ function App() {
             <Casher />
           ):
           location.pathname === "/" ? (
-            <Login />
+            <SignIn />
           ) : (
             <div className="app">
             <>
@@ -91,7 +96,12 @@ function App() {
                  <Route path="/edit_items" element= {<EditItems />}></Route>
                  <Route path="/edit_item_type" element= {<EditItemType />}></Route>
                  <Route path="/pending" element ={<Pending />}></Route>
-                 <Route path="/history" element ={<History />}></Route>
+                 <Route path="/storehistory" element ={<History />}></Route>
+                 <Route path="/saleshistory" element ={<SalesHistory />}></Route>
+                 <Route path="/credit" element = {<Credit />}></Route>
+                 <Route path="/test" element = {<SignIn />}></Route>
+                 <Route path="/pendingshopsales" element = {<PendingShopSale />}></Route>
+                 <Route path="/pendingshopitems" element = {<PendingShopItem />}></Route>
                   <Route path="/team" element={<Team />} />
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/invoices" element={<Invoices />} />

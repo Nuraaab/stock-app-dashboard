@@ -1,15 +1,51 @@
 import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
-import { mockLineData as data } from "../data/mockData";
+import  Axios  from "axios";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
+  const [lineData, setLineData] = useState([]);
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const mainResponse = await Axios.get("/mainstore/line");
+          const subResponse = await Axios.get("/substore/line");
+          const shopResponse = await Axios.get("/shop/line");
+  
+          const MainStoreData = {
+            id: "mainstore",
+            color: tokens("dark").greenAccent[500],
+            data: mainResponse.data,
+          };
+  
+          const SubStoreData = {
+            id: "substore",
+            color: tokens("dark").blueAccent[300],
+            data: subResponse.data,
+          };
+  
+          const shopData = {
+            id: "shop",
+            color: tokens("dark").redAccent[200],
+            data: shopResponse.data,
+          };
+  
+          setLineData([MainStoreData, SubStoreData, shopData]);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+  
+      fetchData();
+      console.log('line data '+lineData);
+    }, []);
   return (
     <ResponsiveLine
-      data={data}
+      data={lineData}
       theme={{
         axis: {
           domain: {

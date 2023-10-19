@@ -431,6 +431,7 @@ export const mockPieData = [
 ];
 
 export const mockLineData = [
+  
   {
     id: "japan",
     color: tokens("dark").greenAccent[500],
@@ -595,6 +596,20 @@ export const mockLineData = [
   },
 ];
 
+export const warehouses = [
+  {
+    id: "1",
+    name: "Warehouse1"
+  },
+  {
+    id: "2",
+    name: "Warehouse2"
+  },
+  {
+    id: "3",
+    name: "Warehouse3"
+  },
+]
 export const mockGeographyData = [
   {
     id: "AFG",

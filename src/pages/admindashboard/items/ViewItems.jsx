@@ -146,12 +146,14 @@ const getRowId = (row) => {
       </Collapse>
     </Box>}
     {loading && <LinearProgress color="secondary"/>}
-      <Box
+    <Box
         m="40px 0 0 0"
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
+            marginBottom: "20px",
+            overflowX: "auto",
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
@@ -176,6 +178,8 @@ const getRowId = (row) => {
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
             color: `${colors.grey[100]} !important`,
           },
+          width: "100%",
+          overflow: "hidden",
         }}
       >
         <DataGrid

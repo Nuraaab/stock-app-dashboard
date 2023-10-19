@@ -70,16 +70,36 @@ const Sidebar = () => {
   const [selected, setSelected] = useState("Dashboard");
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
+  const [role, setRole] = useState('');
   useEffect(() => {
-    Axios.post('http://94.130.104.15/api/auth/refresh').then((response) => {
+    Axios.post('/auth/refresh',{
+      withCredentials: true,
+    }).then((response) => {
         setUserName(response.data.adminName);
         setEmail(response.data.email);
+        setRole(response.data.type);
         console.log(username);
         console.log(email);
        }).catch((error) => {
         console.log(error);
        })
-}, [])
+}, []);
+    useEffect(() => {
+      const handleResize = () => {
+        if (window.innerWidth <= 768) {
+          setIsCollapsed(true);
+        } else {
+          setIsCollapsed(false);
+        }
+      };
+
+      handleResize(); // Check initial screen size
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }, []);
   return (
     <Box
       sx={{
@@ -146,10 +166,10 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 10px 10px" }}
                 >
-                  Stock Maneger Name
+                 {username}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
-                Stock Maneger Role
+                {role}
                 </Typography>
               </Box>
             </Box>
@@ -365,19 +385,74 @@ const Sidebar = () => {
                 </Menu>
               }
             />
-             <Item
+             <Itemtest
               title="Pending"
-              to="/pending"
               icon={<i class="fa fa-clock"></i>}
               selected={selected}
               setSelected={setSelected}
+              isCollapsed={isCollapsed}
+              subMenu={
+                <Menu>
+                  <MenuItem
+                    active={selected === "Pending Orders"}
+                    icon ={<i className="fas fa-exchange-alt"></i>}
+                    onClick={() => setSelected("Pending Orders")}
+                  >
+                    <Typography>Pending Orders</Typography>
+                    <Link to="/pending" />
+                  </MenuItem>
+                  <MenuItem
+                    active={selected === "Pending Shop Sales"}
+                    icon={<i className="fas fa-history"></i>}
+                    onClick={() => setSelected("Pending Shop Sales")}
+                  >
+                    <Typography>Pending Shop Sales</Typography>
+                    <Link to="/pendingshopsales" />
+                  </MenuItem>
+                  <MenuItem
+                    active={selected === "Pending Shop Items"}
+                    icon={<i className="fas fa-history"></i>}
+                    onClick={() => setSelected("Pending Shop Items")}
+                  >
+                    <Typography>Pending Shop Items</Typography>
+                    <Link to="/pendingshopitems" />
+                  </MenuItem>
+                </Menu>
+              }
             />
-             <Item
+              <Item
+              title="Credit"
+              to="/credit"
+              icon={<i className="fas fa-credit-card"></i>}
+              selected={selected}
+              setSelected={setSelected}
+            />
+             <Itemtest
               title="History"
-              to="/history"
               icon={<i class="fa fa-history"></i>}
               selected={selected}
               setSelected={setSelected}
+              isCollapsed={isCollapsed}
+              subMenu={
+                <Menu>
+                  <MenuItem
+                    active={selected === "Store to Store History"}
+                    icon ={<i className="fas fa-exchange-alt"></i>}
+                    onClick={() => setSelected("Store to Store History")}
+                  >
+                    <Typography>Store to Store History</Typography>
+                    <Link to="/storehistory" />
+                  </MenuItem>
+                  <MenuItem
+                    active={selected === "Sales History"}
+                    icon={<i className="fas fa-history"></i>}
+                    onClick={() => setSelected("Sales History")}
+                  >
+                    <Typography>Sales History</Typography>
+                    <Link to="/saleshistory" />
+                  </MenuItem>
+                </Menu>
+              }
             />
           </Box>
         </Menu>

@@ -11,7 +11,7 @@ import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from "@mui/material/CircularProgress";
-const Pending = () => {
+const PendingShopItem = () => {
   const [open, setOpen] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
   const theme = useTheme();
@@ -43,7 +43,7 @@ const Pending = () => {
       } else {
         setErrorMessage("An error occurred");
       }
-})
+      })
     }
   };
   const handleApprove = (selectedrow) => {
@@ -95,7 +95,7 @@ const Pending = () => {
   };
 
   useEffect(() => {
-    Axios.get('/pending/getall').then((response) => {
+    Axios.get('/toshoppending/getall').then((response) => {
         setPendingList(response.data);
         setLoading(false);
        }).catch((error) => {
@@ -107,31 +107,26 @@ const Pending = () => {
         setLoading(false);
        })
 }, []);
+
 const getRowId = (row) => {
     return row._id;
   };
   const columns = [
     {
-        field: "company",
-        headerName: "Company Name",
+        field: "name",
+        headerName: "Item Name",
         flex: 1,
         cellClassName: "name-column--cell",
       },
     {
-      field: "name",
-      headerName: "Item Name",
+      field: "itemCode",
+      headerName: "Item Code",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-        field: "itemCode",
-        headerName: "Item Code",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
         field: "specification",
-        headerName: "Item Specification",
+        headerName: "Specification",
         flex: 1,
         cellClassName: "name-column--cell",
       },
@@ -148,11 +143,42 @@ const getRowId = (row) => {
         cellClassName: "name-column--cell",
       },
       {
+        field: "cashierName",
+        headerName: "Cashier Name",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
         field: "quantity",
         headerName: "Quantity",
         flex: 1,
         cellClassName: "name-column--cell",
       },
+      {
+        field: "warehouseType",
+        headerName: "Warehouse Type",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "paymentMethod",
+        headerName: "Payment Methods",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "from",
+        headerName: "From",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+      {
+        field: "to",
+        headerName: "To",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+
     // {
     //   field: "edit",
     //   headerName: "Edit",
@@ -161,6 +187,7 @@ const getRowId = (row) => {
     //     return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
     //   },
     // },
+
     {
       field: "delete",
       headerName: "Delete",
@@ -254,7 +281,7 @@ const getRowId = (row) => {
     </div>
     <Box m="20px">
       <Header
-        title="VIEW PENDING ITEMS" 
+        title="PENDING SHOP ITEMS" 
       />
        {errorMessage && <Box sx={{ width: '100%' }}>
       <Collapse in={openAlert}>
@@ -360,4 +387,4 @@ const getRowId = (row) => {
   );
 };
 
-export default Pending;
+export default PendingShopItem;

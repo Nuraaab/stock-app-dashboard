@@ -9,13 +9,13 @@ import { useEffect, useState } from "react";
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
-const History = () => {
+const SalesHistory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true);
-  const [historyList , setHistoryList] = useState([]);
+  const [salesHistoryList , setSalesHistory] = useState([]);
   const [openAlert, setOpenAlert] = useState(true);
   const navigate = useNavigate();
 //   const handleEdit = (row) => {
@@ -23,22 +23,11 @@ const History = () => {
 //   };
   
   const handleDelete = (row) => {
-//     if(window.confirm('Are you sure you want to delete this history?')){
-//       Axios.delete(`/history/delete/${row._id}`).then((response) => {
-//         setMessage("History Deleted successfully!");
-//         window.location.reload();
-//      }).catch((error) => {
-//       if (error.response && error.response.data) {
-//         setErrorMessage(error.response.data);
-//       } else {
-//         setErrorMessage("An error occurred");
-//       }
-// })
-//     }
+    console.log(row);
   };
   useEffect(() => {
-    Axios.get('/history/getall').then((response) => {
-        setHistoryList(response.data);
+    Axios.get('/salleshistory/getall').then((response) => {
+        setSalesHistory(response.data);
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
@@ -119,7 +108,7 @@ const getRowId = (row) => {
   return (
     <Box m="20px">
       <Header
-        title="VIEW STORE TO STORE ITEMS MOVEMENT HISTORY"
+        title="VIEW SALES HISTORY"
       />
         {errorMessage && <Box sx={{ width: '100%' }}>
       <Collapse in={openAlert}>
@@ -198,7 +187,7 @@ const getRowId = (row) => {
         }}
       >
         <DataGrid
-            rows={historyList}
+            rows={salesHistoryList}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
             getRowId={getRowId}
@@ -221,4 +210,4 @@ const getRowId = (row) => {
   );
 };
 
-export default History;
+export default SalesHistory;

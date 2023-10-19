@@ -263,43 +263,36 @@ const getRowId = (row) => {
       field: "name",
       headerName: "Item Name",
       flex: 1,
-      cellClassName: "name-column--cell",
     },
     {
         field: "itemCode",
         headerName: "Item Code",
         flex: 1,
-        cellClassName: "name-column--cell",
       },
       {
         field: "specification",
         headerName: "Item Specification",
         flex: 1,
-        cellClassName: "name-column--cell",
       },
       {
         field: "type",
         headerName: "Item Type",
         flex: 1,
-        cellClassName: "name-column--cell",
       },
       {
         field: "expireDate",
         headerName: "Expire Date",
         flex: 1,
-        cellClassName: "name-column--cell",
       },
       {
         field: "warehouseName",
         headerName: "Warehouse Name",
         flex: 1,
-        cellClassName: "name-column--cell",
       },
       {
         field: "quantity",
         headerName: "Quantity",
         flex: 1,
-        cellClassName: "name-column--cell",
       },
     {
       field: "move",

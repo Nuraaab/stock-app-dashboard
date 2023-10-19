@@ -152,7 +152,7 @@ const AddWareHouse = () => {
               </Select>
     
               
-              <Box display="flex" justifyContent="end" mt="10px" width= '800px'>
+              <Box display="flex" justifyContent="end" mt="10px">
               <Button type="submit" color="secondary" variant="contained" disabled ={isAdded}>
                 {isAdded ? <CircularProgress color="secondary" size={30}/> : 'ADD WAREHOUSE'}
               </Button>

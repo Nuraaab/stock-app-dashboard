@@ -15,10 +15,11 @@ const Topbar = () => {
   const colorMode = useContext(ColorModeContext);
 
   return (
-    <Box display="flex" justifyContent="space-between" p={2}>
+    <Box 
+    display="flex" justifyContent={{sm: "end", xs: 'end'}} p={2}>
       {/* SEARCH BAR */}
-      <Box
-        display="flex"
+      {/* <Box
+        display={{ xs: "none", sm: "flex" }}
         backgroundColor={colors.primary[400]}
         borderRadius="3px"
       >
@@ -26,10 +27,13 @@ const Topbar = () => {
         <IconButton type="button" sx={{ p: 1 }}>
           <SearchIcon />
         </IconButton>
-      </Box>
+      </Box> */}
 
       {/* ICONS */}
-      <Box display="flex">
+      <Box 
+
+      display="flex"
+      >
         <IconButton onClick={colorMode.toggleColorMode}>
           {theme.palette.mode === "dark" ? (
             <DarkModeOutlinedIcon />
