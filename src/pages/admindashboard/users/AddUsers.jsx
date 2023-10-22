@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -16,6 +16,8 @@ const AddUsers = () => {
   const [message, setMessage] = useState('');
   const [errorMessage,  setErrorMessage] = useState('');
   const [openAlert, setOpenAlert] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isCashier, setIsCashier] = useState(false);
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values) => {
     setIsAdded(true);
@@ -38,10 +40,20 @@ const AddUsers = () => {
     })
     console.log(values);
   };
-
+  const handleUserTypeChange = (event, handleChange) => {
+    const selecteduserType = event.target.value;
+   if(selecteduserType === "admin"){
+    setIsAdmin(true);
+    setIsCashier(false);
+   }else if(selecteduserType === "cashier"){
+    setIsCashier(true);
+    setIsAdmin(false);
+   }
+    handleChange(event); 
+  };
   return (
     <Box m="20px">
-      <Header title="CREATE USER" subtitle="" />
+      <Header title="ADD NEW USER" subtitle="" />
       {errorMessage && <Box sx={{ width: '100%' }}>
       <Collapse in={openAlert}>
         <Alert
@@ -151,6 +163,9 @@ const AddUsers = () => {
                 helperText={touched.phone && errors.phone}
                 sx={{ gridColumn: "span 2" }}
               />
+              <FormControl sx={{gridColumn: "span 2" }}
+                error={!!touched.type && !!errors.type}>
+                <InputLabel id="demo-simple-select-helper-label">Select User Type</InputLabel>
                <Select
                fullWidth
                variant="outlined"
@@ -161,13 +176,36 @@ const AddUsers = () => {
                name="type"
                label="User Type"
                onBlur={handleBlur}
-               onChange={handleChange}
+               onChange={(e) => handleUserTypeChange(e, handleChange)}
               >
-                <MenuItem value=''>Select User Type</MenuItem>
                 <MenuItem value='admin'>Admin</MenuItem>
-                <MenuItem value='casher'>Casher</MenuItem>
+                <MenuItem value='cashier'>Cashier</MenuItem>
               </Select>
-              
+              <FormHelperText>{touched.warehouse && errors.warehouse}</FormHelperText>
+              </FormControl>
+
+              {
+                isCashier && <FormControl sx={{gridColumn: "span 4" }}
+                 error={!!touched.warehouse && !!errors.warehouse}>
+                 <InputLabel id="demo-simple-select-helper-label">Select warehouse the cashier control</InputLabel>
+                <Select
+                fullWidth
+                variant="outlined"
+                error={!!touched.warehouse && !!errors.warehouse}
+                helperText={touched.warehouse && errors.warehouse}
+                sx={{ gridColumn: "span 4" ,color: "white"}}
+                value={values.warehouse}
+                name="warehouse"
+                label="Warehouse name"
+                onBlur={handleBlur}
+                onChange={(e) => handleUserTypeChange(e, handleChange)}
+               >
+                 <MenuItem value='warehouse1'>Warehouse1</MenuItem>
+                 <MenuItem value='warehouse2'>Warehouse2</MenuItem>
+               </Select>
+               <FormHelperText>{touched.warehouse && errors.warehouse}</FormHelperText>
+               </FormControl>
+              }
               <TextField
                 fullWidth
                 variant="outlined"
@@ -229,14 +267,15 @@ const phoneRegExp =
   /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const checkoutSchema = yup.object().shape({
-  fullname: yup.string().required("required"),
-  type: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
+  fullname: yup.string().required("Full name required"),
+  warehouse: yup.string().required("Warehouse name required"),
+  type: yup.string().required("User type required"),
+  email: yup.string().email("invalid email").required("Email required"),
   phone: yup
     .string()
-    .matches(phoneRegExp, "Phone number is not valid"),
-  password: yup.string().required("required"),
-  rpassword: yup.string().required("required"),
+    .matches(phoneRegExp, "Phone number is not valid").required('Phone Number required'),
+  password: yup.string().required("Password required"),
+  rpassword: yup.string().required("Confirm password required"),
 });
 const initialValues = {
   fullname: "",
@@ -245,6 +284,7 @@ const initialValues = {
   password: "",
   rpassword: "",
   type: "",
+  warehouse: "",
 };
 
 export default AddUsers;

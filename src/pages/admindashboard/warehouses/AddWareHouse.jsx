@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -133,6 +133,9 @@ const AddWareHouse = () => {
                 helperText={touched.name && errors.name}
                 sx={{ gridColumn: "span 4" }}
               />
+              <FormControl sx={{gridColumn: "span 4" }}
+                error={!!touched.type && !!errors.type}>
+                <InputLabel id="demo-simple-select-helper-label">Select Warehouse</InputLabel>
               <Select
                fullWidth
                variant="outlined"
@@ -145,12 +148,12 @@ const AddWareHouse = () => {
                onBlur={handleBlur}
                onChange={handleChange}
               >
-                <MenuItem value=''>Select Warehouse</MenuItem>
                 <MenuItem value='Main Store'>Main Store</MenuItem>
                 <MenuItem value='Sub Store'>Sub Store</MenuItem>
                 <MenuItem value='Shop'>Shop</MenuItem>
               </Select>
-    
+              <FormHelperText>{touched.type && errors.type}</FormHelperText>
+              </FormControl>
               
               <Box display="flex" justifyContent="end" mt="10px">
               <Button type="submit" color="secondary" variant="contained" disabled ={isAdded}>
@@ -168,11 +171,12 @@ const AddWareHouse = () => {
 
 
 const checkoutSchema = yup.object().shape({
-  name: yup.string().required("required"),
-  type: yup.string().required("required"),
+  name: yup.string().required("Warehouse name required"),
+  type: yup.string().required("Warehouse type required"),
 });
 const initialValues = {
   type: "",
+  name: ""
  
 };
 

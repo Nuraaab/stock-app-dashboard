@@ -91,7 +91,7 @@ const RecentSales = ({ name}) => {
         ];
   return (
     <>
-   { todaySales ? <Box
+   {todaySales.length !== 0 && <Box
            gridColumn={{ xs: "span 12", sm: "span 12" }}
            gridRow={{ xs: 'span 3', sm: 'span 2'}}
            backgroundColor={colors.primary[400]}
@@ -130,7 +130,7 @@ const RecentSales = ({ name}) => {
         <Typography variant="h5" fontWeight="600">
             Recent Sales From {name}
           </Typography>
-        <DataGrid
+          <DataGrid
             rows={todaySales}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
@@ -150,14 +150,23 @@ const RecentSales = ({ name}) => {
                 handleClickOpen(row);
               }
             }}
-          />
-      </Box> : <Box
-      gridColumn={{ xs: "span 12", sm: "span 12" }}
-      >
-        <Typography variant="h5" fontWeight="600">
-            There is no sales in {name} for now!!
-          </Typography>
-        </Box>}
+          /> 
+          {/* //  <Box
+          // gridColumn={{ xs: "span 12", sm: "span 12" }}
+          // backgroundColor={colors.primary[400]}
+          // p={2}
+          // sx={{
+          //   alignContent: 'center',
+          //   alignItems: 'center'
+          // }}
+          // >
+          //   <Typography variant="h5" fontWeight="600">
+          //       There is no sales in {name} for now!!
+          //     </Typography>
+          //   </Box> */}
+            
+      </Box> 
+      } 
       </>
   )
 }

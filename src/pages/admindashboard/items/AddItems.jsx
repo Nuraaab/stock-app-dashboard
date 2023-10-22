@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -216,6 +216,10 @@ const AddItems = () => {
                 helperText={touched.itemname && errors.itemname}
                 sx={{ gridColumn: "span 4" }}
               />
+              
+                <FormControl sx={{gridColumn: "span 4" }}
+                error={!!touched.itemtype && !!errors.itemtype}>
+                <InputLabel id="demo-simple-select-helper-label">Item Type</InputLabel>
               <Select
                 fullWidth
                 variant="outlined"
@@ -233,9 +237,12 @@ const AddItems = () => {
                   <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
                 ))}
               </Select>
-              
-          
-                          <Select
+              <FormHelperText>{touched.specification && errors.specification}</FormHelperText>
+              </FormControl>
+              <FormControl sx={{gridColumn: "span 4" }}
+                error={!!touched.specification && !!errors.specification}>
+                <InputLabel id="demo-simple-select-helper-label">Item Specification(more than one can be selected)</InputLabel>
+                 <Select
                 fullWidth
                 variant="outlined"
                 error={!!touched.specification && !!errors.specification}
@@ -243,7 +250,7 @@ const AddItems = () => {
                 sx={{ gridColumn: "span 4", color: "white" }}
                 value={values.specification}
                 name="specification"
-                label="Item Type"
+                label="Item Specification(more than one can be selected) "
                 onBlur={handleBlur}
                 onChange={(event) => handleSpecificationChange(event, handleChange)}
               >
@@ -252,7 +259,8 @@ const AddItems = () => {
                   <MenuItem key={spec} value={spec}>{spec}</MenuItem>
                 ))}
               </Select>
-
+              <FormHelperText>{touched.specification && errors.specification}</FormHelperText>
+              </FormControl>
               <div className="row">
                 {selectedSpecifications.map((specification) => (
                   <div key={specification} className="col-auto d-flex align-items-center">

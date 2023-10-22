@@ -10,7 +10,13 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import { Collapse } from "@mui/material";
-const Item = ({ title, to, icon, selected, setSelected }) => {
+const Item = ({ title, to, icon, selected, setSelected, isCollapsed, isMobile, setIsCollapsed }) => {
+  const handleClick = (title) =>{
+    if(isMobile){
+      setIsCollapsed(!isCollapsed);
+    }
+    setSelected(title);
+  }
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
@@ -19,22 +25,28 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
       style={{
         color: colors.grey[100],
       }}
-      onClick={() => setSelected(title)}
+      onClick={() => !isCollapsed && handleClick(title)}
       icon={icon}
     >
       <Typography>{title}</Typography>
-      <Link to={to} />
+      {!isCollapsed && <Link to={to} />}
     </MenuItem>
   );
 };
 
-const Itemtest = ({ title, to, icon, selected, setSelected, subMenu , isCollapsed}) => {
+const Itemtest = ({ title, to, icon, selected, setSelected, subMenu , isCollapsed, isMobile, setIsCollapsed}) => {
    const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
   const handleSubMenuToggle = () => {
     setSelected(title);
     setIsSubMenuOpen(!isSubMenuOpen);
+   
   };
+  const handleIsMobile = () => {
+    if(isMobile){
+      setIsCollapsed(!isCollapsed);
+    }
+  }
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
@@ -47,7 +59,7 @@ const Itemtest = ({ title, to, icon, selected, setSelected, subMenu , isCollapse
           alignItems: "center",
          
         }}
-        onClick={() => handleSubMenuToggle()}
+        onClick={() => !isCollapsed && handleSubMenuToggle()}
         icon={icon}
         suffix={!isCollapsed && (isSubMenuOpen ? <i className="fa fa-sort-up"></i> : <i className="fa fa-sort-down"></i>)}
       >
@@ -56,7 +68,7 @@ const Itemtest = ({ title, to, icon, selected, setSelected, subMenu , isCollapse
       </MenuItem>
       {subMenu && (
         <Collapse in={isSubMenuOpen}>
-          <div style={{ display: "flex", marginLeft: '20px', backgroundColor: colors.primary[500],justifyContent: 'space-between' }}>{subMenu}</div>
+          <div onClick={() => handleIsMobile()} style={{ display: "flex", marginLeft: '20px', backgroundColor: colors.primary[500],justifyContent: 'space-between' }}>{subMenu}</div>
         </Collapse>
       )}
     </>
@@ -71,6 +83,9 @@ const Sidebar = () => {
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
+  const [isMobile, setisMobile] = useState(false);
+  const [breakPoint, setBreakPoint] = useState(false);
+  const [display, setDisplay] = useState('');
   useEffect(() => {
     Axios.post('/auth/refresh',{
       withCredentials: true,
@@ -88,8 +103,14 @@ const Sidebar = () => {
       const handleResize = () => {
         if (window.innerWidth <= 768) {
           setIsCollapsed(true);
+          setisMobile(true);
+          setBreakPoint(true);
+          setDisplay('');
         } else {
           setIsCollapsed(false);
+          setisMobile(false);
+          setBreakPoint(false);
+          setDisplay('display');
         }
       };
 
@@ -99,7 +120,19 @@ const Sidebar = () => {
       return () => {
         window.removeEventListener("resize", handleResize);
       };
-    }, []);
+    }, [window.innerWidth]);
+
+    const handleSidebar = () => {
+      setBreakPoint(!breakPoint);
+      setIsCollapsed(!isCollapsed);
+    }
+  const handleCollapse = () =>{
+    if(isMobile){
+      handleSidebar();
+    }else{
+      setIsCollapsed(!isCollapsed);
+    }
+  }
   return (
     <Box
       sx={{
@@ -121,12 +154,12 @@ const Sidebar = () => {
         height: '100vh',
       }}
     >
-      <ProSidebar collapsed={isCollapsed}>
-        <Menu iconShape="square">
+      <ProSidebar collapsed={isCollapsed} breakPoint={breakPoint ? 'sm': ''}>
+        <Menu >
           {/* LOGO AND MENU ICON */}
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}
-            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+            icon={isCollapsed ? <MenuOutlinedIcon /> :undefined }
             style={{
               margin: "10px 0 20px 0",
               color: colors.grey[100],
@@ -138,13 +171,15 @@ const Sidebar = () => {
                 justifyContent="space-between"
                 alignItems="center"
                 ml="15px"
+                
               >
                 <Typography variant="h3" color={colors.grey[100]}>
                  SMS
                 </Typography>
-                <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                <IconButton onClick={() => handleCollapse()}>
                   <MenuOutlinedIcon />
                 </IconButton>
+               
               </Box>
             )}
           </MenuItem>
@@ -179,19 +214,23 @@ const Sidebar = () => {
           <Box paddingLeft={isCollapsed ? undefined : "0px"}>
             <Item
               title="Dashboard"
-              to="/dashboard"
+              to="/"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+              isMobile={isMobile}
             />
 
             <Itemtest
               title="Items"
-              to="/dashboard"
               icon={<i class="fa fa-list"></i>}
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -215,11 +254,12 @@ const Sidebar = () => {
             />
             <Itemtest
               title="Store Items"
-              to="/dashboard"
               icon={<i class="fa fa-store"></i>}
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -246,14 +286,7 @@ const Sidebar = () => {
                     <Typography>Sub Store Items</Typography>
                     <Link to="/sub_store_items" />
                   </MenuItem>
-                  {/* <MenuItem
-                    active={selected === "Add Sub Store Items"}
-                    icon ={<i class="fa-solid fa-plus"></i>}
-                    onClick={() => setSelected("Add Sub Store Items")}
-                  >
-                    <Typography>Add Sub Store Items</Typography>
-                    <Link to="/add_sub_store_items" />
-                  </MenuItem> */}
+               
                   <MenuItem
                     active={selected === "Shop Items"}
                     icon ={<i class="fas fa-shopping-bag"></i>}
@@ -262,25 +295,19 @@ const Sidebar = () => {
                     <Typography>Shop Items</Typography>
                     <Link to="/shop_items" />
                   </MenuItem>
-                  {/* <MenuItem
-                    active={selected === "Add Shop Items"}
-                    icon ={<i class="fa-solid fa-plus"></i>}
-                    onClick={() => setSelected("Add Shop Items")}
-                  >
-                    <Typography>Add Shop Items</Typography>
-                    <Link to="/add_shop_items" />
-                  </MenuItem> */}
+                 
                 </Menu>
               }
             />
              
              <Itemtest
               title="Users"
-              to="/dashboard"
               icon={<i class="fa fa-user"></i>}
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -304,11 +331,12 @@ const Sidebar = () => {
             />
              <Itemtest
               title="WareHouses"
-              to="/dashboard"
               icon={<i class="fa fa-store"></i>}
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -333,11 +361,12 @@ const Sidebar = () => {
             />
             <Itemtest
               title="Item Spacification"
-              to="/dashboard"
               icon={<i class="fa-solid fa-file-contract"></i>}
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -365,6 +394,8 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -392,6 +423,8 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -427,6 +460,9 @@ const Sidebar = () => {
               icon={<i className="fas fa-credit-card"></i>}
               selected={selected}
               setSelected={setSelected}
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+              isMobile={isMobile}
             />
              <Itemtest
               title="History"
@@ -434,6 +470,8 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -458,6 +496,13 @@ const Sidebar = () => {
           </Box>
         </Menu>
       </ProSidebar>
+      <IconButton sx={{
+        marginTop: '30px',
+        marginLeft: '5px',
+        overflowY: 'auto'
+      }} className={display} onClick={() => handleSidebar()}>
+                <MenuOutlinedIcon />
+       </IconButton>
     </Box>
   );
 };

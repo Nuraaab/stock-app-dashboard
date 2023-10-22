@@ -19,6 +19,7 @@ const ViewSubStoreItems = () => {
   const [subStoreItems , setSubStoreItems] = useState([]);
   const [custName, setCustName] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [quantityMove, setQuantityMove] = useState('');
   const [price, setPrice] = useState('');
   const [transactionType, setTransactionType] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
@@ -150,6 +151,23 @@ const ViewSubStoreItems = () => {
           console.log(transactionType);
         }
   }
+  const resetForm = () => {
+    setStoreType('');
+    setWarehouseName('');
+    setQuantityMove('');
+    setIsSelected(false);
+    setErrorMessage('');
+  };
+  const saleResetForm = () => {
+    setCustName('');
+    setPrice('');
+    setQuantity('');
+    setTransactionType('');
+    setIsSelected(false);
+    setErrorMessage('');
+    setTransfer(false);
+    setCredit(false);
+  };
   const handleClickOpen = (row) => {
     setOpen(true);
     setSelectedRow(row);
@@ -170,7 +188,7 @@ const ViewSubStoreItems = () => {
     setIsMoved(true);
     if(storeType === "Sub Store"){
        Axios.post(`/Substore/subtransaction/${row._id}`, {
-          quantity: row.quantity,  
+          quantity: quantityMove,  
           warehouseName: warehouseName,
        }).then((response) => {
         setOpenMove(false);
@@ -188,7 +206,7 @@ const ViewSubStoreItems = () => {
        })
     }else if(storeType === "Shop"){
         Axios.post(`/Substore/transaction/${row._id}`, {
-          quantity: row.quantity,  
+          quantity: quantityMove,  
           warehouseName: warehouseName,
         }).then((response) => {
           setOpenMove(false);
@@ -209,7 +227,7 @@ const ViewSubStoreItems = () => {
       setIsMoved(false);
     }
   };
-  const handleStoreType = (value) => {
+  const handleStoreType = (value, row) => {
     setIsMoveLoad(true);
     setStoreType(value);
     if(value === ''){
@@ -218,8 +236,8 @@ const ViewSubStoreItems = () => {
     setIsMoveLoad(false);
    }else{
      Axios.get('/warehouse/getall').then((response) => {
-       const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === value);
-   
+       const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === value && warehouse.name !== row.warehouseName);
+       console.log(filteredWarehouse.length);
    if (filteredWarehouse.length === 0) {
      setErrorMessage("No warehouses found for the selected Store Type!!");
      setIsSelected(false);
@@ -233,7 +251,7 @@ const ViewSubStoreItems = () => {
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
       } else {
-        setErrorMessage("An error occurred");
+        setErrorMessage("An error occurredf" + error);
       }
       setIsMoveLoad(false);
        setIsSelected(false);
@@ -341,7 +359,7 @@ const getRowId = (row) => {
       Fill the information below
     </DialogTitle>
         <DialogTitle>
-        {isSelected || errorMessage && <Box sx={{ width: '100%' }}>
+        {errorMessage && <Box sx={{ width: '100%' }}>
       <Collapse in={openAlert}>
         <Alert
         severity="error"
@@ -369,9 +387,12 @@ const getRowId = (row) => {
         <Select
             label="Move To Where"
             value={storeType}
-            onChange={(e) => handleStoreType(e.target.value)}
+            onChange={(e) => handleStoreType(e.target.value, selectedMoveRow)}
             fullWidth
             margin="normal"
+            sx={{
+              marginBottom: '5px'
+            }}
           >
             <MenuItem value="">Select store you want to move the item </MenuItem>
             <MenuItem value="Sub Store">To Sub Store</MenuItem>
@@ -381,7 +402,7 @@ const getRowId = (row) => {
          { isSelected && <Select
                fullWidth
                variant="outlined"
-               sx={{ gridColumn: "span 4" ,color: "white"}}
+               sx={{ gridColumn: "span 4" ,color: "white", marginBottom: '5px'}}
                value={warehouseName}
                name="warehouse"
                label="Warehouse Name"
@@ -394,9 +415,23 @@ const getRowId = (row) => {
                   ))
                 }
            </Select>}
+           {
+            isSelected && <TextField
+            sx={{
+              marginBottom: '5px'
+            }}
+            fullWidth
+            variant="outlined"
+            type="text"
+            label="Quantity"
+            value={quantityMove}
+            name="quantity"
+            onChange={(e) => setQuantityMove(e.target.value)}
+          />
+           }
         </DialogContent>
         <DialogActions>
-          <Button style={{ color: 'white' }} onClick={handleMoveClose}>
+          <Button style={{ color: 'white' }} onClick={() => { handleMoveClose(); resetForm(); }}>
             Cancel
           </Button>
           <Button style={{ color: 'white' }} onClick={() => handleMove(selectedMoveRow)} disabled ={isMoved} >
@@ -449,13 +484,13 @@ const getRowId = (row) => {
             fullWidth
             margin="normal"
           />
-         {!credit && <TextField
+        <TextField
             label="Quantity"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             fullWidth
             margin="normal"
-          />}
+          />
            <TextField
             label="Price"
             value={price}
@@ -516,7 +551,7 @@ const getRowId = (row) => {
           }
         </DialogContent>
         <DialogActions>
-          <Button style={{ color: 'white' }} onClick={handleClose}>
+          <Button style={{ color: 'white' }} onClick={() => {handleClose(); saleResetForm()}}>
             Cancel
           </Button>
           <Button style={{ color: 'white' }} onClick={() => handleSale(selectedRow)}  disabled ={isSaled}>

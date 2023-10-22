@@ -1,5 +1,5 @@
-import { Alert, Box, Button,  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton,  MenuItem, Modal, Select, TextField, useMediaQuery } from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { Alert, Box, Button,  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, IconButton,  InputLabel,  MenuItem, Modal, Select, TextField, useMediaQuery } from "@mui/material";
+import { DataGrid, GridToolbar, GridColDef } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
 import { useTheme } from "@mui/material";
@@ -33,6 +33,7 @@ const ViewMainStores = () => {
   const [selectedMoveRow, setSelectedMoveRow] = useState(null);
   const [warehouseNameList, setwarehouseNameList] = useState([]);
   const [warehouseName, setWarehouseName] = useState('');
+  const [quantityMove, setQuantityMove] = useState('');
   const [storeType, setStoreType] = useState('');
   const [transfer, setTransfer] = useState(false);
   const [credit, setCredit] = useState(false);
@@ -43,11 +44,12 @@ const ViewMainStores = () => {
   const [saleLoading, setSaleLoading] = useState(false);
   const [moveLoading, setMoveLoading] = useState(false)
   const [initialMoveLoading, setInitialMoveLoading] = useState(false);
+  const [reload, setReload] = useState(true);
   const handleMove = (row) => {
     setMoveLoading(true);
     if(storeType === "Main Store"){
        Axios.post(`/mainstore/maintransaction/${row._id}`, {
-          quantity: row.quantity,  
+          quantity: quantityMove,  
           warehouseName: warehouseName,
        }).then((response) => {
         setOpenMove(false);
@@ -65,7 +67,7 @@ const ViewMainStores = () => {
        })
     }else if(storeType === "Sub Store"){
         Axios.post(`/mainstore/transaction/${row._id}`, {
-          quantity: row.quantity,  
+          quantity: quantityMove,  
           warehouseName: warehouseName,
         }).then((response) => {
           setOpenMove(false);
@@ -86,7 +88,23 @@ const ViewMainStores = () => {
       setMoveLoading(false);
     }
   };
-  
+  const resetForm = () => {
+    setStoreType('');
+    setWarehouseName('');
+    setQuantityMove('');
+    setIsSelected(false);
+    setErrorMessage('');
+  };
+  const saleResetForm = () => {
+    setCustName('');
+    setPrice('');
+    setQuantity('');
+    setTransactionType('');
+    setIsSelected(false);
+    setErrorMessage('');
+    setTransfer(false);
+    setCredit(false);
+  };
   const handleDelete = (row) => {
     if(window.confirm(`Are you sure you want to delete ${row.name}?`)){
       Axios.delete(`/mainstore/delete/${row._id}`).then((response) => {
@@ -181,6 +199,7 @@ const ViewMainStores = () => {
     setSelectedMoveRow(row);
   };
   const handleMoveClose = () => {
+    setReload(!reload);
     setOpenMove(false);
     setSelectedMoveRow(null);
   };
@@ -188,7 +207,7 @@ const ViewMainStores = () => {
     setOpen(false);
     setSelectedRow(null);
   };
-  const handleStoreType = (value) => {
+  const handleStoreType = (value, row) => {
     setInitialMoveLoading(true);
    setStoreType(value);
    if(value === ''){
@@ -197,7 +216,7 @@ const ViewMainStores = () => {
    setInitialMoveLoading(false);
   }else{
     Axios.get('/warehouse/getall').then((response) => {
-      const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === value);
+      const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === value && warehouse.name !== row.warehouseName);
   
   if (filteredWarehouse.length === 0) {
     setErrorMessage("No warehouses found for the selected Store Type!!");
@@ -253,7 +272,7 @@ const ViewMainStores = () => {
         }
         setLoading(false);
        })
-}, []);
+}, [reload]);
 const getRowId = (row) => {
     return row._id;
   };
@@ -263,6 +282,7 @@ const getRowId = (row) => {
       field: "name",
       headerName: "Item Name",
       flex: 1,
+      width: 160,
     },
     {
         field: "itemCode",
@@ -363,9 +383,12 @@ const getRowId = (row) => {
      </DialogTitle>
     <DialogContent>
     <Select
+    sx={{
+      marginBottom: '5px'
+    }}
             label="Move To Where"
             value={storeType}
-            onChange={(e) => handleStoreType(e.target.value)}
+            onChange={(e) => handleStoreType(e.target.value, selectedMoveRow)}
             fullWidth
             margin="normal"
           >
@@ -374,25 +397,42 @@ const getRowId = (row) => {
             <MenuItem value="Sub Store">To Sub Store</MenuItem>
           </Select>
 
-         { isSelected && <Select
+         { isSelected && 
+         <Select
                fullWidth
                variant="outlined"
-               sx={{ gridColumn: "span 4" ,color: "white"}}
+               sx={{ gridColumn: "span 12" ,color: "white", marginBottom: '5px'}}
                value={warehouseName}
                name="warehouse"
                label="Warehouse Name"
                onChange={(e) => setWarehouseName(e.target.value)}
               >
-                <MenuItem value=''>Select Warehouse Name</MenuItem>
+                <MenuItem>Select Warehouse Name</MenuItem>
                 {
                  warehouseNameList.map((warehouse) => (
                     <MenuItem key={warehouse.id} value={warehouse.name}>{warehouse.name}</MenuItem>
                   ))
                 }
-           </Select>}
+           </Select>
+           }
+
+           {
+            isSelected && <TextField
+            sx={{
+              marginBottom: '5px'
+            }}
+            fullWidth
+            variant="outlined"
+            type="text"
+            label="Quantity"
+            value={quantityMove}
+            name="quantity"
+            onChange={(e) => setQuantityMove(e.target.value)}
+          />
+           }
     </DialogContent>
     <DialogActions>
-          <Button style={{ color: 'white' }} onClick={handleMoveClose}>
+          <Button style={{ color: 'white' }} onClick={() => { handleMoveClose(); resetForm(); }}>
             Cancel
           </Button>
           <Button style={{ color: 'white' }} onClick={() => handleMove(selectedMoveRow)}  disabled ={moveLoading}>
@@ -446,13 +486,13 @@ const getRowId = (row) => {
             fullWidth
             margin="normal"
           />
-         {!credit && <TextField
+       <TextField
             label="Quantity"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             fullWidth
             margin="normal"
-          />}
+          />
            <TextField
             label="Price"
             value={price}
@@ -513,7 +553,7 @@ const getRowId = (row) => {
           }
         </DialogContent>
         <DialogActions>
-          <Button style={{ color: 'white' }} onClick={handleClose}>
+          <Button style={{ color: 'white' }} onClick={() => {handleClose(); saleResetForm()}}>
             Cancel
           </Button>
           <Button style={{ color: 'white' }} onClick={() => handleSale(selectedRow)}  disabled ={saleLoading}>
@@ -524,7 +564,7 @@ const getRowId = (row) => {
     </div>
     <Box m="20px">
       <Header
-        title="VIEW MAIN STORE ITEMS" 
+        title="MAIN STORE ITEMS" 
       />
       {loading && <LinearProgress color="secondary" />}
       {errorMessage && <Box sx={{ width: '100%' }}>
@@ -603,7 +643,9 @@ const getRowId = (row) => {
           },
         }}
       >
-      {<DataGrid
+      {
+        <div style={{ height: 400, width: '100%' }}>
+        <DataGrid
             rows={mainStoreItems}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
@@ -614,6 +656,12 @@ const getRowId = (row) => {
                 style: { color: "red" },
               },
             }}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 5 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
             checkboxSelection
             onCellClick={(params) => {
               const row = params.row;
@@ -626,7 +674,9 @@ const getRowId = (row) => {
                 handleClickOpen(row);
               }
             }}
-          />}
+          />
+          </div>
+          }
       </Box>
     </Box>
     </>

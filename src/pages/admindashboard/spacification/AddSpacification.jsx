@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -148,6 +148,9 @@ const AddSpacifications = () => {
                 helperText={touched.spacification && errors.spacification}
                 sx={{ gridColumn: "span 4" }}
               />
+              <FormControl sx={{gridColumn: "span 4" }}
+                error={!!touched.itemtype && !!errors.itemtype}>
+                <InputLabel id="demo-simple-select-helper-label">Select Item Type</InputLabel>
               <Select
                fullWidth
                variant="outlined"
@@ -168,7 +171,8 @@ const AddSpacifications = () => {
                 }
                 
               </Select>
-    
+              <FormHelperText>{touched.itemtype && errors.itemtype}</FormHelperText>
+              </FormControl>
               
               <Box display="flex" justifyContent="end" mt="10px" >
               <Button type="submit" color="secondary" variant="contained" disabled ={isAdded}>
@@ -186,12 +190,12 @@ const AddSpacifications = () => {
 
 
 const checkoutSchema = yup.object().shape({
-  spacification: yup.string().required("required"),
-  itemtype: yup.string().required("required"),
+  spacification: yup.string().required("Specification required"),
+  itemtype: yup.string().required("Item type required"),
 });
 const initialValues = {
   itemtype: "",
- 
+  spacification: "",
 };
 
 export default AddSpacifications;

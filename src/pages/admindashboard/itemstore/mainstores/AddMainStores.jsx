@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -26,6 +26,7 @@ const AddMainStoreItems = () => {
   const colors = tokens(theme.palette.mode);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [typeSelected, setTypeSelected] = useState(false);
   const handleFormSubmit = (values, { resetForm }) => {
     setLoading(true);
    Axios.post('/pending/add', {
@@ -59,6 +60,7 @@ const AddMainStoreItems = () => {
     console.log(filteredItems);
     setFilteredItemList(filteredItems);
     handleChange(event); 
+    setTypeSelected(true);
   };
   const handleItemNameChange = (event, handleChange) => {
     const selectedItemCode = event.target.value;
@@ -198,7 +200,9 @@ const AddMainStoreItems = () => {
                 helperText={touched.company && errors.company}
                 sx={{ gridColumn: "span 4" }}
               />
-
+              <FormControl sx={{gridColumn: "span 4" }}
+                error={!!touched.itemtype && !!errors.itemtype}>
+                <InputLabel id="demo-simple-select-helper-label">Item Type</InputLabel>
               <Select
                fullWidth
                variant="outlined"
@@ -219,6 +223,11 @@ const AddMainStoreItems = () => {
                 }
                 
               </Select>
+              <FormHelperText>{touched.itemtype && errors.itemtype}</FormHelperText>
+              </FormControl>
+              <FormControl sx={{gridColumn: "span 4" }}
+                error={!!touched.name && !!errors.name}>
+                <InputLabel id="demo-simple-select-helper-label">{typeSelected ? 'First Select Item Name' : 'Select Item Name'}</InputLabel>
               <Select
                fullWidth
                variant="outlined"
@@ -231,7 +240,6 @@ const AddMainStoreItems = () => {
                onBlur={handleBlur}
                onChange={(event) => handleItemNameChange(event, handleChange)}
               >
-                <MenuItem value=''>Select Item Name</MenuItem>
                 {
                  filteredItemList.map((itemName) => (
                     <MenuItem key={itemName.id} value={itemName.itemCode}>{itemName.name}</MenuItem>
@@ -239,27 +247,8 @@ const AddMainStoreItems = () => {
                 }
                 
               </Select>
-             
-              {/* <Select
-               fullWidth
-               variant="outlined"
-               error={!!touched.warehouseName && !!errors.warehouseName}
-               helperText={touched.warehouseName && errors.warehouseName}
-               sx={{ gridColumn: "span 2" ,color: "white"}}
-               value={values.warehouseName}
-               name="warehouseName"
-               label="Warehouse Name"
-               onBlur={handleBlur}
-               onChange={handleChange}
-              >
-                <MenuItem value=''>Select Warehouse Name</MenuItem>
-                {
-                 filteredWarehouseList.map((warehouse) => (
-                    <MenuItem key={warehouse.id} value={warehouse.name}>{warehouse.name}</MenuItem>
-                  ))
-                }
-                
-              </Select> */}
+              <FormHelperText>{touched.name && errors.name}</FormHelperText>
+              </FormControl>
               <TextField
                 fullWidth
                 variant="outlined"
@@ -307,12 +296,12 @@ const AddMainStoreItems = () => {
 
 
 const checkoutSchema = yup.object().shape({
-  itemtype: yup.string().required("required"),
-  name: yup.string().required("required"),
-  expireDate: yup.string().required("required"),
+  itemtype: yup.string().required("Item type required!!!"),
+  name: yup.string().required("Item name required!!!"),
+  expireDate: yup.string().required("Expired Date required!!!"),
 //   specification: yup.string().required("required"),
-  company: yup.string().required("required"),
-  quantity: yup.string().required("required"),
+  company: yup.string().required("Campany name required!!!"),
+  quantity: yup.string().required("Quantity required!!!"),
 });
 const initialValues = {
   itemtype: "",

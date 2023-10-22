@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 import PieChart from "../../../components/PieChart";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import RecentSales from "../../../components/admincomponents/RecentSales";
+import LinearProgress from "@mui/material/LinearProgress";
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -39,18 +40,59 @@ const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [lineData, setLineData] = useState([]);
+  const [mainstoreData, setMainstoreData] = useState([]);
+  const [subStoreData, setSubstoreData] = useState([]);
   useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const mainResponse = await Axios.get("/mainstore/line");
+          const subResponse = await Axios.get("/substore/line");
+          const shopResponse = await Axios.get("/shop/line");
+  
+          const MainStoreData = {
+            id: "Main Store",
+            color: tokens("dark").greenAccent[500],
+            data: mainResponse.data,
+          };
+  
+          const SubStoreData = {
+            id: "Sub Store",
+            color: tokens("dark").blueAccent[300],
+            data: subResponse.data,
+          };
+  
+          const shopData = {
+            id: "Shop",
+            color: tokens("dark").redAccent[200],
+            data: shopResponse.data,
+          };
+  
+          setLineData([ SubStoreData, MainStoreData, shopData]);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+  
+      fetchData();
+      console.log('line data '+lineData);
+    }, []);
+  useEffect(() => {
+    setLoading(true);
    Axios.get('/items/getall').then((response) => {
      setTotalItem(response.data.length);
+     setLoading(false);
    }).catch((error) => {
     if (error.response && error.response.data) {
       setErrorMessage(error.response.data);
     } else {
       setErrorMessage("An error occurred");
     }
+    setLoading(false);
    })
   }, []);
   useEffect(() => {
+    setLoading(true);
     Axios.get('/auth/getall').then((response) => {
       setTotalUsers(response.data.length);
     }).catch((error) => {
@@ -59,9 +101,11 @@ const Dashboard = () => {
      } else {
        setErrorMessage("An error occurred");
      }
+     setLoading(false);
     })
    }, []);
    useEffect(() => {
+    setLoading(true);
     Axios.get('/pending/getall').then((response) => {
       setTotalPending(response.data.length);
     }).catch((error) => {
@@ -70,9 +114,11 @@ const Dashboard = () => {
      } else {
        setErrorMessage("An error occurred");
      }
+     setLoading(false);
     })
    }, []);
    useEffect(() => {
+    setLoading(true);
     Axios.get('/warehouse/getall').then((response) => {
       setTotalWarehouse(response.data.length);
       setWarehouseList(response.data);
@@ -82,9 +128,11 @@ const Dashboard = () => {
      } else {
        setErrorMessage("An error occurred");
      }
+     setLoading(false);
     })
    }, []);
    useEffect(() => {
+    setLoading(true);
     Axios.get('/salleshistory/getall').then((response) => {
       setTotalSale(response.data.length);
     }).catch((error) => {
@@ -93,9 +141,11 @@ const Dashboard = () => {
      } else {
        setErrorMessage("An error occurred");
      }
+     setLoading(false);
     })
    }, []);
    useEffect(() => {
+    setLoading(true);
     Axios.get('/mainstore/getall').then((response) => {
       setTotalMainStoreItems(response.data.length);
     }).catch((error) => {
@@ -104,9 +154,11 @@ const Dashboard = () => {
      } else {
        setErrorMessage("An error occurred");
      }
+     setLoading(false);
     })
    }, []);
    useEffect(() => {
+    setLoading(true);
     Axios.get('/Substore/getall').then((response) => {
       setTotalSubStoreItems(response.data.length);
     }).catch((error) => {
@@ -115,9 +167,11 @@ const Dashboard = () => {
      } else {
        setErrorMessage("An error occurred");
      }
+     setLoading(false);
     })
    }, []);
    useEffect(() => {
+    setLoading(true);
     Axios.get('/Shop/getall').then((response) => {
       setTotalShopItems(response.data.length);
     }).catch((error) => {
@@ -126,6 +180,7 @@ const Dashboard = () => {
      } else {
        setErrorMessage("An error occurred");
      }
+     setLoading(false);
     })
    }, []);
    const getRowId = (row) => {
@@ -186,6 +241,7 @@ const Dashboard = () => {
     //   },
     // }}
     >
+      {loading && <LinearProgress  color="secondary"/>}
       <Box
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
@@ -194,7 +250,7 @@ const Dashboard = () => {
       >
         {/* ROW 1 */}
         <Box
-          gridColumn={{ xs: "span 12", sm: "span 3" }} 
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
@@ -369,7 +425,7 @@ const Dashboard = () => {
         {/* ROW 2 */}
         <Box
           gridColumn={{ xs: "span 12", sm: "span 12" }} 
-          gridRow="span 2"
+          gridRow={{xs:'span 2', sm: 'span 3'}}
           backgroundColor={colors.primary[400]}
         >
           <Box
@@ -380,20 +436,14 @@ const Dashboard = () => {
             alignItems="center"
           >
             <Box>
-              {/* <Typography
+              <Typography
                 variant="h5"
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-                Revenue Generated
+                Orders Report
               </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                $59,342.32
-              </Typography> */}
+             
             </Box>
             <Box>
               <IconButton>
@@ -403,17 +453,17 @@ const Dashboard = () => {
               </IconButton>
             </Box>
           </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
+          <Box height={{xs:'250px', sm:'400px'}} m="-20px 0 0 0">
+            <LineChart isDashboard={true}  lineData={lineData}/>
           </Box>
         </Box>
         <Box
           gridColumn={{ xs: "span 12", sm: "span 12" }}
-          gridRow="span 2"
+          gridRow={{xs: 'span 2', sm: 'span 3'}}
           backgroundColor={colors.primary[400]}
-          overflow="auto"
+         p={2}
         >
-          <Box
+          {/* <Box
             display="flex"
             justifyContent="center"
             alignItems="center"
@@ -425,11 +475,14 @@ const Dashboard = () => {
               Report
             </Typography>
            
-          </Box>
+          </Box> */}
+          <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
+             Sales Report
+            </Typography>
           <PieChart size = '80' />
          
         </Box>
-
+        
           {/* <Box
            gridColumn={{ xs: "span 12", sm: "span 12" }}
            gridRow="span 3"

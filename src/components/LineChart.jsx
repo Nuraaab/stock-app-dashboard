@@ -5,44 +5,10 @@ import  Axios  from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 
-const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
+const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [lineData, setLineData] = useState([]);
-  useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const mainResponse = await Axios.get("/mainstore/line");
-          const subResponse = await Axios.get("/substore/line");
-          const shopResponse = await Axios.get("/shop/line");
-  
-          const MainStoreData = {
-            id: "mainstore",
-            color: tokens("dark").greenAccent[500],
-            data: mainResponse.data,
-          };
-  
-          const SubStoreData = {
-            id: "substore",
-            color: tokens("dark").blueAccent[300],
-            data: subResponse.data,
-          };
-  
-          const shopData = {
-            id: "shop",
-            color: tokens("dark").redAccent[200],
-            data: shopResponse.data,
-          };
-  
-          setLineData([MainStoreData, SubStoreData, shopData]);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-  
-      fetchData();
-      console.log('line data '+lineData);
-    }, []);
+ console.log(lineData);
   return (
     <ResponsiveLine
       data={lineData}
@@ -84,8 +50,8 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
       xScale={{ type: "point" }}
       yScale={{
         type: "linear",
-        min: "auto",
-        max: "auto",
+        min: 'auto',
+        max: 'auto',
         stacked: true,
         reverse: false,
       }}

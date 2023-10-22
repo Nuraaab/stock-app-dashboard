@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
+import { useNavigate } from 'react-router-dom';
 const ViewShopItems = () => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -44,7 +45,7 @@ const ViewShopItems = () => {
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSaled, setIsSaled] = useState(false);
- 
+  const navigate = useNavigate();
 //transaction type
   const handleTransactionType = (value) => {
     console.log('value'+ value);
@@ -86,7 +87,7 @@ const handleClickOpen = (row) => {
     if(window.confirm(`Are you sure you want to delete ${row.name}?`)){
       Axios.delete(`/Shop/delete/${row._id}`).then((response) => {
         setMessage("Sale Deleted successfully!");
-        window.location.reload();
+        window.location.href = window.location.href;
      }).catch((error) => {
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
@@ -95,6 +96,16 @@ const handleClickOpen = (row) => {
       }
 })
     }
+  };
+  const saleResetForm = () => {
+    setCustName('');
+    setPrice('');
+    setQuantity('');
+    setTransactionType('');
+    setIsSelected(false);
+    setErrorMessage('');
+    setTransfer(false);
+    setCredit(false);
   };
   const handleSale = (selectedrow) => {
     setIsSaled(true);
@@ -294,13 +305,13 @@ const getRowId = (row) => {
             fullWidth
             margin="normal"
           />
-         {!credit && <TextField
+          <TextField
             label="Quantity"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             fullWidth
             margin="normal"
-          />}
+          />
            <TextField
             label="Price"
             value={price}
@@ -361,7 +372,7 @@ const getRowId = (row) => {
           }
         </DialogContent>
         <DialogActions>
-          <Button style={{ color: 'white' }} onClick={handleClose}>
+          <Button style={{ color: 'white' }} onClick={() => {handleClose(); saleResetForm()}}>
             Cancel
           </Button>
           <Button style={{ color: 'white' }} onClick={() => handleSale(selectedRow)} disabled ={isSaled}>
