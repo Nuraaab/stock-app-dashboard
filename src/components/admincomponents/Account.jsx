@@ -38,11 +38,32 @@ const VisuallyHiddenInput = styled('input')({
 const Account = ({fullScreen, open, handleClose}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [userId, setUserId] =useState('');
   const [adminName, setAdminName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [profileImage, setProfileImage] = useState('');
   const [role, setRole] = useState('');
-  
+  const covertToBase64 = (e) => {
+    var reader = new FileReader();
+    reader.readAsDataURL(e.target.files[0]);
+    reader.onload = () => {
+      setProfileImage((prev) => ({ ...prev, profile: reader.result }))
+    };
+    console.log('profile Image' + profileImage);
+    reader.onerror = error => {
+        console.log(error);
+    };
+}
+const handleUpload = () => {
+  Axios.post(`/auth/update/${userId}`, {
+    profile: profileImage.profile,
+  }).then((response) => {
+
+  }).catch((error) => {
+    
+  })
+}
   useEffect(() => {
     Axios.post('/auth/refresh',{
       withCredentials: true,
@@ -51,6 +72,7 @@ const Account = ({fullScreen, open, handleClose}) => {
       setEmail(response.data.email);
       setPhone(response.data.phone);
       setRole(response.data.type);
+      setUserId(response.data._id);
        }).catch((error) => {
         console.log(error);
        })
@@ -85,7 +107,7 @@ const Account = ({fullScreen, open, handleClose}) => {
                   alt="profile-user"
                   width="150px"
                   height="150px"
-                  src={`../../assets/user.png`}
+                  src=  { profileImage.profile ? profileImage.profile :`../../assets/user.png`}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                   
                 />
@@ -106,11 +128,15 @@ const Account = ({fullScreen, open, handleClose}) => {
       <DialogActions style={{ justifyContent: 'center' }}> 
           <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
           Upload file
-          <VisuallyHiddenInput type="file" />
+          <VisuallyHiddenInput name="profile" id="file" type="file" accept="image/star" onChange={(e) => covertToBase64(e)} />
         </Button>
-        {/* <Button autoFocus onClick={handleClose}>
-          Save changes
-        </Button> */}
+        
+
+   
+       {profileImage.profile && <Button variant="contained"
+            color="primary" onClick={() => handleUpload()}> 
+          Cahnge Profile
+        </Button>}
       </DialogActions>
     </BootstrapDialog>
 

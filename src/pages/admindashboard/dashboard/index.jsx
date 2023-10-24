@@ -241,6 +241,7 @@ const Dashboard = () => {
     //     backgroundColor: 'transparent', // Customize scrollbar color
     //   },
     // }}
+    padding={0}
     >
       {loading && <LinearProgress  color="secondary"/>}
       <Box

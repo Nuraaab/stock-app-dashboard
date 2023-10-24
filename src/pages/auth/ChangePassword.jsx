@@ -73,7 +73,6 @@ export default function ChangePassword() {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -82,10 +81,10 @@ export default function ChangePassword() {
             borderRadius: 2,
             px: 4,
             py: 6,
-            marginTop: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            backgroundColor:`${colors.primary[400]}`
           }}
         >
          <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
@@ -145,6 +144,5 @@ export default function ChangePassword() {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
   );
 }

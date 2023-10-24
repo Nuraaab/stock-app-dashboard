@@ -207,16 +207,17 @@ const router = createBrowserRouter([
           path: "/import",
           element: <AddMainStoreItems />
         },
+        {
+          path: "/changePass",
+          element: <ChangePassword />,
+        },
       ]
     },
     {
       path: "/login",
       element: <SignIn />,
     },
-    {
-      path: "/changePass",
-      element: <ChangePassword />,
-    },
+   
     {
       path: '/forgotPass',
       element: <ForgotPassword />

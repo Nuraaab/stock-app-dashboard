@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from "@mui/material/CircularProgress";
+import Message from "../../../components/admincomponents/Message";
 const AddWareHouse = () => {
   // const [warehouseList , setwarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -48,49 +49,8 @@ const AddWareHouse = () => {
   return (
     <Box m="20px">
       <Header title="ADD WAREHOUSE" />
-      {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
-       {message && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {message}
-        </Alert>
-      </Collapse>
-    </Box>}
+      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
@@ -135,7 +95,7 @@ const AddWareHouse = () => {
               />
               <FormControl sx={{gridColumn: "span 4" }}
                 error={!!touched.type && !!errors.type}>
-                <InputLabel id="demo-simple-select-helper-label">Select Warehouse</InputLabel>
+                <InputLabel id="demo-simple-select-helper-label">Select Warehouse Type</InputLabel>
               <Select
                fullWidth
                variant="outlined"

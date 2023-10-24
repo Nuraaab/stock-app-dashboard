@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -10,6 +10,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import CloseIcon from '@mui/icons-material/Close';
+import Message from "../../../components/admincomponents/Message";
 const EditSpecifications = () => {
   const [itemType , setItemType] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -24,7 +25,6 @@ const EditSpecifications = () => {
   const rowData = location.state.rowData;
   const navigate = useNavigate();
   const initialValues = {
-    itemtype: rowData.type,
     spacification: rowData.specification,
    
   };
@@ -32,7 +32,6 @@ const EditSpecifications = () => {
     setIsEdited(true);
    Axios.post(`/specification/update/${rowData._id}`, {
     specification: values.spacification,
-    type: values.itemtype,
    }).then((response) => {
     console.log(response.data);
     console.log('Updating  successfull');
@@ -56,7 +55,7 @@ const EditSpecifications = () => {
     Axios.get('/type/getall').then((response) => {
         setItemType(response.data);
         setLoading(false);
-        console.log(itemType);
+        console.log('item type' + rowData.type);
        }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
@@ -71,49 +70,8 @@ const EditSpecifications = () => {
   return (
     <Box m="20px">
       <Header title="EDIT SPECIFICATIONS" />
-      {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
-       {message && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {message}
-        </Alert>
-      </Collapse>
-    </Box>}
+      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
       {loading && <LinearProgress color="secondary"/>}
       <Formik
         onSubmit={handleFormSubmit}
@@ -157,27 +115,6 @@ const EditSpecifications = () => {
                 helperText={touched.spacification && errors.spacification}
                 sx={{ gridColumn: "span 4" }}
               />
-              <Select
-               fullWidth
-               variant="outlined"
-               error={!!touched.itemtype && !!errors.itemtype}
-               helperText={touched.itemtype && errors.itemtype}
-               sx={{ gridColumn: "span 4" ,color: "white"}}
-               value={values.itemtype}
-               name="itemtype"
-               label="Item Type"
-               onBlur={handleBlur}
-               onChange={handleChange}
-              >
-                <MenuItem value=''>Select Item Type</MenuItem>
-                {
-                 itemType.map((item) => (
-                    <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
-                  ))
-                }
-                
-              </Select>
-    
               
               <Box display="flex" justifyContent="end" mt="10px" >
               <Button type="submit" color="secondary" variant="contained" disabled ={isEdited}>
@@ -196,7 +133,6 @@ const EditSpecifications = () => {
 
 const checkoutSchema = yup.object().shape({
   spacification: yup.string().required("required"),
-  itemtype: yup.string().required("required"),
 });
 
 export default EditSpecifications;

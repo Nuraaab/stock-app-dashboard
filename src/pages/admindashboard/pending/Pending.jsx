@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, MenuItem, Modal, Select, TextField, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -11,6 +11,19 @@ import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from "@mui/material/CircularProgress";
+import Message from "../../../components/admincomponents/Message";
+import { styled } from '@mui/material/styles';
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+  '& .MuiDialog-paper': {
+    width: '100%', // Adjust the width as needed
+  },
+}));
 const Pending = () => {
   const [open, setOpen] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
@@ -28,23 +41,31 @@ const Pending = () => {
   const [loading, setLoading] = useState(true);
   const [isApproved, setIsApproved] = useState(false);
   const [warehouseLoading, setWarehouseLoading] = useState(true);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [openCancle, setOpenCancle] = useState(false);
+  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
+  const [reload, setReload] = useState(false);
+  const [isCancled, setIsCancled] = useState(false);
 //   const handleEdit = (row) => {
 //     navigate(`/edit_main_store_items`, { state: { rowData: row } });
 //   };
   
   const handleDelete = (row) => {
-    if(window.confirm('Are you sure you want to delete this sale?')){
+    setIsCancled(true);
       Axios.delete(`/pending/delete/${row._id}`).then((response) => {
         setMessage("Sale Deleted successfully!");
-        window.location.reload();
+        setIsCancled(false);
+        setOpenCancle(false);
+        setReload(!reload);
      }).catch((error) => {
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
       } else {
         setErrorMessage("An error occurred");
       }
+      setIsCancled(false);
+      setOpenCancle(true);
 })
-    }
   };
   const handleApprove = (selectedrow) => {
     setIsApproved(true);
@@ -93,7 +114,14 @@ const Pending = () => {
     setOpen(false);
     setSelectedRow(null);
   };
-
+  const handleCancleClose = () => {
+    setOpenCancle(false);
+    setSelectedCancleRow(null);
+  };
+  const handleCancleClickOpen = (row) => {
+    setOpenCancle(true);
+    setSelectedCancleRow(row);
+};
   useEffect(() => {
     Axios.get('/pending/getall').then((response) => {
         setPendingList(response.data);
@@ -106,7 +134,7 @@ const Pending = () => {
         }
         setLoading(false);
        })
-}, []);
+}, [reload]);
 const getRowId = (row) => {
     return row._id;
   };
@@ -117,18 +145,19 @@ const getRowId = (row) => {
         flex: 1,
         cellClassName: "name-column--cell",
       },
+      {
+        field: "itemCode",
+        headerName: "Item Code",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
     {
       field: "name",
       headerName: "Item Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
-    {
-        field: "itemCode",
-        headerName: "Item Code",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
+    
       {
         field: "specification",
         headerName: "Item Specification",
@@ -166,7 +195,7 @@ const getRowId = (row) => {
       headerName: "Delete",
       renderCell: ({ row }) => {
         // Render the delete button here
-        return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
+        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
     {
@@ -184,46 +213,39 @@ const getRowId = (row) => {
       {/* <Button variant="outlined" onClick={handleClickOpen}>
         Open responsive dialog
       </Button> */}
-     <Dialog
-        fullScreen={fullScreen}
+     <BootstrapDialog
         open={open}
         onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
+        aria-labelledby="Costomized-dialog-title"
         // maxWidth="md" // Set the desired width here
         fullWidth
       >
        <DialogTitle
-      id="responsive-dialog-title"
-      style={{ textAlign: 'center' }}
+      id="costomized-dialog-title"
     >
-      Fill the information below
+      Approve Sale
     </DialogTitle>
-        <DialogTitle>
-        {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
+    <IconButton
+        aria-label="close"
+        onClick={handleClose}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+       {errorMessage && <DialogTitle>
+        <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
         {warehouseLoading && <LinearProgress  color="secondary"/>}
-        </DialogTitle>
-        <DialogContent>
+        </DialogTitle>}
+        <DialogContent dividers>
+        <FormControl
+          fullWidth
+          sx={{gridColumn: "span 4" }}>
+                <InputLabel id="demo-simple-select-helper-label">Select Warehouse Name</InputLabel>
         <Select
                fullWidth
                variant="outlined"
@@ -233,7 +255,6 @@ const getRowId = (row) => {
                label="Warehouse Name"
                onChange={(e) => setWarehouseName(e.target.value)}
               >
-                <MenuItem value=''>Select Warehouse Name</MenuItem>
                 {
                  filteredWarehouseList.map((warehouse) => (
                     <MenuItem key={warehouse.id} value={warehouse.name}>{warehouse.name}</MenuItem>
@@ -241,67 +262,63 @@ const getRowId = (row) => {
                 }
                 
               </Select>
+              </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button style={{ color: 'white' }} onClick={handleClose}>
-            Cancel
-          </Button>
+          
           <Button style={{ color: 'white' }} onClick={() => handleApprove(selectedRow)}  disabled ={isApproved}>
             {isApproved ? <CircularProgress color="secondary" size={30}/> : 'Approve'}
           </Button>
         </DialogActions>
-      </Dialog>
+      </BootstrapDialog>
+      <BootstrapDialog
+        open={openCancle}
+        onClose={handleCancleClose}
+        aria-labelledby="customized-dialog-title"
+        // maxWidth="md" // Set the desired width here
+        fullWidth
+      >
+      <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={() => handleCancleClose()}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Are you sure you want to delete this item?
+          </Typography>
+        </DialogContent>
+        <DialogActions dividers style={{ justifyContent: 'center' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
+            No
+          </Button>
+          <Button  variant="contained"
+            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
+            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
+          </Button>
+        </DialogActions>
+      </BootstrapDialog>
     </div>
-    <Box m="20px">
+    <Box 
+    margin={0}
+    padding={0}
+    >
       <Header
-        title="VIEW PENDING ITEMS" 
+        title="PENDING ITEMS" 
       />
-       {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
-      {message && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {message}
-        </Alert>
-      </Collapse>
-    </Box>}
+      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
     {loading && <LinearProgress color="secondary" />}
       <Box
-        m="40px 0 0 0"
+        margin={0}
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {
@@ -343,16 +360,7 @@ const getRowId = (row) => {
                 style: { color: "red" },
               },
             }}
-            checkboxSelection
-            onCellClick={(params) => {
-              const row = params.row;
-
-             if(params.field === "delete") {
-                handleDelete(row);
-              } else if (params.field === "approve") {
-                handleClickOpen(row);
-              }
-            }}
+           disableColumnFilter = {isMobile}
           />
       </Box>
     </Box>

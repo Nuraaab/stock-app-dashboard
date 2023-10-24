@@ -219,7 +219,7 @@ const AddItems = () => {
               
                 <FormControl sx={{gridColumn: "span 4" }}
                 error={!!touched.itemtype && !!errors.itemtype}>
-                <InputLabel id="demo-simple-select-helper-label">Item Type</InputLabel>
+                <InputLabel id="demo-simple-select-helper-label">Select Item Type</InputLabel>
               <Select
                 fullWidth
                 variant="outlined"
@@ -232,7 +232,6 @@ const AddItems = () => {
                 onBlur={handleBlur}
                 onChange={(event) => handleItemTypeChange(event, handleChange)}
               >
-                <MenuItem value=''>Select Item Type</MenuItem>
                 {itemType.map((item) => (
                   <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
                 ))}

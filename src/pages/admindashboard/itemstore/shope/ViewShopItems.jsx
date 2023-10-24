@@ -11,6 +11,18 @@ import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import Message from "../../../../components/admincomponents/Message";
+import { styled } from '@mui/material/styles';
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+  '& .MuiDialog-paper': {
+    width: '100%', // Adjust the width as needed
+  },
+}));
 const ViewShopItems = () => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -51,6 +63,7 @@ const ViewShopItems = () => {
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [isCancled, setIsCancled] = useState(false);
   const [reload, setReload] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 //transaction type
   const handleTransactionType = (value) => {
@@ -300,22 +313,32 @@ const getRowId = (row) => {
   ];
   return (
     <>
-      <Dialog
-        fullScreen={fullScreen}
+      <BootstrapDialog
         open={open}
         onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
+        aria-labelledby="costomized-dialog-title"
       >
        <DialogTitle
-      id="responsive-dialog-title"
-      style={{ textAlign: 'center' }}
+      id="costomized-dialog-title"
     >
-      Fill the information below
+      Sale Shop Items
     </DialogTitle>
-        <DialogTitle>
+    <IconButton
+        aria-label="close"
+        onClick={() => {handleClose(); saleResetForm()}}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        {errorMessage && <DialogTitle>
         <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
-        </DialogTitle>
-        <DialogContent>
+        </DialogTitle>}
+        <DialogContent dividers>
           <TextField
             required
             label="Customer Name"
@@ -408,37 +431,46 @@ const getRowId = (row) => {
           }
         </DialogContent>
         <DialogActions>
-          <Button style={{ color: 'white' }} onClick={() => {handleClose(); saleResetForm()}}>
-            Cancel
-          </Button>
           <Button style={{ color: 'white' }} onClick={() => handleSale(selectedRow)} disabled ={isSaled}>
             {isSaled ? <CircularProgress color="secondary" size={30} /> : 'Sale'}
           </Button>
         </DialogActions>
-      </Dialog>
-    <Box m="20px">
+      </BootstrapDialog>
+    <Box 
+    margin={0}
+    padding={0}
+    >
       <Header
         title="SHOP ITEMS"
       />
       <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
-    <Dialog
-        fullScreen={fullScreen}
+    <BootstrapDialog
         open={openCancle}
         onClose={handleCancleClose}
-        aria-labelledby="responsive-dialog-title"
+        aria-labelledby="Costomized-dialog-title"
         // maxWidth="md" // Set the desired width here
         fullWidth
       >
-      <DialogTitle id="delete-confirmation-dialog-title" style={{ textAlign: 'center' }}>Confirm Delete</DialogTitle>
-        <DialogTitle>
-        </DialogTitle>
-        <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={() => handleCancleClose()}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Typography variant="body1">
             Are you sure you want to delete this item?
           </Typography>
         </DialogContent>
-        <DialogActions  style={{ justifyContent: 'center' }}>
+        <DialogActions dividers style={{ justifyContent: 'center' }}>
         <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
             No
           </Button>
@@ -447,11 +479,11 @@ const getRowId = (row) => {
             {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
           </Button>
         </DialogActions>
-      </Dialog>
+      </BootstrapDialog>
 
     {loading && <LinearProgress color="secondary" />}
       <Box
-        m="40px 0 0 0"
+       margin={0}
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {
@@ -493,16 +525,7 @@ const getRowId = (row) => {
                 style: { color: "red" },
               },
             }}
-            checkboxSelection
-            onCellClick={(params) => {
-              const row = params.row;
-
-              if (params.field === "delete") {
-                handleCancleClickOpen(row);
-              } else if (params.field === "sale") {
-                handleClickOpen(row);
-              }
-            }}
+            disableColumnFilter ={isMobile}
           />
       </Box>
     </Box>

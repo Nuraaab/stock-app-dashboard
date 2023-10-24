@@ -1,4 +1,4 @@
-import { Alert, Box, IconButton, Modal } from "@mui/material";
+import { Alert, Box, IconButton, Modal, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
+import Message from "../../../components/admincomponents/Message";
 const History = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -17,6 +18,7 @@ const History = () => {
   const [loading, setLoading] = useState(true);
   const [historyList , setHistoryList] = useState([]);
   const [openAlert, setOpenAlert] = useState(true);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 //   const handleEdit = (row) => {
 //     navigate(`/edit_spacification`, { state: { rowData: row } });
@@ -54,17 +56,18 @@ const getRowId = (row) => {
   };
   const columns = [
     {
+      field: "itemCode",
+      headerName: "Item Code",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
       field: "name",
       headerName: "Item Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
-    {
-        field: "itemCode",
-        headerName: "Item Code",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
+  
       {
         field: "specification",
         headerName: "Item Specification",
@@ -117,56 +120,18 @@ const getRowId = (row) => {
     // },
   ];
   return (
-    <Box m="20px">
+    <Box 
+    margin={0}
+    padding={0}
+    >
       <Header
-        title="VIEW STORE TO STORE ITEMS MOVEMENT HISTORY"
+        title="STORE TO STORE ITEMS MOVEMENT HISTORY"
       />
-        {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
-      {message && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {message}
-        </Alert>
-      </Collapse>
-    </Box>}
+      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
     {loading && <LinearProgress color="secondary" />}
       <Box
-        m="40px 0 0 0"
+       margin={0}
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {
@@ -208,13 +173,7 @@ const getRowId = (row) => {
                 style: { color: "red" },
               },
             }}
-            checkboxSelection
-            onCellClick={(params) => {
-              const row = params.row;
-              if (params.field === "delete") {
-                handleDelete(row);
-              }
-            }}
+           disableColumnFilter = {isMobile}
           />
       </Box>
     </Box>

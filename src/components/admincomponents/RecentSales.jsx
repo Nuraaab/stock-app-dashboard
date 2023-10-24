@@ -20,6 +20,7 @@ const RecentSales = ({ name}) => {
    const [isCancled, setIsCancled] = useState(false);
    const [message, setMessage] = useState('');
    const [reload, setReload] = useState(false);
+   const isMobile = useMediaQuery('(max-width: 768px)');
    const handleApprove = (selectedrow) => {
     setIsApproved(true);
     Axios.post(`/sallespending/approve/${selectedrow._id}`).then((response) => {
@@ -273,15 +274,7 @@ setSelectedRow(null);
                 style: { color: "red" },
               },
             }}
-            checkboxSelection
-            onCellClick={(params) => {
-              const row = params.row;
-              if (params.field === "cancle") {
-                handleCancleClickOpen(row);
-              } else if (params.field === "approve") {
-                handleClickOpen(row);
-              }
-            }}
+           disableColumnFilter = {isMobile}
           /> 
         
             
