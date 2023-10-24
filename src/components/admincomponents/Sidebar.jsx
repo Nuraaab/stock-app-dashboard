@@ -10,10 +10,10 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import { Collapse } from "@mui/material";
-const Item = ({ title, to, icon, selected, setSelected, isCollapsed, isMobile, setIsCollapsed }) => {
+const Item = ({ title, to, icon, selected, setSelected, isCollapsed, isMobile, setIsCollapsed, handleSidebar }) => {
   const handleClick = (title) =>{
     if(isMobile){
-      setIsCollapsed(!isCollapsed);
+      handleSidebar();
     }
     setSelected(title);
   }
@@ -34,7 +34,7 @@ const Item = ({ title, to, icon, selected, setSelected, isCollapsed, isMobile, s
   );
 };
 
-const Itemtest = ({ title, to, icon, selected, setSelected, subMenu , isCollapsed, isMobile, setIsCollapsed}) => {
+const Itemtest = ({ title, to, icon, selected, setSelected, subMenu , isCollapsed, isMobile, setIsCollapsed, handleSidebar}) => {
    const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
   const handleSubMenuToggle = () => {
@@ -44,7 +44,7 @@ const Itemtest = ({ title, to, icon, selected, setSelected, subMenu , isCollapse
   };
   const handleIsMobile = () => {
     if(isMobile){
-      setIsCollapsed(!isCollapsed);
+      handleSidebar();
     }
   }
   const theme = useTheme();
@@ -152,6 +152,7 @@ const Sidebar = () => {
           color: "#6870fa !important",
         },
         height: '100vh',
+        width: isMobile ? '0px' : undefined
       }}
     >
       <ProSidebar collapsed={isCollapsed} breakPoint={breakPoint ? 'sm': ''}>
@@ -221,6 +222,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               setIsCollapsed={setIsCollapsed}
               isMobile={isMobile}
+              handleSidebar = {handleSidebar}
             />
 
             <Itemtest
@@ -231,6 +233,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               isMobile={isMobile}
               setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -260,6 +263,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               isMobile={isMobile}
               setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -308,6 +312,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               isMobile={isMobile}
               setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -337,6 +342,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               isMobile={isMobile}
               setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -367,6 +373,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               isMobile={isMobile}
               setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -396,6 +403,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               isMobile={isMobile}
               setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -425,6 +433,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               isMobile={isMobile}
               setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -463,6 +472,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               setIsCollapsed={setIsCollapsed}
               isMobile={isMobile}
+              handleSidebar={handleSidebar}
             />
              <Itemtest
               title="History"
@@ -472,6 +482,7 @@ const Sidebar = () => {
               isCollapsed={isCollapsed}
               isMobile={isMobile}
               setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
               subMenu={
                 <Menu>
                   <MenuItem
@@ -499,7 +510,6 @@ const Sidebar = () => {
       <IconButton sx={{
         marginTop: '30px',
         marginLeft: '5px',
-        overflowY: 'auto'
       }} className={display} onClick={() => handleSidebar()}>
                 <MenuOutlinedIcon />
        </IconButton>

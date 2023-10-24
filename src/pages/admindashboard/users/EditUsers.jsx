@@ -114,62 +114,10 @@ const EditUsers = () => {
                 <MenuItem value='admin'>Admin</MenuItem>
                 <MenuItem value='casher'>Casher</MenuItem>
               </Select>
-              {/* <TextField
-                fullWidth
-                variant="outlined"
-                type="text"
-                label="Contact Number"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.contact}
-                name="contact"
-                error={!!touched.contact && !!errors.contact}
-                helperText={touched.contact && errors.contact}
-                sx={{ gridColumn: "span 4" }}
-              /> */}
-              <TextField
-                fullWidth
-                variant="outlined"
-                type="password"
-                label="Password"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.password}
-                name="password"
-                error={!!touched.password && !!errors.password}
-                helperText={touched.password && errors.password}
-                sx={{ gridColumn: "span 4" }}
-              />
-              <TextField
-                fullWidth
-                
-                variant="outlined"
-                type="password"
-                label="Confirm Password"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.rpassword}
-                name="rpassword"
-                error={!!touched.rpassword && !!errors.rpassword}
-                helperText={touched.rpassword && errors.rpassword}
-                sx={{ gridColumn: "span 4" }}
-              />
+           
+             
+            
               
-               <label htmlFor="btn-upload">
-                <input
-                  id="btn-upload"
-                  name="upload"
-                  style={{ display: 'none'}}
-                  type="file"
-                  onChange={values.upload} />
-                <Button
-                style={{backgroundColor: colors.grey[200]}}
-                  className="btn-choose"
-                  variant="outlined"
-                  component="span" >
-                  Choose Files
-                </Button>
-              </label>
               <Box display="flex" justifyContent="end" mt="10px"  width='800px'>
               <Button type="submit" color="secondary" variant="contained">
                 EDIT USER

@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Modal, Select, TextField, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -8,7 +8,9 @@ import { useEffect, useState } from "react";
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
+import Message from "../../../../components/admincomponents/Message";
 const ViewShopItems = () => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -45,6 +47,10 @@ const ViewShopItems = () => {
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSaled, setIsSaled] = useState(false);
+  const [openCancle, setOpenCancle] = useState(false);
+  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
+  const [isCancled, setIsCancled] = useState(false);
+  const [reload, setReload] = useState(false);
   const navigate = useNavigate();
 //transaction type
   const handleTransactionType = (value) => {
@@ -84,18 +90,21 @@ const handleClickOpen = (row) => {
 
   
   const handleDelete = (row) => {
-    if(window.confirm(`Are you sure you want to delete ${row.name}?`)){
+    setIsCancled(true);
       Axios.delete(`/Shop/delete/${row._id}`).then((response) => {
         setMessage("Sale Deleted successfully!");
-        window.location.href = window.location.href;
+        setIsCancled(false);
+        setOpenCancle(false);
+        setReload(!reload);
      }).catch((error) => {
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
       } else {
         setErrorMessage("An error occurred");
       }
+      setIsCancled(false);
+        setOpenCancle(true);
 })
-    }
   };
   const saleResetForm = () => {
     setCustName('');
@@ -115,7 +124,8 @@ const handleClickOpen = (row) => {
         customerName: custName,
         paymentMethod: transactionType,
       }).then((response) => {
-        setMessage("Sale Adedded successfully!! " + response.data);
+        setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
+        setReload(!reload);
         Axios.post('/credit/add', {
           amount: price,
           customerName: custName,
@@ -124,10 +134,17 @@ const handleClickOpen = (row) => {
           warehouseName: selectedrow.warehouseName,
           paymentDate: creditDate
         }).then((response) => {
-          window.location.reload();
           setIsSaled(false);
-          setMessage("Credit Added succesfully!!");
+          setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
           setOpen(false);
+          setCustName('');
+          setPrice('');
+          setQuantity('');
+          setTransfer(false);
+          setCredit(false);
+          setTransactionType('');
+          setErrorMessage('');
+          setReload(!reload);
         }).catch((error) => {
           if (error.response && error.response.data) {
             setErrorMessage(error.response.data);
@@ -150,10 +167,17 @@ const handleClickOpen = (row) => {
         customerName: custName,
         paymentMethod: `${transactionType}(Bank Name: ${bankName}, Account Number: ${accountNumber})`,
       }).then((response) => {
-        window.location.reload();
         setOpen(false);
         setIsSaled(false);
         setMessage("Sale Adedded successfully!! ");
+        setCustName('');
+        setPrice('');
+        setQuantity('');
+        setTransfer(false);
+        setCredit(false);
+        setTransactionType('');
+        setErrorMessage('');
+        setReload(!reload);
       }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
@@ -168,10 +192,17 @@ const handleClickOpen = (row) => {
         customerName: custName,
         paymentMethod: transactionType,
       }).then((response) => {
-        window.location.reload();
         setOpen(false);
         setIsSaled(false);
-        setMessage("Sale Adedded successfully!! " + response.data);
+        setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
+        setCustName('');
+        setPrice('');
+        setQuantity('');
+        setTransfer(false);
+        setCredit(false);
+        setTransactionType('');
+        setErrorMessage('');
+        setReload(!reload);
       }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
@@ -182,6 +213,14 @@ const handleClickOpen = (row) => {
       })
     }
     }
+    const handleCancleClose = () => {
+      setOpenCancle(false);
+      setSelectedCancleRow(null);
+    };
+    const handleCancleClickOpen = (row) => {
+      setOpenCancle(true);
+      setSelectedCancleRow(row);
+  };
   useEffect(() => {
     Axios.get('/Shop/getall').then((response) => {
       setShopItems(response.data);
@@ -194,7 +233,7 @@ const handleClickOpen = (row) => {
         }
         setLoading(false);
        })
-}, []);
+}, [reload]);
 const getRowId = (row) => {
     return row._id;
   };
@@ -247,7 +286,7 @@ const getRowId = (row) => {
       headerName: "Delete",
       renderCell: ({ row }) => {
         // Render the delete button here
-        return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
+        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
     {
@@ -274,31 +313,11 @@ const getRowId = (row) => {
       Fill the information below
     </DialogTitle>
         <DialogTitle>
-        {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
+        <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
         </DialogTitle>
         <DialogContent>
           <TextField
+            required
             label="Customer Name"
             value={custName}
             onChange={(e) => setCustName(e.target.value)}
@@ -306,6 +325,8 @@ const getRowId = (row) => {
             margin="normal"
           />
           <TextField
+            required
+            type="number"
             label="Quantity"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
@@ -313,38 +334,51 @@ const getRowId = (row) => {
             margin="normal"
           />
            <TextField
+            required
             label="Price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             fullWidth
             margin="normal"
           />
+          <FormControl
+           fullWidth
+           sx={{gridColumn: "span 4" }}>
+                 <InputLabel id="demo-simple-select-helper-label">Select Transaction Type</InputLabel>
            <Select
+           required
             label="Transaction Type"
             value={transactionType}
             onChange={(e) => handleTransactionType(e.target.value)}
             fullWidth
             margin="normal"
           >
-            <MenuItem value="">Select Transaction Type</MenuItem>
             <MenuItem value="transfer">Transfer</MenuItem>
             <MenuItem value="cash">Cash</MenuItem>
             <MenuItem value="credit">Credit</MenuItem>
           </Select>
-          {transfer &&  <Select
+          </FormControl>
+          {transfer && 
+           <FormControl
+           fullWidth
+           sx={{gridColumn: "span 4" }}>
+                 <InputLabel id="demo-simple-select-helper-label">Select Bank Name</InputLabel>
+          <Select
+          required
             label="Bank Name"
             value={bankName}
             onChange={(e) => setBankName(e.target.value)}
             fullWidth
             margin="normal"
           >
-            <MenuItem value="">Select Bank Name</MenuItem>
             <MenuItem value="cbe">CBE</MenuItem>
             <MenuItem value="awash">Awash</MenuItem>
             <MenuItem value="abay">Abay</MenuItem>
           </Select>
+          </FormControl>
           }
           { transfer &&  <TextField
+          required
             label="Account Number"
             value={accountNumber}
             onChange={(e) => setAccountNumber(e.target.value)}
@@ -352,6 +386,7 @@ const getRowId = (row) => {
             margin="normal"
           />}
           {credit && <TextField
+          required
             label="phone Number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -360,6 +395,7 @@ const getRowId = (row) => {
           />}
           {
             credit && <TextField
+            required
             label="Payment Date"
             type="date"
             value={creditDate}
@@ -382,51 +418,37 @@ const getRowId = (row) => {
       </Dialog>
     <Box m="20px">
       <Header
-        title="VIEW SHOP ITEMS"
+        title="SHOP ITEMS"
       />
-       {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
-       {message && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {message}
-        </Alert>
-      </Collapse>
-    </Box>}
+      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+    <Dialog
+        fullScreen={fullScreen}
+        open={openCancle}
+        onClose={handleCancleClose}
+        aria-labelledby="responsive-dialog-title"
+        // maxWidth="md" // Set the desired width here
+        fullWidth
+      >
+      <DialogTitle id="delete-confirmation-dialog-title" style={{ textAlign: 'center' }}>Confirm Delete</DialogTitle>
+        <DialogTitle>
+        </DialogTitle>
+        <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Are you sure you want to delete this item?
+          </Typography>
+        </DialogContent>
+        <DialogActions  style={{ justifyContent: 'center' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
+            No
+          </Button>
+          <Button  variant="contained"
+            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
+            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     {loading && <LinearProgress color="secondary" />}
       <Box
         m="40px 0 0 0"
@@ -476,7 +498,7 @@ const getRowId = (row) => {
               const row = params.row;
 
               if (params.field === "delete") {
-                handleDelete(row);
+                handleCancleClickOpen(row);
               } else if (params.field === "sale") {
                 handleClickOpen(row);
               }

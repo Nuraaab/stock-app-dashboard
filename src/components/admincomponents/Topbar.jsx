@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, Tooltip, useTheme } from "@mui/material";
+import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../theme";
 import InputBase from "@mui/material/InputBase";
@@ -15,13 +15,21 @@ import { Logout, Person, PersonAdd, Settings } from '@mui/icons-material';
 import axios from 'axios';
 import { Link, Navigate } from 'react-router-dom';
 import { AuthContext } from '../../context/Context';
-
+import Account from './Account';
 const Topbar = () => {
+ 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const [openAccount, setOpenAccount] = React.useState(false);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  const handleClickOpen = () => {
+    setOpenAccount(true);
+};
+    const handleCloseAccount = () => {
+      setOpenAccount(false);
+    };
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -44,6 +52,7 @@ const Topbar = () => {
   }
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colorMode = useContext(ColorModeContext);
 
   return (
@@ -60,6 +69,7 @@ const Topbar = () => {
         </IconButton>
       </Box> */}
 {/* ICONS */}
+  <Account  fullScreen ={fullScreen} open= {openAccount}  handleClose = {handleCloseAccount}/>
       <Box display="flex">
         <IconButton onClick={colorMode.toggleColorMode}>
           <Tooltip title={theme.palette.mode === "dark" ? "Light mode" : "Dark mode"}>
@@ -132,7 +142,7 @@ const Topbar = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose} >
+        <MenuItem onClick={() => handleClickOpen()} >
           <ListItemIcon >
             <Person  fontSize= 'small'/>
           </ListItemIcon>
@@ -152,12 +162,12 @@ const Topbar = () => {
           </MenuItem>
         </Link>
         <MenuItem onClick={handleClose}>
-          <Link to="/my_account">
+          <Link to="/changePass">
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           <span style={{color:'white'}}>
-          Settings
+          Change Password
           </span>
           </Link>
         </MenuItem>

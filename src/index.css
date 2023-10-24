@@ -17,6 +17,9 @@ overflow-y: auto;
 scrollbar-width: none;
 -ms-overflow-style: none;
 }
+.input{
+  display: "none"
+}
 .display{
   display: none;
 }

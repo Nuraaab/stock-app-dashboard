@@ -5,7 +5,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import Axios from 'axios';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import CloseIcon from '@mui/icons-material/Close';
@@ -18,6 +18,9 @@ const AddUsers = () => {
   const [openAlert, setOpenAlert] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCashier, setIsCashier] = useState(false);
+  const [warehouseList, setwarehouseList] = useState([]);
+  const [reload, setReload] = useState(false);
+  const [loading, setLoading] = useState(true);
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values) => {
     setIsAdded(true);
@@ -26,6 +29,7 @@ const AddUsers = () => {
       email: values.email,
       phone: values.phone,
       type: values.type,
+      isSubstore: values.substoreController,
       password: values.password,
     }).then((response) => {
         setMessage(`User added successfully!`);
@@ -51,6 +55,19 @@ const AddUsers = () => {
    }
     handleChange(event); 
   };
+  useEffect(() => {
+    Axios.get('/warehouse/getall').then((response) => {
+        setwarehouseList(response.data);
+        setLoading(false);
+       }).catch((error) => {
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setLoading(false);
+       })
+}, [reload]);
   return (
     <Box m="20px">
       <Header title="ADD NEW USER" subtitle="" />
@@ -97,6 +114,7 @@ const AddUsers = () => {
         </Alert>
       </Collapse>
     </Box>}
+    {isCashier && loading && <LinearProgress color="secondary"/>}
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
@@ -124,6 +142,7 @@ const AddUsers = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
+
               <TextField
                 fullWidth
                 variant="outlined"
@@ -200,10 +219,35 @@ const AddUsers = () => {
                 onBlur={handleBlur}
                 onChange={(e) => handleUserTypeChange(e, handleChange)}
                >
-                 <MenuItem value='warehouse1'>Warehouse1</MenuItem>
-                 <MenuItem value='warehouse2'>Warehouse2</MenuItem>
+                  {
+                 warehouseList.map((warehouse) => (
+                    <MenuItem key={warehouse.id} value={warehouse.name}>{warehouse.name}</MenuItem>
+                  ))
+                  }
                </Select>
                <FormHelperText>{touched.warehouse && errors.warehouse}</FormHelperText>
+               </FormControl>
+              }
+              {
+                isCashier && <FormControl sx={{gridColumn: "span 4" }}
+                 error={!!touched.substoreController && !!errors.substoreController}>
+                 <InputLabel id="demo-simple-select-helper-label">Is the cashier control substore?</InputLabel>
+                <Select
+                fullWidth
+                variant="outlined"
+                error={!!touched.substoreController && !!errors.substoreController}
+                helperText={touched.substoreController && errors.substoreController}
+                sx={{ gridColumn: "span 4" ,color: "white"}}
+                value={values.substoreController}
+                name="substoreController"
+                label="Warehouse name"
+                onBlur={handleBlur}
+                onChange={(e) => handleUserTypeChange(e, handleChange)}
+               >
+                 <MenuItem value='yes'>Yes</MenuItem>
+                 <MenuItem value='no'>No</MenuItem>
+               </Select>
+               <FormHelperText>{touched.substoreController && errors.substoreController}</FormHelperText>
                </FormControl>
               }
               <TextField
@@ -269,6 +313,7 @@ const phoneRegExp =
 const checkoutSchema = yup.object().shape({
   fullname: yup.string().required("Full name required"),
   warehouse: yup.string().required("Warehouse name required"),
+  substoreController: yup.string().required("required"),
   type: yup.string().required("User type required"),
   email: yup.string().email("invalid email").required("Email required"),
   phone: yup
@@ -285,6 +330,7 @@ const initialValues = {
   rpassword: "",
   type: "",
   warehouse: "",
+  substoreController:""
 };
 
 export default AddUsers;

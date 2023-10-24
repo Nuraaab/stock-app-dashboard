@@ -38,7 +38,7 @@ import { AuthContext } from '../../context/Context';
 
 const defaultTheme = createTheme();
 
-export default function SignIn() {
+export default function ChangePassword() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [message, setMessage] = useState('');
@@ -52,18 +52,16 @@ export default function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      oldPassword: data.get('oldpassword'),
+      newPassword: data.get('newpassword'),
     });
-    Axios.post('/auth/login', {
-        email: data.get('email'),
-        password: data.get('password'),
+    Axios.post('/auth/pwdchange', {
+      oldPassword: data.get('oldpassword'),
+      newPassword: data.get('newpassword'),
        }).then((response) => {
         // setMessage("You are logged in successfully!!")
         setIsLoggedIn(false);
-        refreshUser(response.data||  null)
-        localStorage.setItem("user", JSON.stringify(response.data  ||null))
-          navigate('/');
+          navigate('/login');
        }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
@@ -106,26 +104,27 @@ export default function SignIn() {
           <Typography mt={5}  variant="h6" color={colors.grey[300]}  
           sx={{
             fontSize: 14, 
+            textAlign: 'center'
               }}>
-          Enter your credentials below
+          Enter the credentials below to change your password
         </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
+              name="oldpassword"
+              label="Enter Old Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
             />
-            <TextField
+             <TextField
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
+              name="newpassword"
+              label="Enter New Password"
               type="password"
               id="password"
               autoComplete="current-password"
@@ -140,20 +139,9 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-            {isLoggedIn ? <CircularProgress color='primary' size={30}/> : 'Sign In'}
+            {isLoggedIn ? <CircularProgress color='primary' size={30}/> : 'Submit'}
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="/forgotPass" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
+           
           </Box>
         </Box>
       </Container>

@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Modal, Select, TextField, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -9,6 +9,8 @@ import * as React from 'react';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
+import CircularProgress from "@mui/material/CircularProgress";
+import Message from "../../../../components/admincomponents/Message";
 const ViewSubStoreItems = () => {
   const [open, setOpen] = React.useState(false);
   const [openMove, setOpenMove] = useState(false);
@@ -40,19 +42,26 @@ const ViewSubStoreItems = () => {
   const [isSaled, setIsSaled] = useState(false);
   const [isMoved, setIsMoved] = useState(false);
   const [isMoveLoad, setIsMoveLoad] = useState(false);
+  const [openCancle, setOpenCancle] = useState(false);
+  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
+  const [isCancled, setIsCancled] = useState(false);
+  const [reload, setReload] = useState(false);
   const handleDelete = (row) => {
-    if(window.confirm(`Are you sure you want to delete ${row.name}?`)){
+       setIsCancled(true);
       Axios.delete(`/Substore/delete/${row._id}`).then((response) => {
         setMessage("Sale Deleted successfully!");
-        window.location.reload();
+        setIsCancled(false);
+        setOpenCancle(false);
+        setReload(!reload);
      }).catch((error) => {
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
       } else {
         setErrorMessage("An error occurred");
       }
+      setIsCancled(false);
+      setOpenCancle(true);
 })
-    }
   };
   const handleSale = (selectedrow) => {
     setIsSaled(true);
@@ -62,7 +71,7 @@ const ViewSubStoreItems = () => {
         customerName: custName,
         paymentMethod: transactionType,
       }).then((response) => {
-        setMessage("Sale Adedded successfully!! " + response.data);
+        setReload(!reload);
         Axios.post('/credit/add', {
           amount: price,
           customerName: custName,
@@ -71,10 +80,17 @@ const ViewSubStoreItems = () => {
           warehouseName: selectedrow.warehouseName,
           paymentDate: creditDate
         }).then((response) => {
-          window.location.reload();
-          setMessage("Credit Added succesfully!!");
+          setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
           setIsSaled(false);
           setOpen(false);
+          setCustName('');
+          setPrice('');
+          setQuantity('');
+          setTransactionType('');
+          setErrorMessage('');
+          setTransfer(false);
+          setCredit(false);
+          setReload(!reload);
         }).catch((error) => {
           if (error.response && error.response.data) {
             setErrorMessage(error.response.data);
@@ -97,10 +113,17 @@ const ViewSubStoreItems = () => {
         customerName: custName,
         paymentMethod: `${transactionType}(Bank Name: ${bankName}, Account Number: ${accountNumber})`,
       }).then((response) => {
-        window.location.reload();
         setOpen(false);
         setIsSaled(false);
-        setMessage("Sale Adedded successfully!! ");
+        setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
+        setCustName('');
+        setPrice('');
+        setQuantity('');
+        setTransactionType('');
+        setErrorMessage('');
+        setTransfer(false);
+        setCredit(false);
+        setReload(!reload);
       }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
@@ -115,10 +138,17 @@ const ViewSubStoreItems = () => {
         customerName: custName,
         paymentMethod: transactionType,
       }).then((response) => {
-        window.location.reload();
         setOpen(false);
         setIsSaled(false);
-        setMessage("Sale Adedded successfully!! " + response.data);
+        setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
+        setCustName('');
+        setPrice('');
+        setQuantity('');
+        setTransactionType('');
+        setErrorMessage('');
+        setTransfer(false);
+        setCredit(false);
+        setReload(!reload);
       }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
@@ -192,9 +222,9 @@ const ViewSubStoreItems = () => {
           warehouseName: warehouseName,
        }).then((response) => {
         setOpenMove(false);
-        setMessage(`Item ${row.name} is succesfully moved to Sub Store  ${warehouseName}`);
+        setMessage(`${quantityMove} ${row.name} is succesfully moved at Sub Store to  ${warehouseName}`);
         setIsMoved(false);
-        window.location.reload();
+        setReload(!reload);
        }).catch((error) => {
         setOpenMove(true);
         if (error.response && error.response.data) {
@@ -210,9 +240,9 @@ const ViewSubStoreItems = () => {
           warehouseName: warehouseName,
         }).then((response) => {
           setOpenMove(false);
-          setMessage(`Item ${row.name} is succesfully moved to Shop ${warehouseName}`);
+          setMessage(`${quantityMove} ${row.name} is succesfully moved at Shop to ${warehouseName}`);
           setIsMoved(false);
-          window.location.reload();
+          setReload(!reload);
         }).catch((error) => {
           if (error.response && error.response.data) {
             setErrorMessage(error.response.data);
@@ -254,10 +284,18 @@ const ViewSubStoreItems = () => {
         setErrorMessage("An error occurredf" + error);
       }
       setIsMoveLoad(false);
-       setIsSelected(false);
+      setIsSelected(false);
      })
    }
    }
+   const handleCancleClose = () => {
+    setOpenCancle(false);
+    setSelectedCancleRow(null);
+  };
+  const handleCancleClickOpen = (row) => {
+    setOpenCancle(true);
+    setSelectedCancleRow(row);
+};
   useEffect(() => {
     Axios.get('/Substore/getall').then((response) => {
         setSubStoreItems(response.data);
@@ -270,7 +308,7 @@ const ViewSubStoreItems = () => {
         }
         setLoading(false);
        })
-}, []);
+}, [reload]);
 const getRowId = (row) => {
     return row._id;
   };
@@ -323,7 +361,7 @@ const getRowId = (row) => {
       headerName: "Delete",
       renderCell: ({ row }) => {
         // Render the delete button here
-        return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
+        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
     {
@@ -359,32 +397,16 @@ const getRowId = (row) => {
       Fill the information below
     </DialogTitle>
         <DialogTitle>
-        {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
+        <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
        {isMoveLoad && <LinearProgress color="secondary"/>}
         </DialogTitle>
         <DialogContent>
+        <FormControl
+          fullWidth
+          sx={{gridColumn: "span 4" }}>
+                <InputLabel id="demo-simple-select-helper-label">Select store you want to move the item</InputLabel>
         <Select
+            required
             label="Move To Where"
             value={storeType}
             onChange={(e) => handleStoreType(e.target.value, selectedMoveRow)}
@@ -394,12 +416,17 @@ const getRowId = (row) => {
               marginBottom: '5px'
             }}
           >
-            <MenuItem value="">Select store you want to move the item </MenuItem>
             <MenuItem value="Sub Store">To Sub Store</MenuItem>
             <MenuItem value="Shop">To Shop</MenuItem>
           </Select>
-
-         { isSelected && <Select
+       </FormControl>
+         { isSelected && 
+         <FormControl
+         fullWidth
+         sx={{gridColumn: "span 4" }}>
+               <InputLabel id="demo-simple-select-helper-label">Select Warehouse Name</InputLabel>
+         <Select
+               required
                fullWidth
                variant="outlined"
                sx={{ gridColumn: "span 4" ,color: "white", marginBottom: '5px'}}
@@ -408,21 +435,24 @@ const getRowId = (row) => {
                label="Warehouse Name"
                onChange={(e) => setWarehouseName(e.target.value)}
               >
-                <MenuItem value=''>Select Warehouse Name</MenuItem>
+               
                 {
                  warehouseNameList.map((warehouse) => (
                     <MenuItem key={warehouse.id} value={warehouse.name}>{warehouse.name}</MenuItem>
                   ))
                 }
-           </Select>}
+           </Select>
+           </FormControl>
+           }
            {
             isSelected && <TextField
             sx={{
               marginBottom: '5px'
             }}
+            required
             fullWidth
             variant="outlined"
-            type="text"
+            type="number"
             label="Quantity"
             value={quantityMove}
             name="quantity"
@@ -453,31 +483,11 @@ const getRowId = (row) => {
       Fill the information below
     </DialogTitle>
         <DialogTitle>
-        {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
+        <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
         </DialogTitle>
         <DialogContent>
           <TextField
+           required
             label="Customer Name"
             value={custName}
             onChange={(e) => setCustName(e.target.value)}
@@ -485,45 +495,60 @@ const getRowId = (row) => {
             margin="normal"
           />
         <TextField
+           required
             label="Quantity"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             fullWidth
+            type="number"
             margin="normal"
           />
            <TextField
+           required
             label="Price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             fullWidth
             margin="normal"
           />
+           <FormControl
+          fullWidth
+          sx={{gridColumn: "span 4" }}>
+                <InputLabel id="demo-simple-select-helper-label">Select Transaction Type</InputLabel>
            <Select
+           required
             label="Transaction Type"
             value={transactionType}
             onChange={(e) => handleTransactionType(e.target.value)}
             fullWidth
             margin="normal"
           >
-            <MenuItem value="">Select Transaction Type</MenuItem>
             <MenuItem value="transfer">Transfer</MenuItem>
             <MenuItem value="cash">Cash</MenuItem>
             <MenuItem value="credit">Credit</MenuItem>
           </Select>
-          {transfer &&  <Select
+          </FormControl>
+          {transfer && 
+          <FormControl
+          fullWidth
+          sx={{gridColumn: "span 4" }}>
+                <InputLabel id="demo-simple-select-helper-label">Select Bank Name</InputLabel>
+          <Select
+          required
             label="Bank Name"
             value={bankName}
             onChange={(e) => setBankName(e.target.value)}
             fullWidth
             margin="normal"
           >
-            <MenuItem value="">Select Bank Name</MenuItem>
             <MenuItem value="cbe">CBE</MenuItem>
             <MenuItem value="awash">Awash</MenuItem>
             <MenuItem value="abay">Abay</MenuItem>
           </Select>
+          </FormControl>
           }
           { transfer &&  <TextField
+          required
             label="Account Number"
             value={accountNumber}
             onChange={(e) => setAccountNumber(e.target.value)}
@@ -531,6 +556,7 @@ const getRowId = (row) => {
             margin="normal"
           />}
           {credit && <TextField
+          required
             label="phone Number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -539,6 +565,7 @@ const getRowId = (row) => {
           />}
           {
             credit && <TextField
+            required
             label="Payment Date"
             type="date"
             value={creditDate}
@@ -559,32 +586,39 @@ const getRowId = (row) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        fullScreen={fullScreen}
+        open={openCancle}
+        onClose={handleCancleClose}
+        aria-labelledby="responsive-dialog-title"
+        // maxWidth="md" // Set the desired width here
+        fullWidth
+      >
+      <DialogTitle id="delete-confirmation-dialog-title" style={{ textAlign: 'center' }}>Confirm Delete</DialogTitle>
+        <DialogTitle>
+        </DialogTitle>
+        <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Are you sure you want to delete this item?
+          </Typography>
+        </DialogContent>
+        <DialogActions  style={{ justifyContent: 'center' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
+            No
+          </Button>
+          <Button  variant="contained"
+            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
+            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     <Box m="20px">
       <Header
-        title="VIEW SUB STORE ITEMS"
+        title="SUB STORE ITEMS"
       />
        {loading && <LinearProgress color="secondary" />}
-       {message && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {message}
-        </Alert>
-      </Collapse>
-    </Box>}
+       <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -633,7 +667,7 @@ const getRowId = (row) => {
               const row = params.row;
 
               if (params.field === "delete") {
-                handleDelete(row);
+                handleCancleClickOpen(row);
               }else if (params.field === "move"){
                 handleMoveClickOpen(row);
               }else if (params.field === "sale") {

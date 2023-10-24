@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, MenuItem, Modal, Select, TextField, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, MenuItem, Modal, Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -26,37 +26,55 @@ const PendingShopItem = () => {
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isCancled, setIsCancled] = useState(false);
+  const [openCancle, setOpenCancle] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
   const [warehouseLoading, setWarehouseLoading] = useState(true);
+  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
+  const [reload, setReload] = useState(false);
 //   const handleEdit = (row) => {
 //     navigate(`/edit_main_store_items`, { state: { rowData: row } });
 //   };
   
   const handleDelete = (row) => {
-    if(window.confirm('Are you sure you want to delete this sale?')){
-      Axios.delete(`/pending/delete/${row._id}`).then((response) => {
-        setMessage("Sale Deleted successfully!");
-        window.location.reload();
+    setIsCancled(true);
+    Axios.delete(`/ToShopPending/undo/${row._id}`).then((response) => {
+      setOpenCancle(false);
+      console.log(response.data);
+      console.log('Adding successfull');
+      setIsCancled(false);
+      setMessage(`Sale Cancled successfully!!!`);
+      setReload(!reload);
      }).catch((error) => {
+      setOpenCancle(true);
+      console.log(error);
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
       } else {
         setErrorMessage("An error occurred");
       }
-      })
-    }
+      setIsCancled(false);
+     })
   };
+  const handleCancleClickOpen = (row) => {
+    setOpenCancle(true);
+    setSelectedCancleRow(row);
+};
+const handleCancleClose = () => {
+  setOpenCancle(false);
+  setSelectedCancleRow(null);
+};
   const handleApprove = (selectedrow) => {
     setIsApproved(true);
-    Axios.post(`/pending/approve/${selectedrow._id}`, {
-        warehouseName: warehouseName,
+    Axios.post(`/ToShopPending/approve/${selectedrow._id}`, {
+        warehouseName: selectedrow.to,
+        quantity: selectedrow.quantity,
        }).then((response) => {
         setOpen(false);
         console.log(response.data);
-        console.log('Adding successfull');
         setIsApproved(false);
-        setMessage(`Adding ${response.data.name} is successfull!`);
-        navigate('/mainstore');
+        setMessage(`Sales Approved successfully!`);
+        setReload(!reload);
        }).catch((error) => {
         setOpen(true);
         console.log(error);
@@ -72,7 +90,7 @@ const PendingShopItem = () => {
             setOpen(true);
             setSelectedRow(row);
     Axios.get('/warehouse/getall').then((response) => {
-        const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Main Store");
+        const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Shop");
         setFilteredWarehouseList(filteredWarehouse);
         setWarehouseLoading(false);
         console.log('warehouse');
@@ -106,7 +124,7 @@ const PendingShopItem = () => {
         }
         setLoading(false);
        })
-}, []);
+}, [reload]);
 
 const getRowId = (row) => {
     return row._id;
@@ -155,18 +173,6 @@ const getRowId = (row) => {
         cellClassName: "name-column--cell",
       },
       {
-        field: "warehouseType",
-        headerName: "Warehouse Type",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "paymentMethod",
-        headerName: "Payment Methods",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
         field: "from",
         headerName: "From",
         flex: 1,
@@ -193,7 +199,7 @@ const getRowId = (row) => {
       headerName: "Delete",
       renderCell: ({ row }) => {
         // Render the delete button here
-        return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
+        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Cancle</button>;
       },
     },
     {
@@ -223,58 +229,55 @@ const getRowId = (row) => {
       id="responsive-dialog-title"
       style={{ textAlign: 'center' }}
     >
-      Fill the information below
+      Approve Sales
     </DialogTitle>
         <DialogTitle>
-        {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
-        {warehouseLoading && <LinearProgress  color="secondary"/>}
         </DialogTitle>
-        <DialogContent>
-        <Select
-               fullWidth
-               variant="outlined"
-               sx={{ gridColumn: "span 4" ,color: "white"}}
-               value={warehouseName}
-               name="warehouse"
-               label="Warehouse Name"
-               onChange={(e) => setWarehouseName(e.target.value)}
-              >
-                <MenuItem value=''>Select Warehouse Name</MenuItem>
-                {
-                 filteredWarehouseList.map((warehouse) => (
-                    <MenuItem key={warehouse.id} value={warehouse.name}>{warehouse.name}</MenuItem>
-                  ))
-                }
-                
-              </Select>
+        <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Typography variant="body1">
+         Do yo want to approve this sale?
+         </Typography>
         </DialogContent>
-        <DialogActions>
-          <Button style={{ color: 'white' }} onClick={handleClose}>
-            Cancel
+        <DialogActions style={{ justifyContent: 'center' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleClose()} >
+            No
           </Button>
-          <Button style={{ color: 'white' }} onClick={() => handleApprove(selectedRow)}  disabled ={isApproved}>
-            {isApproved ? <CircularProgress color="secondary" size={30}/> : 'Approve'}
+          <Button variant="contained" color="primary" onClick={() => handleApprove(selectedRow)}  disabled ={isApproved}>
+            {isApproved ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+            <Dialog
+        fullScreen={fullScreen}
+        open={openCancle}
+        onClose={handleCancleClose}
+        aria-labelledby="responsive-dialog-title"
+        fullWidth
+        
+      >
+        <DialogTitle id="responsive-dialog-title" style={{ textAlign: 'center' }}>
+          Cancel Sale
+        </DialogTitle>
+        <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Are you sure you want to cancel this sale?
+          </Typography>
+        </DialogContent>
+        <DialogActions style={{ justifyContent: 'center' }}>
+          <Button variant="outlined" color="inherit" onClick={handleCancleClose}>
+            No
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleDelete(selectedCancleRow)}
+            disabled={isCancled}
+          >
+            {isCancled ? (
+              <CircularProgress color="inherit" size={20} />
+            ) : (
+              'Yes'
+            )}
           </Button>
         </DialogActions>
       </Dialog>
@@ -375,7 +378,7 @@ const getRowId = (row) => {
               const row = params.row;
 
              if(params.field === "delete") {
-                handleDelete(row);
+              handleCancleClickOpen(row);
               } else if (params.field === "approve") {
                 handleClickOpen(row);
               }

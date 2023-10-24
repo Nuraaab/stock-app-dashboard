@@ -1,4 +1,4 @@
-import { Alert, Box, Collapse, IconButton, Modal } from "@mui/material";
+import { Alert, Box, Button, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Modal, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -9,33 +9,50 @@ import { useNavigate } from "react-router-dom";
 import { Warehouse } from "@mui/icons-material/";
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from "@mui/material/LinearProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 const ViewWareHouses = () => {
   const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
   const [warehouse , setWarehouse] = useState([]);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [openAlert, setOpenAlert] = useState(true);
+  const [openCancle, setOpenCancle] = useState(false);
+  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
+  const [isCancled, setIsCancled] = useState(false);
+  const [reload, setReload] = useState(false);
   const navigate = useNavigate();
   const handleEdit = (row) => {
     navigate(`/edit_ware_house`, { state: { rowData: row } });
   };
   
   const handleDelete = (row) => {
-    if(window.confirm(`Are you sure you want to delete ${row.name}?`)){
+     setIsCancled(true);
       Axios.delete(`/warehouse/delete/${row._id}`).then((response) => {
         setMessage(`${row.name} deleted successfully!`);
-        window.location.reload();
+        setIsCancled(false);
+        setOpenCancle(false);
+        setReload(!reload);
       }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
         } else {
           setErrorMessage("An error occurred");
         }
+        setIsCancled(false);
+        setOpenCancle(true);
       })
-    }
   };
+  const handleCancleClose = () => {
+    setOpenCancle(false);
+    setSelectedCancleRow(null);
+  };
+  const handleCancleClickOpen = (row) => {
+    setOpenCancle(true);
+    setSelectedCancleRow(row);
+};
   useEffect(() => {
     Axios.get('/warehouse/getall').then((response) => {
         setWarehouse(response.data);
@@ -49,7 +66,7 @@ const ViewWareHouses = () => {
         }
         setLoading(false);
        })
-}, []);
+}, [reload]);
 const getRowId = (row) => {
     return row._id;
   };
@@ -77,7 +94,7 @@ const getRowId = (row) => {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
+        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
   ];
@@ -129,6 +146,31 @@ const getRowId = (row) => {
         </Alert>
       </Collapse>
     </Box>}
+    <Dialog
+        fullScreen={fullScreen}
+        open={openCancle}
+        onClose={handleCancleClose}
+        aria-labelledby="responsive-dialog-title"
+        // maxWidth="md" // Set the desired width here
+        fullWidth
+      >
+      <DialogTitle id="delete-confirmation-dialog-title" style={{ textAlign: 'center' }}>Confirm Delete</DialogTitle>
+       
+        <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Are you sure you want to delete this item?
+          </Typography>
+        </DialogContent>
+        <DialogActions  style={{ justifyContent: 'center' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
+            No
+          </Button>
+          <Button  variant="contained"
+            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
+            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
       {loading && <LinearProgress color="secondary"/>}
       <Box
         m="40px 0 0 0"
@@ -180,7 +222,7 @@ const getRowId = (row) => {
               if (params.field === "edit") {
                 handleEdit(row);
               } else if (params.field === "delete") {
-                handleDelete(row);
+                handleCancleClickOpen(row);
               }
             }}
           />

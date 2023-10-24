@@ -122,6 +122,7 @@ const Dashboard = () => {
     Axios.get('/warehouse/getall').then((response) => {
       setTotalWarehouse(response.data.length);
       setWarehouseList(response.data);
+      console.log('name' + response.data._id)
     }).catch((error) => {
      if (error.response && error.response.data) {
        setErrorMessage(error.response.data);
@@ -483,65 +484,7 @@ const Dashboard = () => {
          
         </Box>
         
-          {/* <Box
-           gridColumn={{ xs: "span 12", sm: "span 12" }}
-           gridRow="span 3"
-           backgroundColor={colors.primary[400]}
-           p={2}
-           pb={4}
-           
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-        }}
-      >
-        <Typography variant="h5" fontWeight="600">
-            Recent Sales
-          </Typography>
-        <DataGrid
-            rows={mockDataTeam}
-            columns={columns}
-            components={{ Toolbar: GridToolbar }}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                style: { color: "red" },
-              },
-            }}
-            checkboxSelection
-            onCellClick={(params) => {
-              const row = params.row;
-              if (params.field === "delete") {
-                // handleDelete(row);
-              }
-            }}
-          />
-      </Box> */}
-         
+      
        {
         warehouseList.map((warehouse) => (
           <RecentSales name={warehouse.name}/>

@@ -1,4 +1,4 @@
-import { Alert, Box, CircularProgress, IconButton, Modal } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Modal, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -9,34 +9,51 @@ import { useEffect, useState } from "react";
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
+import Message from "../../../components/admincomponents/Message";
 const ViewItems = () => {
   const [itemList , setItemList] = useState([]);
   const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
   const [itemType , setItemType] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [openAlert, setOpenAlert] = useState(true);
+  const [openCancle, setOpenCancle] = useState(false);
+  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
+  const [isCancled, setIsCancled] = useState(false);
+  const [reload, setReload] = useState(false);
   const navigate = useNavigate();
   const handleEdit = (row) => {
     navigate(`/edit_items`, { state: { rowData: row } });
   };
   
   const handleDelete = (row) => {
-    if(window.confirm(`Are you sure you want to delete ${row.name}?`)){
+    setIsCancled(true);
       Axios.delete(`/items/delete/${row._id}`).then((response) => {
         setMessage(`${row.name} deleted successfully!`);
-        window.location.reload();
+        setReload(!reload);
+        setIsCancled(false);
+        setOpenCancle(false);
       }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
         } else {
           setErrorMessage("An error occurred");
         }
+        setIsCancled(false);
+        setOpenCancle(true);
       })
-    }
   };
+  const handleCancleClose = () => {
+    setOpenCancle(false);
+    setSelectedCancleRow(null);
+  };
+  const handleCancleClickOpen = (row) => {
+    setOpenCancle(true);
+    setSelectedCancleRow(row);
+};
   useEffect(() => {
     Axios.get('/items/getall').then((response) => {
       setItemList(response.data);
@@ -50,7 +67,7 @@ const ViewItems = () => {
         }
         setLoading(false);
        })
-}, []);
+}, [reload]);
 const getRowId = (row) => {
     return row._id;
   };
@@ -92,60 +109,44 @@ const getRowId = (row) => {
       headerName: "Delete",
       renderCell: ({ row }) => {
         // Render the delete button here
-        return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 " >Delete</button>;
+        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 " >Delete</button>;
       },
     },
   ];
   return (
     <Box m="20px">
       <Header
-        title="VIEW ITEM TYPE"
+        title="ITEM TYPE"
       />
-       {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
-       {message && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="success"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {message}
-        </Alert>
-      </Collapse>
-    </Box>}
+      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
     {loading && <LinearProgress color="secondary"/>}
+    <Dialog
+        fullScreen={fullScreen}
+        open={openCancle}
+        onClose={handleCancleClose}
+        aria-labelledby="responsive-dialog-title"
+        // maxWidth="md" // Set the desired width here
+        fullWidth
+      >
+       <DialogTitle id="delete-confirmation-dialog-title" style={{ textAlign: 'center' }}>Confirm Delete</DialogTitle>
+        <DialogTitle>
+        </DialogTitle>
+        <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Are you sure you want to delete this item?
+          </Typography>
+        </DialogContent>
+        <DialogActions  style={{ justifyContent: 'center' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
+            No
+          </Button>
+          <Button  variant="contained"
+            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
+            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     <Box
         m="40px 0 0 0"
         height="75vh"
@@ -200,7 +201,7 @@ const getRowId = (row) => {
               if (params.field === "edit") {
                 handleEdit(row);
               } else if (params.field === "delete") {
-                handleDelete(row);
+                handleCancleClickOpen(row);
               }
             }}
           />

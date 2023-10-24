@@ -38,13 +38,15 @@ import { AuthContext } from '../../context/Context';
 
 const defaultTheme = createTheme();
 
-export default function SignIn() {
+export default function ForgotPassword() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
+  const [isEmailsent, setIsEmailSent] = useState(false);
+  const [isUserVerified, setIsUserVerified] = useState(false);
   const navigate = useNavigate();
   const { refreshUser } = useContext(AuthContext)
   const handleSubmit = (event) => {
@@ -107,7 +109,7 @@ export default function SignIn() {
           sx={{
             fontSize: 14, 
               }}>
-          Enter your credentials below
+          Enter the credentials below to reset your password
         </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -120,16 +122,26 @@ export default function SignIn() {
               autoComplete="email"
               autoFocus
             />
-            <TextField
+           { isEmailsent && <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="otp"
+              label="Enter the code sent to your email"
+              type="number"
+              id="otp"
+              autoComplete="otp"
+            />}
+            {isEmailsent && isUserVerified && <TextField
               margin="normal"
               required
               fullWidth
               name="password"
-              label="Password"
+              label="Enter New Password"
               type="password"
               id="password"
-              autoComplete="current-password"
-            />
+              autoComplete="new-password"
+            />}
             {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -140,20 +152,8 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-            {isLoggedIn ? <CircularProgress color='primary' size={30}/> : 'Sign In'}
+            {isLoggedIn ? <CircularProgress color='primary' size={30}/> : 'Submit'}
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="/forgotPass" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
       </Container>

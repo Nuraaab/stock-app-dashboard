@@ -45,6 +45,8 @@ import PendingShopSale from "./pages/admindashboard/pending/PendingShopSale";
 import PendingShopItem from "./pages/admindashboard/pending/PendingShopItems";
 import { AuthContext } from "./context/Context";
 import SignIn from "./pages/auth/Login";
+import ChangePassword from "./pages/auth/ChangePassword";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 function App() {
 
@@ -56,7 +58,6 @@ function App() {
 
     if (currentUser === null) {
       return <Navigate to="/login" />
-
     } else {
       return children
     }
@@ -84,9 +85,11 @@ function App() {
 const router = createBrowserRouter([
     {
       path: "/",
-      element: (<ProtectedRoute>
+      element: (
+      <ProtectedRoute>
         <Layout />
-      </ProtectedRoute>),
+        </ProtectedRoute>
+        ),
       children: [
         {
           path: "/",
@@ -209,6 +212,14 @@ const router = createBrowserRouter([
     {
       path: "/login",
       element: <SignIn />,
+    },
+    {
+      path: "/changePass",
+      element: <ChangePassword />,
+    },
+    {
+      path: '/forgotPass',
+      element: <ForgotPassword />
     }
   ]);
 
