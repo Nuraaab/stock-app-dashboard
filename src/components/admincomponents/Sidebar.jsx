@@ -61,7 +61,7 @@ const Itemtest = ({ title, to, icon, selected, setSelected, subMenu , isCollapse
         }}
         onClick={() => !isCollapsed && handleSubMenuToggle()}
         icon={icon}
-        suffix={!isCollapsed && (isSubMenuOpen ? <i className="fa fa-sort-up"></i> : <i className="fa fa-sort-down"></i>)}
+        suffix={!isCollapsed && ( isSubMenuOpen ? <i className="fa fa-sort-up"></i> : <i className="fa fa-sort-down"></i>)}
       >
         <Typography>{title}</Typography>
         {/* <Link to={to} /> */}
@@ -82,10 +82,12 @@ const Sidebar = () => {
   const [selected, setSelected] = useState("Dashboard");
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
+  const [profile, setProfile] =useState('');
   const [role, setRole] = useState('');
   const [isMobile, setisMobile] = useState(false);
   const [breakPoint, setBreakPoint] = useState(false);
   const [display, setDisplay] = useState('');
+  const [reload, setReload] = useState(false);
   useEffect(() => {
     Axios.post('/auth/refresh',{
       withCredentials: true,
@@ -93,6 +95,7 @@ const Sidebar = () => {
         setUserName(response.data.adminName);
         setEmail(response.data.email);
         setRole(response.data.type);
+        setProfile(response.data.profile);
         console.log(username);
         console.log(email);
        }).catch((error) => {
@@ -192,7 +195,7 @@ const Sidebar = () => {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src={`../../assets/user.png`}
+                  src={profile ? profile : `../../assets/user.png`}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>

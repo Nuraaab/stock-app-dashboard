@@ -25,6 +25,9 @@ import PieChart from "../../../components/PieChart";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import RecentSales from "../../../components/admincomponents/RecentSales";
 import LinearProgress from "@mui/material/LinearProgress";
+import Formatting from "../../../components/admincomponents/Test";
+import MyResponsivePie from "../../../components/admincomponents/Test";
+import TestLine from "../../../components/admincomponents/TestLine";
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -457,6 +460,8 @@ const Dashboard = () => {
           </Box>
           <Box height={{xs:'250px', sm:'400px'}} m="-20px 0 0 0">
             <LineChart isDashboard={true}  lineData={lineData}/>
+            {/* <TestLine /> */}
+          
           </Box>
         </Box>
         <Box
@@ -481,7 +486,8 @@ const Dashboard = () => {
           <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
              Sales Report
             </Typography>
-          <PieChart size = '80' />
+          {/* <PieChart size = '80' /> */}
+          <MyResponsivePie />
          
         </Box>
         

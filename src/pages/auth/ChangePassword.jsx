@@ -61,7 +61,7 @@ export default function ChangePassword() {
        }).then((response) => {
         // setMessage("You are logged in successfully!!")
         setIsLoggedIn(false);
-          navigate('/login');
+          navigate('/');
        }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);

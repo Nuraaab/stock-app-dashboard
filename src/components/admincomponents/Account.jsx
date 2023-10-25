@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import { Avatar, useTheme } from "@mui/material";
 import  Axios  from 'axios';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CircularProgress from '@mui/material/CircularProgress';
+import Message from './Message';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -44,6 +46,13 @@ const Account = ({fullScreen, open, handleClose}) => {
   const [phone, setPhone] = useState('');
   const [profileImage, setProfileImage] = useState('');
   const [role, setRole] = useState('');
+  const [profile, setProfile] = useState('');
+  const [isUploaded, setIsUploaded] = useState(true);
+  const [upload, setUpload] = useState(false);
+  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [openAlert, setOpenAlert] = useState(true);
+  const [reload, setReload] = useState(false);
   const covertToBase64 = (e) => {
     var reader = new FileReader();
     reader.readAsDataURL(e.target.files[0]);
@@ -56,12 +65,22 @@ const Account = ({fullScreen, open, handleClose}) => {
     };
 }
 const handleUpload = () => {
+  setUpload(true);
   Axios.post(`/auth/update/${userId}`, {
     profile: profileImage.profile,
   }).then((response) => {
-
+    setMessage('Profile Updated successfully!!!');
+    setUpload(false);
+    setReload(!reload);
+ setIsUploaded(false);
   }).catch((error) => {
-    
+   if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+      }
+      setIsUploaded(true);
+      setUpload(false);
   })
 }
   useEffect(() => {
@@ -73,10 +92,11 @@ const handleUpload = () => {
       setPhone(response.data.phone);
       setRole(response.data.type);
       setUserId(response.data._id);
+      setProfile(response.data.profile);
        }).catch((error) => {
         console.log(error);
        })
-}, []);
+}, [reload]);
   return (
     <BootstrapDialog
       // fullScreen ={fullScreen}
@@ -100,6 +120,8 @@ const handleUpload = () => {
       >
         <CloseIcon />
       </IconButton>
+      {message && <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>}
+      {errorMessage && <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>}
       <DialogContent dividers sx={{ display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}> 
       <Avatar sx={{ m: 0, bgcolor: 'secondary.main', width: '150px',  
            height: '150px'}} >
@@ -107,7 +129,7 @@ const handleUpload = () => {
                   alt="profile-user"
                   width="150px"
                   height="150px"
-                  src=  { profileImage.profile ? profileImage.profile :`../../assets/user.png`}
+                  src=  {profile ? profile : (profileImage.profile ? profileImage.profile :`../../assets/user.png`)}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                   
                 />
@@ -133,9 +155,9 @@ const handleUpload = () => {
         
 
    
-       {profileImage.profile && <Button variant="contained"
-            color="primary" onClick={() => handleUpload()}> 
-          Cahnge Profile
+       {isUploaded && profileImage.profile && <Button variant="contained"
+            color="primary" onClick={() => handleUpload()} > 
+          {upload ? <CircularProgress color='secondary' size={25}/> : 'Cahnge Profile'}
         </Button>}
       </DialogActions>
     </BootstrapDialog>
