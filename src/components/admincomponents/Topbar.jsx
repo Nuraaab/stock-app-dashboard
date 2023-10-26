@@ -13,25 +13,58 @@ import SearchIcon from "@mui/icons-material/Search";
 import { MenuItem } from 'react-pro-sidebar';
 import { Logout, Person, PersonAdd, Settings } from '@mui/icons-material';
 import axios from 'axios';
+import Axios from 'axios';
+import { useEffect, useState } from "react";
 import { Link, Navigate } from 'react-router-dom';
 import { AuthContext } from '../../context/Context';
+import { formatDistanceToNow } from 'date-fns';
 import Account from './Account';
+const styles = {
+  notification: {
+    padding: '10px',
+    borderRadius: '5px',
+    cursor:'pointer'
+  },
+  notificationInfo: {
+    fontSize: '14px',
+    color: '#fff',
+    margin: '0',
+  },
+  cashier: {
+    fontWeight: 'bold',
+  },
+  quantity: {
+    fontStyle: 'italic',
+  },
+};
 const Topbar = () => {
  
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const [openAccount, setOpenAccount] = React.useState(false);
+
+  const [anchorE2, setAnchorE2] = React.useState(null);
+  const openNot = Boolean(anchorE2);
+  const [openAccountNot, setOpenAccountNot] = React.useState(false);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+  const handleClickNot = (event) => {
+    setAnchorE2(event.currentTarget);
   };
   const handleClickOpen = () => {
     setOpenAccount(true);
 };
+
     const handleCloseAccount = () => {
       setOpenAccount(false);
     };
+   
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleCloseNot = () => {
+    setAnchorE2(null);
   };
   const { refreshUser } = useContext(AuthContext)
 
@@ -54,21 +87,26 @@ const Topbar = () => {
   const colors = tokens(theme.palette.mode);
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colorMode = useContext(ColorModeContext);
+  const [notifications, setNotifiCations] = useState([]);
+  const [errorMessage, setErrorMessage] =useState('');
+  const [count, setCount] = useState(0);
 
+  useEffect(() => {
+    Axios.get('/toshoppending/getall').then((response) => {
+    setNotifiCations(response.data);
+    setCount(response.data.length);
+    console.log('count' + count);
+     }).catch((error) => {
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+      }
+     })
+  }, []);
   return (
     <Box display="flex" justifyContent="end" p={2}>
-      {/* SEARCH BAR */}
-      {/* <Box
-        display="flex"
-        backgroundColor={colors.primary[400]}
-        borderRadius="3px"
-      >
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
-        <IconButton type="button" sx={{ p: 1 }}>
-          <SearchIcon />
-        </IconButton>
-      </Box> */}
-{/* ICONS */}
+    
   <Account  fullScreen ={fullScreen} open= {openAccount}  handleClose = {handleCloseAccount}/>
       <Box display="flex">
         <IconButton onClick={colorMode.toggleColorMode}>
@@ -80,20 +118,14 @@ const Topbar = () => {
             )}
           </Tooltip>
         </IconButton>
-        <IconButton>
+        <IconButton >
           <Tooltip title="notifications">
-            <Badge badgeContent={4} color="error">
-              <NotificationsOutlinedIcon />
+            <Badge badgeContent={count} color="error"> 
+              <NotificationsOutlinedIcon  onClick={handleClickNot}/>
             </Badge>
           </Tooltip>
         </IconButton>
-        {/* <IconButton>
-          <Tooltip title="Account settings">
-            <Link to="/my_account">
-              <SettingsOutlinedIcon color='secondary'/>
-            </Link>
-          </Tooltip>
-        </IconButton> */}
+    
         <IconButton>
           <Tooltip title="Account">
             <PersonOutlinedIcon
@@ -177,6 +209,57 @@ const Topbar = () => {
           </ListItemIcon>
           Logout
         </MenuItem>
+      </Menu>
+      <Menu
+        anchorEl={anchorE2}
+        id="account-menu"
+        open={openNot}
+        onClose={handleCloseNot}
+        onClick={handleCloseNot}
+        
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            p: 2,
+            paddingRight: 5,
+            paddingTop: 2,
+            paddingLeft: 2,
+            paddingBottom: 2,
+            '& .MuiAvatar-root': {
+              width: 30,
+              height: 30,
+              ml: -0.5,
+              mr: 1,
+            },
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+              {notifications.map((message) => (
+          <div key={message._id} style={styles.notification}>
+            <p style={styles.notificationInfo}>
+              <Link style={{color: 'white'}} to='/pendingshopitems'>
+              <span style={styles.cashier}>{message.cashierName}</span> requested <span style={styles.quantity}>{message.quantity}</span> {message.name} {formatDistanceToNow(new Date(message.createdAt))} ago
+              </Link>
+            </p>
+          </div>
+        ))}
       </Menu>
     </Box>
   );

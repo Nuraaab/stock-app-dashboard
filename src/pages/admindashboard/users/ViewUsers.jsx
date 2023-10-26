@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import CircularProgress from '@mui/material/CircularProgress';
 import Message from "../../../components/admincomponents/Message";
 import { styled } from '@mui/material/styles';
+import { useNavigate } from "react-router-dom";
+import LinearProgress from "@mui/material/LinearProgress";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -35,10 +37,9 @@ const ViewUsers = () => {
   const [openAlert, setOpenAlert] = useState(true);
   const [reload, setReload] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const navigate = useNavigate();
   const handleEdit = (row) => {
-    // Open a modal dialog with the current row data
-    const modal = new Modal(row);
-    modal.open();
+    navigate(`/edit_users`, { state: { rowData: row } });
   };
   
   const handleDelete = (row) => {
@@ -100,12 +101,6 @@ const getRowId = (row) => {
     {
       field: "phone",
       headerName: "Phone Number",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "profile",
-      headerName: "Profile",
       flex: 1,
       cellClassName: "name-column--cell",
     },
@@ -175,8 +170,9 @@ const getRowId = (row) => {
           </Button>
         </DialogActions>
       </BootstrapDialog>
-      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
-      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+      {message && <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>}
+     {errorMessage && <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>}
+     {loading && <LinearProgress color="secondary" />}
       <Box
         margin={0}
         height="75vh"

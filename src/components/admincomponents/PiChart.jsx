@@ -1,45 +1,12 @@
-// install (please try to align the version of installed @nivo packages)
-// yarn add @nivo/pie
-import { ResponsivePie } from '@nivo/pie'
 
-// make sure parent container have a defined height when using
-// responsive component, otherwise height will be 0 and
-// no chart will be rendered.
-// website examples showcase many properties,
-// you'll often use just a few of them.
-const MyResponsivePie = () => {
-    const data = [
-        {
-          "id": "ruby",
-          "label": "ruby",
-          "value": 365,
-          "color": "hsl(297, 70%, 50%)"
-        },
-        {
-          "id": "erlang",
-          "label": "erlang",
-          "value": 30,
-          "color": "hsl(239, 70%, 50%)"
-        },
-        {
-          "id": "hack",
-          "label": "hack",
-          "value": 402,
-          "color": "hsl(318, 70%, 50%)"
-        },
-        {
-          "id": "sass",
-          "label": "sass",
-          "value": 220,
-          "color": "hsl(242, 70%, 50%)"
-        },
-        {
-          "id": "stylus",
-          "label": "stylus",
-          "value": 498,
-          "color": "hsl(86, 70%, 50%)"
-        }
-      ]
+import { ResponsivePie } from '@nivo/pie'
+import { useEffect } from 'react';
+import { useState } from 'react';
+import Axios from 'axios';
+const MyResponsivePie = ({data}) => {
+     console.log('fafffffffff' + data);
+   
+    
    return(
     <ResponsivePie
     data={data}
@@ -57,7 +24,7 @@ const MyResponsivePie = () => {
             <strong>{datum.label}</strong>
           </div>
           <div>
-            Value: <strong>{datum.value}</strong>
+            Total Item: <strong>{datum.value}</strong>
           </div>
         </div>
       )}

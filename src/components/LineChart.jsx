@@ -8,6 +8,7 @@ import { useState } from "react";
 const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  
  console.log(lineData);
   return (
     <ResponsiveLine

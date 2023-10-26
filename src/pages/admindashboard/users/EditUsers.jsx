@@ -1,22 +1,57 @@
 import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, resetForm } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
-
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import Axios from 'axios';
+import CircularProgress from "@mui/material/CircularProgress";
 const EditUsers = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const handleFormSubmit = (values) => {
+  const location = useLocation();
+  const [isEdited, setIsEdited] = useState(false);
+  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
+  const  rowData = location.state.rowData;
+  const initialValues = {
+    fullname: rowData.adminName,
+    email: rowData.email,
+    phone: rowData.phone,
+  };
+  const handleFormSubmit = (values, {resetForm}) => {
+    setIsEdited(true);
+   Axios.post(`/auth/update/${rowData._id}`, {
+    adminName: values.fullname,
+    email: values.email,
+    phone: values.phone,
+   }).then((response) => {
+    console.log(response.data);
+    console.log('Updating successfull');
+    setIsEdited(false);
+    setMessage('User Updated Successfully!');
+    resetForm();
+    navigate('/view_users');
+   }).catch((error) => {
+    console.log(error);
+    if (error.response && error.response.data) {
+      setErrorMessage(error.response.data);
+    } else {
+      setErrorMessage("An error occurred");
+    }
+    setIsEdited(false);
+   })
     console.log(values);
   };
+ 
 
   return (
     <Box m="20px">
       <Header title="EDIT USERS" subtitle="" />
-
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
@@ -72,19 +107,6 @@ const EditUsers = () => {
                 helperText={touched.email && errors.email}
                 sx={{ gridColumn: "span 2" }}
               />
-              {/* <TextField
-                fullWidth
-                variant="outlined"
-                type="text"
-                label="Email"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.email}
-                name="email"
-                error={!!touched.email && !!errors.email}
-                helperText={touched.email && errors.email}
-                sx={{ gridColumn: "span 4" }}
-              /> */}
                <TextField
                 fullWidth
                 variant="outlined"
@@ -98,29 +120,9 @@ const EditUsers = () => {
                 helperText={touched.phone && errors.phone}
                 sx={{ gridColumn: "span 2" }}
               />
-               <Select
-               fullWidth
-               variant="outlined"
-               error={!!touched.type && !!errors.type}
-               helperText={touched.type && errors.type}
-               sx={{ gridColumn: "span 2" ,color: "white"}}
-               value={values.type}
-               name="type"
-               label="User Type"
-               onBlur={handleBlur}
-               onChange={handleChange}
-              >
-                <MenuItem value=''>Select User Type</MenuItem>
-                <MenuItem value='admin'>Admin</MenuItem>
-                <MenuItem value='casher'>Casher</MenuItem>
-              </Select>
-           
-             
-            
-              
-              <Box display="flex" justifyContent="end" mt="10px"  width='800px'>
+              <Box display="flex" justifyContent="end" mt="10px"  >
               <Button type="submit" color="secondary" variant="contained">
-                EDIT USER
+               {isEdited ? <CircularProgress color="secondary" size={25}/> : 'EDIT USER'}
               </Button>
             </Box>
             </Box>
@@ -137,22 +139,12 @@ const phoneRegExp =
 
 const checkoutSchema = yup.object().shape({
   fullname: yup.string().required("required"),
-  type: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
   phone: yup
     .string()
     .matches(phoneRegExp, "Phone number is not valid")
     .required("required"),
-  password: yup.string().required("required"),
-  rpassword: yup.string().required("required"),
 });
-const initialValues = {
-  fullname: "",
-  email: "",
-  phone: "",
-  password: "",
-  rpassword: "",
-  type: "",
-};
+
 
 export default EditUsers;

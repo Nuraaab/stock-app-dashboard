@@ -25,8 +25,8 @@ import PieChart from "../../../components/PieChart";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import RecentSales from "../../../components/admincomponents/RecentSales";
 import LinearProgress from "@mui/material/LinearProgress";
-import Formatting from "../../../components/admincomponents/Test";
-import MyResponsivePie from "../../../components/admincomponents/Test";
+import Formatting from "../../../components/admincomponents/PiChart";
+import MyResponsivePie from "../../../components/admincomponents/PiChart";
 import TestLine from "../../../components/admincomponents/TestLine";
 const Dashboard = () => {
   const theme = useTheme();
@@ -47,39 +47,49 @@ const Dashboard = () => {
   const [mainstoreData, setMainstoreData] = useState([]);
   const [subStoreData, setSubstoreData] = useState([]);
   useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const mainResponse = await Axios.get("/mainstore/line");
-          const subResponse = await Axios.get("/substore/line");
-          const shopResponse = await Axios.get("/shop/line");
+    const fetchData = async () => {
+      try {
+        const amountResponse = await Axios.get("http://localhost:8000/api/salleshistory/lineamount");
+        const quantityResponse = await Axios.get("http://localhost:8000/api/salleshistory/linequantity");
+        // const shopResponse = await Axios.get("/shop/line");
   
-          const MainStoreData = {
-            id: "Main Store",
-            color: tokens("dark").greenAccent[500],
-            data: mainResponse.data,
-          };
+        const AmountData = {
+          id: "Amount Salled",
+          color: tokens("dark").greenAccent[500],
+          data: amountResponse.data,
+        };
   
-          const SubStoreData = {
-            id: "Sub Store",
-            color: tokens("dark").blueAccent[300],
-            data: subResponse.data,
-          };
+        const QuantityData = {
+          id: "Total Item",
+          color: tokens("dark").blueAccent[300],
+          data: quantityResponse.data,
+        };
+        console.log('quantiy:', QuantityData);
+        console.log('ammount:', AmountData);
   
-          const shopData = {
-            id: "Shop",
-            color: tokens("dark").redAccent[200],
-            data: shopResponse.data,
-          };
+        console.log('Before setLineData:', lineData);
+        setLineData([AmountData, QuantityData]);
+        console.log('After setLineData:', lineData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
   
-          setLineData([ SubStoreData, MainStoreData, shopData]);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
+    fetchData();
+  }, []);
   
-      fetchData();
-      console.log('line data '+lineData);
-    }, []);
+  useEffect(() => {
+    console.log('lineData ddddddddddd:', lineData);
+  }, [lineData]);
+    const [piData, setPiData] = useState('');
+    useEffect(() => {
+      Axios.get('http://localhost:8000/api/mainstore/pie').then((response) => {
+          setPiData(response.data);
+          console.log('lineData:', lineData);
+         }).catch((error) => {
+          console.log(error);
+         })
+  }, []);
   useEffect(() => {
     setLoading(true);
    Axios.get('/items/getall').then((response) => {
@@ -446,20 +456,13 @@ const Dashboard = () => {
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-                Orders Report
+                Sales Report
               </Typography>
              
             </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
           </Box>
           <Box height={{xs:'250px', sm:'400px'}} m="-20px 0 0 0">
-            <LineChart isDashboard={true}  lineData={lineData}/>
+           {lineData && <LineChart isDashboard={true}  lineData={lineData}/>}
             {/* <TestLine /> */}
           
           </Box>
@@ -484,10 +487,10 @@ const Dashboard = () => {
            
           </Box> */}
           <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-             Sales Report
+             Items Report
             </Typography>
           {/* <PieChart size = '80' /> */}
-          <MyResponsivePie />
+         {piData && <MyResponsivePie data={piData} />}
          
         </Box>
         
