@@ -54,7 +54,7 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     });
-    Axios.post('/auth/login', {
+    Axios.post('https://adminapi.besal10.com/api/auth/login', {
         email: data.get('email'),
         password: data.get('password'),
        }).then((response) => {
