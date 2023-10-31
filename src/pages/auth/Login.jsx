@@ -67,7 +67,7 @@ export default function SignIn() {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
         } else {
-          setErrorMessage("An error occurred");
+          setErrorMessage("An error occurred" + error);
         }
         setIsLoggedIn(false)
        })
