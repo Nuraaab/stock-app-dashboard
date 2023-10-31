@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Modal, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -78,6 +78,7 @@ const ViewItemType = () => {
         }
         setLoading(false);
        })
+       // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [reload]);
 const getRowId = (row) => {
     return row._id;
@@ -86,7 +87,8 @@ const getRowId = (row) => {
     {
       field: "type",
       headerName: "Item Type",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
    
@@ -195,6 +197,8 @@ const getRowId = (row) => {
               },
             }}
            disableColumnFilter = {isMobile}
+           disableDensitySelector ={isMobile}
+           disableColumnSelector ={isMobile}
           />
       </Box>
     </Box>

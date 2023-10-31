@@ -1,5 +1,5 @@
-import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik, resetForm } from "formik";
+import { Box, Button, TextField, useTheme } from "@mui/material";
+import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
@@ -8,12 +8,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Axios from 'axios';
 import CircularProgress from "@mui/material/CircularProgress";
+import Message from "../../../components/admincomponents/Message";
 const EditUsers = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const location = useLocation();
   const [isEdited, setIsEdited] = useState(false);
+  const [openAlert, setOpenAlert] = useState(true);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
@@ -52,6 +54,8 @@ const EditUsers = () => {
   return (
     <Box m="20px">
       <Header title="EDIT USERS" subtitle="" />
+      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}

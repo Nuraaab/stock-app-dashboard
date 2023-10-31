@@ -1,9 +1,6 @@
 import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
-import  Axios  from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }) => {
   const theme = useTheme();
@@ -13,6 +10,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }
   return (
     <ResponsiveLine
       data={lineData}
+      
       theme={{
         axis: {
           domain: {
@@ -64,8 +62,8 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }
         orient: "bottom",
         tickSize: 0,
         tickPadding: 5,
-        tickRotation: 0,
-        legend: isDashboard ? undefined : "transportation", // added
+        tickRotation: -45, // Rotate the x-axis tick labels by -45 degrees
+        legend: isDashboard ? undefined : "transportation",
         legendOffset: 36,
         legendPosition: "middle",
       }}

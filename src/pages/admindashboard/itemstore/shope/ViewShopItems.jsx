@@ -1,15 +1,17 @@
-import { Alert, Box, Button,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Typography, useMediaQuery } from "@mui/material";
+import {Box, Button,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
+import * as React from 'react';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import PropTypes from 'prop-types';
 import { useEffect, useState } from "react";
-import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useNavigate } from 'react-router-dom';
 import Message from "../../../../components/admincomponents/Message";
 import { styled } from '@mui/material/styles';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -23,18 +25,12 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     width: '100%', // Adjust the width as needed
   },
 }));
-const ViewShopItems = () => {
+ function CustomTabPanel(props){
+  const { children, value, index, shopitems, setReload, reload, ...other } = props;
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
-  // dialog
   const [open, setOpen] = useState(false);
-  const [ openMove,  setOpenMove] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
-  const [loading, setLoading]  = useState(true);
-  //dialog
-
-  //input data
   const [custName, setCustName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [price, setPrice] = useState('');
@@ -46,26 +42,13 @@ const ViewShopItems = () => {
   const [credit, setCredit] = useState(false);
   const [transfer, setTransfer] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [selectedMoveRow, setSelectedMoveRow] = useState(null);
-  //input data
-
-  //warehouse and shope
-  const [warehouseNameList, setwarehouseNameList] = useState([]);
-  const [warehouseName, setWarehouseName] = useState('');
-  const [storeType, setStoreType] = useState('');
-  const [isSelected, setIsSelected] = useState(false);
-  //warehouse  and shope
-  const [shopeItems , setShopItems] = useState([]);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSaled, setIsSaled] = useState(false);
   const [openCancle, setOpenCancle] = useState(false);
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [isCancled, setIsCancled] = useState(false);
-  const [reload, setReload] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const navigate = useNavigate();
-//transaction type
   const handleTransactionType = (value) => {
     console.log('value'+ value);
         if(value === "transfer"){
@@ -88,7 +71,6 @@ const ViewShopItems = () => {
           console.log(transactionType);
         }
   }
-// popup related
 const handleClickOpen = (row) => {
   setSelectedRow(row);
   setOpen(true);
@@ -97,11 +79,6 @@ const handleClickOpen = (row) => {
     setOpen(false);
     setSelectedRow(null);
     };
-
-//popup related
-
-
-  
   const handleDelete = (row) => {
     setIsCancled(true);
       Axios.delete(`/Shop/delete/${row._id}`).then((response) => {
@@ -124,7 +101,6 @@ const handleClickOpen = (row) => {
     setPrice('');
     setQuantity('');
     setTransactionType('');
-    setIsSelected(false);
     setErrorMessage('');
     setTransfer(false);
     setCredit(false);
@@ -234,63 +210,51 @@ const handleClickOpen = (row) => {
       setOpenCancle(true);
       setSelectedCancleRow(row);
   };
-  useEffect(() => {
-    Axios.get('/Shop/getall').then((response) => {
-      setShopItems(response.data);
-      setLoading(false);
-       }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setLoading(false);
-       })
-}, [reload]);
-const getRowId = (row) => {
+
+  const getRowId = (row) => {
     return row._id;
   };
   const columns = [
     {
-        field: "warehouseName",
-        headerName: "Warehouse Name",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-    {
       field: "name",
       headerName: "Item Name",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
         field: "itemCode",
         headerName: "Item Code",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "specification",
         headerName: "Item Specification",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "type",
         headerName: "Item Type",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "expireDate",
         headerName: "Expire Date",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "quantity",
         headerName: "Quantity",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
    
@@ -311,9 +275,46 @@ const getRowId = (row) => {
         },
       },
   ];
-  return (
+  return(
     <>
-      <BootstrapDialog
+     <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+    <BootstrapDialog
+        open={openCancle}
+        onClose={handleCancleClose}
+        aria-labelledby="Costomized-dialog-title"
+        // maxWidth="md" // Set the desired width here
+        fullWidth
+      >
+      <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={() => handleCancleClose()}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Are you sure you want to delete this item?
+          </Typography>
+        </DialogContent>
+        <DialogActions dividers style={{ justifyContent: 'center' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
+            No
+          </Button>
+          <Button  variant="contained"
+            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
+            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
+          </Button>
+        </DialogActions>
+      </BootstrapDialog>
+     <BootstrapDialog
         open={open}
         onClose={handleClose}
         aria-labelledby="costomized-dialog-title"
@@ -436,6 +437,155 @@ const getRowId = (row) => {
           </Button>
         </DialogActions>
       </BootstrapDialog>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        // <Box sx={{ p: 3 }}>
+        //   <Typography>{children}</Typography>
+        // </Box>
+
+        <Box
+        margin={0}
+         height="75vh"
+         sx={{
+           "& .MuiDataGrid-root": {
+             border: "none",
+           },
+           "& .MuiDataGrid-cell": {
+             borderBottom: "none",
+           },
+           "& .name-column--cell": {
+             color: colors.greenAccent[300],
+           },
+           "& .MuiDataGrid-columnHeaders": {
+             backgroundColor: colors.blueAccent[700],
+             borderBottom: "none",
+           },
+           "& .MuiDataGrid-virtualScroller": {
+             backgroundColor: colors.primary[400],
+           },
+           "& .MuiDataGrid-footerContainer": {
+             borderTop: "none",
+             backgroundColor: colors.blueAccent[700],
+           },
+           "& .MuiCheckbox-root": {
+             color: `${colors.greenAccent[200]} !important`,
+           },
+           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+             color: `${colors.grey[100]} !important`,
+           },
+           flexGrow: '1',
+           overflowX: 'auto',
+           scrollbarWidth: 'none',
+           msOverflowStyle: 'none',
+           '&::-webkit-scrollbar': {
+             width: '0.4em', 
+           },
+           '&::-webkit-scrollbar-thumb': {
+             backgroundColor: 'transparent', 
+           },
+          padding:'0px'
+         }}
+       
+       >
+       {
+         <div style={{ height: 400, width: '100%' }}>
+         <DataGrid
+             rows={shopitems}
+             columns={columns}
+             components={{ Toolbar: GridToolbar }}
+             getRowId={getRowId}
+             slotProps={{
+               toolbar: {
+                 showQuickFilter: true,
+                 style: { color: "red" },
+               },
+             }}
+             initialState={{
+               pagination: {
+                 paginationModel: { page: 0, pageSize: 5 },
+               },
+             }}
+             disableColumnFilter={isMobile}
+             disableDensitySelector ={isMobile}
+             disableColumnSelector ={isMobile}
+           />
+           </div>
+           }
+       </Box>
+      )}
+    </div>
+    </>
+  )
+ }
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+const ViewShopItems = () => {
+  const [shopitems, setShopItems] = useState([]);
+  const [openAlert, setOpenAlert] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(false);
+  const [warehouse, setWarehouse] = useState([]);
+  const [value, setValue] = React.useState(0);
+  const [tabName, setTabName] = useState('');
+  const [intialWarehouse, setInitialWarehouse] = useState('');
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    setTabName(warehouse[newValue].name);
+    console.log('tab data ' + warehouse[newValue].name);
+  };
+ 
+  useEffect(() => {
+    Axios.get('/Shop/getall').then((response) => {
+      setShopItems(response.data);
+      setLoading(false);
+       }).catch((error) => {
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setLoading(false);
+       })
+}, [reload]);
+useEffect(() => {
+  Axios.get('/warehouse/getall')
+    .then((response) => {
+      const filteredData = response.data.filter((data) => data.type === "Shop");
+      setInitialWarehouse(filteredData[0].name);
+      setWarehouse(filteredData);
+      setLoading(false);
+      setValue(0); // Set the initial selected tab to the first tab
+    })
+    .catch((error) => {
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+        console.log('error' +error);
+      }
+      setLoading(false);
+    });
+}, []);
+  return (
+    <>
+     
     <Box 
     margin={0}
     padding={0}
@@ -443,91 +593,24 @@ const getRowId = (row) => {
       <Header
         title="SHOP ITEMS"
       />
-      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
-    <BootstrapDialog
-        open={openCancle}
-        onClose={handleCancleClose}
-        aria-labelledby="Costomized-dialog-title"
-        // maxWidth="md" // Set the desired width here
-        fullWidth
-      >
-      <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={() => handleCancleClose()}
-        sx={{
-          position: 'absolute',
-          right: 8,
-          top: 8,
-          color: (theme) => theme.palette.grey[500],
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
-        <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Typography variant="body1">
-            Are you sure you want to delete this item?
-          </Typography>
-        </DialogContent>
-        <DialogActions dividers style={{ justifyContent: 'center' }}>
-        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
-            No
-          </Button>
-          <Button  variant="contained"
-            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
-            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
-          </Button>
-        </DialogActions>
-      </BootstrapDialog>
-
     {loading && <LinearProgress color="secondary" />}
-      <Box
-       margin={0}
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-        }}
-      >
-        <DataGrid
-            rows={shopeItems}
-            columns={columns}
-            components={{ Toolbar: GridToolbar }}
-            getRowId={getRowId}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                style: { color: "red" },
-              },
-            }}
-            disableColumnFilter ={isMobile}
-          />
+    <Box sx={{ width: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        {warehouse.map((item, index) => (
+          <Tab label={item.name} key={index} sx={{
+            '&.Mui-selected': {
+              color: 'red', // Set your desired active color
+            },
+          }} {...a11yProps(index)} />
+        ))}
+      </Tabs>
       </Box>
+      <CustomTabPanel value={value} index={value}  shopitems ={value === 0 ? shopitems.filter((item) => item.warehouseName === intialWarehouse) : shopitems.filter((item) => item.warehouseName === tabName)} setReload ={setReload} reload = {reload}>
+          
+      </CustomTabPanel>
+    </Box>
     </Box>
     </>
   );

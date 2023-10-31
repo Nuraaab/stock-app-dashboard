@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import { Collapse } from "@mui/material";
 const Item = ({ title, to, icon, selected, setSelected, isCollapsed, isMobile, setIsCollapsed, handleSidebar }) => {
   const handleClick = (title) =>{
@@ -87,7 +86,6 @@ const Sidebar = () => {
   const [isMobile, setisMobile] = useState(false);
   const [breakPoint, setBreakPoint] = useState(false);
   const [display, setDisplay] = useState('');
-  const [reload, setReload] = useState(false);
   useEffect(() => {
     Axios.post('/auth/refresh',{
       withCredentials: true,
@@ -101,6 +99,7 @@ const Sidebar = () => {
        }).catch((error) => {
         console.log(error);
        })
+       // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
     useEffect(() => {
       const handleResize = () => {
@@ -123,6 +122,7 @@ const Sidebar = () => {
       return () => {
         window.removeEventListener("resize", handleResize);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [window.innerWidth]);
 
     const handleSidebar = () => {
@@ -228,8 +228,9 @@ const Sidebar = () => {
               handleSidebar = {handleSidebar}
             />
 
-            <Itemtest
+            <Item
               title="Items"
+              to="/view_items"
               icon={<i class="fa fa-list"></i>}
               selected={selected}
               setSelected={setSelected}
@@ -237,26 +238,6 @@ const Sidebar = () => {
               isMobile={isMobile}
               setIsCollapsed={setIsCollapsed}
               handleSidebar={handleSidebar}
-              subMenu={
-                <Menu>
-                  <MenuItem
-                    active={selected === "View Items"}
-                    icon ={<i class="fa-solid fa-eye"></i>}
-                    onClick={() => setSelected("View Items")}
-                  >
-                    <Typography>View Items</Typography>
-                    <Link to="/view_items" />
-                  </MenuItem>
-                  <MenuItem
-                    active={selected === "Add Items"}
-                    icon ={<i class="fa-solid fa-plus"></i>}
-                    onClick={() => setSelected("Add Items")}
-                  >
-                    <Typography>Add Items</Typography>
-                    <Link to="/add_items" />
-                  </MenuItem>
-                </Menu>
-              }
             />
             <Itemtest
               title="Store Items"
@@ -306,10 +287,9 @@ const Sidebar = () => {
                 </Menu>
               }
             />
-             
-             <Itemtest
-              title="Users"
-              icon={<i class="fa fa-user"></i>}
+              <Itemtest
+              title="History"
+              icon={<i class="fa fa-history"></i>}
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
@@ -319,111 +299,20 @@ const Sidebar = () => {
               subMenu={
                 <Menu>
                   <MenuItem
-                    active={selected === "View Users"}
-                    icon ={<i class="fa-solid fa-eye"></i>}
-                    onClick={() => setSelected("View Users")}
+                    active={selected === "Store to Store History"}
+                    icon ={<i className="fas fa-exchange-alt"></i>}
+                    onClick={() => setSelected("Store to Store History")}
                   >
-                    <Typography>View Users</Typography>
-                    <Link to="/view_users" />
+                    <Typography>Store to Store History</Typography>
+                    <Link to="/storehistory" />
                   </MenuItem>
                   <MenuItem
-                    active={selected === "Add Users"}
-                    icon ={<i class="fa-solid fa-plus"></i>}
-                    onClick={() => setSelected("Add Users")}
+                    active={selected === "Sales History"}
+                    icon={<i className="fas fa-history"></i>}
+                    onClick={() => setSelected("Sales History")}
                   >
-                    <Typography>Add Users</Typography>
-                    <Link to="/add_users" />
-                  </MenuItem>
-                </Menu>
-              }
-            />
-             <Itemtest
-              title="WareHouses"
-              icon={<i class="fa fa-store"></i>}
-              selected={selected}
-              setSelected={setSelected}
-              isCollapsed={isCollapsed}
-              isMobile={isMobile}
-              setIsCollapsed={setIsCollapsed}
-              handleSidebar={handleSidebar}
-              subMenu={
-                <Menu>
-                  <MenuItem
-                    active={selected === "View WareHouses"}
-                    icon ={<i class="fa-solid fa-eye"></i>}
-                    onClick={() => setSelected("View WareHouses")}
-                    sx={{ m: "15px 0 5px 20px" }}
-                  >
-                    <Typography>View WareHouses</Typography>
-                    <Link to="/view_ware_house" />
-                  </MenuItem>
-                  <MenuItem
-                    active={selected === "Add WareHouses"}
-                    icon ={<i class="fa-solid fa-plus"></i>}
-                    onClick={() => setSelected("Add WareHouses")}
-                  >
-                    <Typography>Add WareHouses</Typography>
-                    <Link to="/add_ware_house" />
-                  </MenuItem>
-                </Menu>
-              }
-            />
-            <Itemtest
-              title="Item Spacification"
-              icon={<i class="fa-solid fa-file-contract"></i>}
-              selected={selected}
-              setSelected={setSelected}
-              isCollapsed={isCollapsed}
-              isMobile={isMobile}
-              setIsCollapsed={setIsCollapsed}
-              handleSidebar={handleSidebar}
-              subMenu={
-                <Menu>
-                  <MenuItem
-                    active={selected === "View Spacification"}
-                    icon ={<i class="fa-solid fa-eye"></i>}
-                    onClick={() => setSelected("View Spacification")}
-                  >
-                    <Typography>View Spacification</Typography>
-                    <Link to="/view_spacification" />
-                  </MenuItem>
-                  <MenuItem
-                    active={selected === "Add Spacification"}
-                    icon={<i class="fa-solid fa-plus"></i>}
-                    onClick={() => setSelected("Add Spacification")}
-                  >
-                    <Typography>Add Spacification</Typography>
-                    <Link to="/add_spacification" />
-                  </MenuItem>
-                </Menu>
-              }
-            />
-             <Itemtest
-              title="Item Type"
-              icon={<i class="fa-solid fa-file-contract"></i>}
-              selected={selected}
-              setSelected={setSelected}
-              isCollapsed={isCollapsed}
-              isMobile={isMobile}
-              setIsCollapsed={setIsCollapsed}
-              handleSidebar={handleSidebar}
-              subMenu={
-                <Menu>
-                  <MenuItem
-                    active={selected === "View Item Type"}
-                    icon ={<i class="fa-solid fa-eye"></i>}
-                    onClick={() => setSelected("View Item Type")}
-                  >
-                    <Typography>View Item Type</Typography>
-                    <Link to="/view_item_type" />
-                  </MenuItem>
-                  <MenuItem
-                    active={selected === "Add Item Type"}
-                    icon={<i class="fa-solid fa-plus"></i>}
-                    onClick={() => setSelected("Add Item Type")}
-                  >
-                    <Typography>Add Item Type</Typography>
-                    <Link to="/add_item_type" />
+                    <Typography>Sales History</Typography>
+                    <Link to="/saleshistory" />
                   </MenuItem>
                 </Menu>
               }
@@ -466,7 +355,52 @@ const Sidebar = () => {
                 </Menu>
               }
             />
-              <Item
+             <Item
+              title="Users"
+              to='/view_users'
+              icon={<i class="fa fa-user"></i>}
+              selected={selected}
+              setSelected={setSelected}
+              isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
+            />
+             <Item
+              title="Warehouses"
+              to='/view_ware_house'
+              icon={<i class="fa fa-store"></i>}
+              selected={selected}
+              setSelected={setSelected}
+              isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
+            />
+            <Item
+              title="Item Spacification"
+              to= '/view_spacification'
+              icon={<i class="fa-solid fa-file-contract"></i>}
+              selected={selected}
+              setSelected={setSelected}
+              isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
+            />
+             <Item
+              title="Item Type"
+              to= '/view_item_type'
+              icon={<i class="fa-solid fa-file-contract"></i>}
+              selected={selected}
+              setSelected={setSelected}
+              isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
+            />
+            
+            <Item
               title="Credit"
               to="/credit"
               icon={<i className="fas fa-credit-card"></i>}
@@ -477,36 +411,7 @@ const Sidebar = () => {
               isMobile={isMobile}
               handleSidebar={handleSidebar}
             />
-             <Itemtest
-              title="History"
-              icon={<i class="fa fa-history"></i>}
-              selected={selected}
-              setSelected={setSelected}
-              isCollapsed={isCollapsed}
-              isMobile={isMobile}
-              setIsCollapsed={setIsCollapsed}
-              handleSidebar={handleSidebar}
-              subMenu={
-                <Menu>
-                  <MenuItem
-                    active={selected === "Store to Store History"}
-                    icon ={<i className="fas fa-exchange-alt"></i>}
-                    onClick={() => setSelected("Store to Store History")}
-                  >
-                    <Typography>Store to Store History</Typography>
-                    <Link to="/storehistory" />
-                  </MenuItem>
-                  <MenuItem
-                    active={selected === "Sales History"}
-                    icon={<i className="fas fa-history"></i>}
-                    onClick={() => setSelected("Sales History")}
-                  >
-                    <Typography>Sales History</Typography>
-                    <Link to="/saleshistory" />
-                  </MenuItem>
-                </Menu>
-              }
-            />
+            
           </Box>
         </Menu>
       </ProSidebar>

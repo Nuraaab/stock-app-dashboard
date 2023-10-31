@@ -3,15 +3,9 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useTheme } from "@mui/material";
 import { tokens } from '../../theme';
 import { useNavigate } from 'react-router-dom';
@@ -19,34 +13,15 @@ import  Axios  from 'axios';
 import { useState } from 'react';
 import Message from '../../components/admincomponents/Message';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useContext } from 'react';
-import { AuthContext } from '../../context/Context';
-// function Copyright(props) {
-//   return (
-//     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-//       {'Copyright © '}
-//       <Link color="inherit" href="https://mui.com/">
-//         Your Website
-//       </Link>{' '}
-//       {new Date().getFullYear()}
-//       {'.'}
-//     </Typography>
-//   );
-// }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
 
 export default function ChangePassword() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
   const navigate = useNavigate();
-  const { refreshUser } = useContext(AuthContext)
   const handleSubmit = (event) => {
     setIsLoggedIn(true);
     event.preventDefault();
@@ -87,7 +62,6 @@ export default function ChangePassword() {
             backgroundColor:`${colors.primary[400]}`
           }}
         >
-         <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
          <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
          
          <Avatar sx={{ m: 0, bgcolor: 'secondary.main', width: '80px', 

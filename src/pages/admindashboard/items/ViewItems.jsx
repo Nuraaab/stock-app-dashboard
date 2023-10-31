@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Modal, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -6,11 +6,11 @@ import { useTheme } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import { useEffect, useState } from "react";
-import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import Message from "../../../components/admincomponents/Message";
 import { styled } from '@mui/material/styles';
+import AddIcon from '@mui/icons-material/Add';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -25,9 +25,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 const ViewItems = () => {
   const [itemList , setItemList] = useState([]);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
-  const [itemType , setItemType] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -71,7 +69,6 @@ const ViewItems = () => {
     Axios.get('/items/getall').then((response) => {
       setItemList(response.data);
       setLoading(false);
-        console.log(itemType);
        }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
@@ -80,33 +77,38 @@ const ViewItems = () => {
         }
         setLoading(false);
        })
+       // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [reload]);
 const getRowId = (row) => {
     return row._id;
   };
   const columns = [
     {
+      field: "itemCode",
+      headerName: "Item Code",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
+    },
+    {
       field: "name",
       headerName: "Item Name",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
       field: "type",
       headerName: "Item Type",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "itemCode",
-      headerName: "Item Code",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
       field: "specification",
       headerName: "Item Specification",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
@@ -132,10 +134,20 @@ const getRowId = (row) => {
     padding={0}
     >
       <Header
-        title="ITEM TYPE"
+        title="ITEMS"
       />
-      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
-      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+      {message && <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>}
+      {errorMessage && <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            href="/add_items"
+            startIcon={<AddIcon />}
+            sx={{ marginLeft: 'auto' }}
+          >
+            Add Items
+          </Button>
+        </Box>
     {loading && <LinearProgress color="secondary"/>}
     <BootstrapDialog
         open={openCancle}
@@ -220,6 +232,8 @@ const getRowId = (row) => {
               },
             }}
             disableColumnFilter ={isMobile}
+            disableDensitySelector ={isMobile}
+            disableColumnSelector ={isMobile}
           />
       </Box>
     </Box>

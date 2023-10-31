@@ -1,7 +1,6 @@
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
-  Routes, Route, useLocation,
   createBrowserRouter,
   RouterProvider,
   Outlet,
@@ -11,7 +10,6 @@ import Topbar from "./components/admincomponents/Topbar";
 import Sidebar from "./components/admincomponents/Sidebar";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
-import Login from "./context/Login";
 import AddSpacifications from "./pages/admindashboard/spacification/AddSpacification";
 import ViewSpacifications from "./pages/admindashboard/spacification/ViewSpacification";
 import AddItems from "./pages/admindashboard/items/AddItems";
@@ -22,9 +20,7 @@ import AddWareHouse from "./pages/admindashboard/warehouses/AddWareHouse";
 import ViewWareHouses from "./pages/admindashboard/warehouses/ViewWareHouse";
 import AddMainStoreItems from "./pages/admindashboard/itemstore/mainstores/AddMainStores";
 import ViewMainStores from "./pages/admindashboard/itemstore/mainstores/ViewMainStores";
-import AddSubStoreItems from "./pages/admindashboard/itemstore/substores/AddSubStores";
 import ViewSubStoreItems from "./pages/admindashboard/itemstore/substores/ViewSubStores";
-import AddShopItems from "./pages/admindashboard/itemstore/shope/AddShopItems";
 import ViewShopItems from "./pages/admindashboard/itemstore/shope/ViewShopItems";
 import EditMainStoreItems from "./pages/admindashboard/itemstore/mainstores/EditMainStores";
 import EditSubStoreItems from "./pages/admindashboard/itemstore/substores/EditSubStores";
@@ -52,7 +48,6 @@ function App() {
 
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
-  const [openNav, setOpenNav] = useState(false);
   const ProtectedRoute = ({ children }) => {
     const { currentUser } = useContext(AuthContext)
 
@@ -86,7 +81,7 @@ const router = createBrowserRouter([
     {
       path: "/",
       element: (
-      <ProtectedRoute>
+        <ProtectedRoute>
         <Layout />
         </ProtectedRoute>
         ),

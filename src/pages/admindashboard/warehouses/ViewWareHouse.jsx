@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Modal, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button,  Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -6,12 +6,12 @@ import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Warehouse } from "@mui/icons-material/";
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from "@mui/material/LinearProgress";
 import CircularProgress from "@mui/material/CircularProgress";
 import Message from "../../../components/admincomponents/Message";
 import { styled } from '@mui/material/styles';
+import AddIcon from '@mui/icons-material/Add';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -25,7 +25,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 const ViewWareHouses = () => {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
   const [warehouse , setWarehouse] = useState([]);
   const [message, setMessage] = useState('');
@@ -71,7 +70,6 @@ const ViewWareHouses = () => {
     Axios.get('/warehouse/getall').then((response) => {
         setWarehouse(response.data);
         setLoading(false);
-        console.log(warehouse);
        }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
@@ -81,6 +79,7 @@ const ViewWareHouses = () => {
         setLoading(false);
        })
 }, [reload]);
+
 const getRowId = (row) => {
     return row._id;
   };
@@ -88,13 +87,15 @@ const getRowId = (row) => {
     {
       field: "name",
       headerName: "Warehouse Name",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
         field: "type",
         headerName: "Store Type",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
     {
@@ -119,8 +120,19 @@ const getRowId = (row) => {
       <Header
         title="WAREHOUSES"
       />
-      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
-      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+       
+      {message && <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>}
+      {errorMessage && <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            href="/import"
+            startIcon={<AddIcon />}
+            sx={{ marginLeft: 'auto' }}
+          >
+            Add Warehouse
+          </Button>
+        </Box>
     <BootstrapDialog
         open={openCancle}
         onClose={handleCancleClose}
@@ -201,6 +213,8 @@ const getRowId = (row) => {
               },
             }}
            disableColumnFilter = {isMobile}
+           disableDensitySelector ={isMobile}
+           disableColumnSelector ={isMobile}
           />
       </Box>
     </Box>

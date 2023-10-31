@@ -1,6 +1,5 @@
 // import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, useTheme } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { tokens } from '../../theme';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -10,7 +9,7 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
-import { Avatar, useTheme } from "@mui/material";
+import { Avatar } from "@mui/material";
 import  Axios  from 'axios';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -38,8 +37,6 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 const Account = ({fullScreen, open, handleClose}) => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const [userId, setUserId] =useState('');
   const [adminName, setAdminName] = useState('');
   const [email, setEmail] = useState('');

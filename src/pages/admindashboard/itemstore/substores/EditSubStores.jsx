@@ -1,5 +1,5 @@
 import { Box, Button, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik, resetForm } from "formik";
+import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../../../components/Header";
@@ -13,7 +13,6 @@ const EditSubStoreItems = () => {
   const [specification, setSpecification] = useState([]);
   const [itemName, setItemName] = useState([]);
   const [itemCode, setItemCode] = useState([]);
-  const [warehouseList, setWarehouseList] = useState([]);
   const [filteredWarehouseList, setFilteredWarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
@@ -86,6 +85,7 @@ const EditSubStoreItems = () => {
        }).catch((error) => {
         console.log(error);
        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
 

@@ -1,19 +1,15 @@
-import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik, resetForm } from "formik";
+import { Alert, Box, Button, Collapse, IconButton, TextField, useTheme } from "@mui/material";
+import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import Axios from 'axios';
-import { useRef, useEffect, useState } from "react";
+import {useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useLocation, useNavigate } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
 const EditItems = () => {
-  const [itemType, setItemType] = useState([]);
-  const [specification, setSpecification] = useState([]);
-  const [selectedSpecifications, setSelectedSpecifications] = useState([]);
-  const [filteredSpecifications, setFilteredSpecifications] = useState([]);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isEddited, setIsEddited] = useState(false);
@@ -54,22 +50,6 @@ const EditItems = () => {
     console.log(values);
   };
  
-  useEffect(() => {
-    Axios.get('/type/getall').then((response) => {
-      setItemType(response.data);
-      Axios.get('/specification/getall').then((response) => {
-        setSpecification(response.data);
-        console.log('hi');
-        console.log(specification);
-      }).catch((error) => {
-        console.log(error);
-      });
-    }).catch((error) => {
-      console.log(error);
-    });
-    console.log('from view page');
-    console.log(rowData);
-  }, []);
   
   return (
     <Box m="20px">

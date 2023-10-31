@@ -1,22 +1,18 @@
-import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik, resetForm } from "formik";
+import {Box, Button, TextField, useTheme } from "@mui/material";
+import { Formik} from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import Axios from 'axios';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
-import LinearProgress from "@mui/material/LinearProgress";
-import CloseIcon from '@mui/icons-material/Close';
 import Message from "../../../components/admincomponents/Message";
 const EditSpecifications = () => {
-  const [itemType , setItemType] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(true);
   const [openAlert, setOpenAlert] = useState(true);
   const [isEdited, setIsEdited] = useState(false);
   const theme = useTheme();
@@ -51,28 +47,12 @@ const EditSpecifications = () => {
     console.log(values);
   };
 
-  useEffect(() => {
-    Axios.get('/type/getall').then((response) => {
-        setItemType(response.data);
-        setLoading(false);
-        console.log('item type' + rowData.type);
-       }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setLoading(false);
-       })
-}, []);
-
 
   return (
     <Box m="20px">
       <Header title="EDIT SPECIFICATIONS" />
       <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
-      {loading && <LinearProgress color="secondary"/>}
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}

@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem,  Select,  Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -7,7 +7,6 @@ import Axios from 'axios';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as React from 'react';
-import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from "@mui/material/CircularProgress";
@@ -28,10 +27,8 @@ const Pending = () => {
   const [open, setOpen] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
   const [pendingList , setPendingList] = useState([]);
-  const [warehouseList, setWarehouseList] = useState([]);
   const [warehouseName, setWarehouseName] = useState('');
   const [filteredWarehouseList, setFilteredWarehouseList] = useState([]);
   const navigate = useNavigate();
@@ -142,44 +139,51 @@ const getRowId = (row) => {
     {
         field: "company",
         headerName: "Company Name",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "itemCode",
         headerName: "Item Code",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
     {
       field: "name",
       headerName: "Item Name",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     
       {
         field: "specification",
         headerName: "Item Specification",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "type",
         headerName: "Item Type",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "expireDate",
         headerName: "Expire Date",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "quantity",
         headerName: "Quantity",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
     // {
@@ -245,7 +249,7 @@ const getRowId = (row) => {
         <FormControl
           fullWidth
           sx={{gridColumn: "span 4" }}>
-                <InputLabel id="demo-simple-select-helper-label">Select Warehouse Name</InputLabel>
+                <InputLabel id="demo-simple-select-helper-label">Choose Warehouse Name</InputLabel>
         <Select
                fullWidth
                variant="outlined"
@@ -361,6 +365,8 @@ const getRowId = (row) => {
               },
             }}
            disableColumnFilter = {isMobile}
+           disableDensitySelector ={isMobile}
+           disableColumnSelector ={isMobile}
           />
       </Box>
     </Box>

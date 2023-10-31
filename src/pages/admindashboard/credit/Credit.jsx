@@ -1,14 +1,26 @@
-import { Alert, Box, IconButton, Modal } from "@mui/material";
+import {  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
-import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
+import { styled } from '@mui/material/styles';
+import Message from "../../../components/admincomponents/Message";
+import CircularProgress from "@mui/material/CircularProgress";
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+  '& .MuiDialog-paper': {
+    width: '100%', // Adjust the width as needed
+  },
+}));
 const Credit = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -17,25 +29,40 @@ const Credit = () => {
   const [loading, setLoading] = useState(true);
   const [creditList , setCreditList] = useState([]);
   const [openAlert, setOpenAlert] = useState(true);
-  const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [openCancle, setOpenCancle] = useState(false);
+  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
+  const [isCancled, setIsCancled] = useState(false);
+  const [reload, setReload] = useState(false);
 //   const handleEdit = (row) => {
 //     navigate(`/edit_spacification`, { state: { rowData: row } });
 //   };
   
   const handleDelete = (row) => {
-    if(window.confirm('Are you sure you want to delete this credit?')){
+    setIsCancled(true);
         Axios.delete(`/credit/delete/${row._id}`).then((response) => {
           setMessage("Credit Deleted successfully!");
-          window.location.reload();
+          setIsCancled(false);
+          setOpenCancle(false);
+          setReload(!reload);
        }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
         } else {
           setErrorMessage("An error occurred");
         }
+        setIsCancled(false);
+        setOpenCancle(true);
   })
-      }
   };
+  const handleCancleClose = () => {
+    setOpenCancle(false);
+    setSelectedCancleRow(null);
+  };
+  const handleCancleClickOpen = (row) => {
+    setOpenCancle(true);
+    setSelectedCancleRow(row);
+ };
   useEffect(() => {
     Axios.get('/credit/getall').then((response) => {
         setCreditList(response.data);
@@ -48,7 +75,7 @@ const Credit = () => {
         }
         setLoading(false);
        })
-}, []);
+}, [reload]);
 const getRowId = (row) => {
     return row._id;
   };
@@ -56,37 +83,43 @@ const getRowId = (row) => {
     {
       field: "customerName",
       headerName: "Customer Name",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
         field: "amount",
         headerName: "Amount",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "itemCode",
         headerName: "Item Code",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "phone",
         headerName: "Phone Number",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "warehouseName",
         headerName: "Warehouse Name",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "paymentDate",
         headerName: "Payment Deadline",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       
@@ -101,61 +134,58 @@ const getRowId = (row) => {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
+        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
   ];
   return (
-    <Box m="20px">
+    <Box 
+    margin={0}
+    padding={0}
+    >
       <Header
         title="VIEW CREDIT INFORMATION"
       />
-        {errorMessage && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-        severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="warning"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {errorMessage}
-        </Alert>
-      </Collapse>
-    </Box>}
-      {message && <Box sx={{ width: '100%' }}>
-      <Collapse in={openAlert}>
-        <Alert
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpenAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {message}
-        </Alert>
-      </Collapse>
-    </Box>}
+       <BootstrapDialog
+        open={openCancle}
+        onClose={handleCancleClose}
+        aria-labelledby="costomized-dialog-title"
+        // maxWidth="md" // Set the desired width here
+        fullWidth
+      >
+      <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={() => handleCancleClose()}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Are you sure you want to delete this Credit?
+          </Typography>
+        </DialogContent>
+        <DialogActions dividers style={{ justifyContent: 'center' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
+            No
+          </Button>
+          <Button  variant="contained"
+            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
+            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
+          </Button>
+        </DialogActions>
+      </BootstrapDialog>
+      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+      <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
     {loading && <LinearProgress color="secondary" />}
       <Box
-        m="40px 0 0 0"
+        margin={0}
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {
@@ -197,13 +227,9 @@ const getRowId = (row) => {
                 style: { color: "red" },
               },
             }}
-            checkboxSelection
-            onCellClick={(params) => {
-              const row = params.row;
-              if (params.field === "delete") {
-                handleDelete(row);
-              }
-            }}
+            disableColumnFilter = {isMobile}
+           disableDensitySelector ={isMobile}
+           disableColumnSelector ={isMobile}
           />
       </Box>
     </Box>

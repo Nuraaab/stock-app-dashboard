@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Modal, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -11,6 +11,7 @@ import Message from "../../../components/admincomponents/Message";
 import { styled } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
+import AddIcon from '@mui/icons-material/Add';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -23,9 +24,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 const ViewUsers = () => {
-  const [itemList , setItemList] = useState([]);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
   const [userList , setUserList] = useState([]);
   const [message, setMessage] = useState('');
@@ -89,25 +88,29 @@ const getRowId = (row) => {
     {
       field: "adminName",
       headerName: "Name",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
       field: "email",
       headerName: "Email",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
       field: "phone",
       headerName: "Phone Number",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
       field: "type",
       headerName: "User Type",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
@@ -135,6 +138,16 @@ const getRowId = (row) => {
       <Header
         title="USERS"
       />
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            href="/add_users"
+            startIcon={<AddIcon />}
+            sx={{ marginLeft: 'auto' }}
+          >
+            Add New User
+          </Button>
+        </Box>
        <BootstrapDialog
         open={openCancle}
         onClose={handleCancleClose}
@@ -217,6 +230,8 @@ const getRowId = (row) => {
               },
             }}
           disableColumnFilter ={isMobile}
+          disableDensitySelector ={isMobile}
+          disableColumnSelector ={isMobile}
           />
       </Box>
     </Box>

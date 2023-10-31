@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Modal, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -24,7 +24,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 const ViewSpacifications = () => {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
   const [loading, setloading] = useState(true);
   const [message, setMessage] = useState('');
@@ -66,7 +65,8 @@ const ViewSpacifications = () => {
     setOpenCancle(true);
     setSelectedCancleRow(row);
 };
-  useEffect(() => {
+ 
+useEffect(() => {
     Axios.get('/specification/getall').then((response) => {
         setSpacification(response.data);
         setloading(false);
@@ -79,23 +79,27 @@ const ViewSpacifications = () => {
         }
         setloading(false);
        })
+       // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [reload]);
 const getRowId = (row) => {
     return row._id;
   };
   const columns = [
     {
-      field: "specification",
-      headerName: "Specification",
-      flex: 1,
+      field: "type",
+      headerName: "Item Type",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
-        field: "type",
-        headerName: "Item Type",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
+      field: "specification",
+      headerName: "Specification",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
+    },
+   
     {
       field: "edit",
       headerName: "Edit",
@@ -200,6 +204,8 @@ const getRowId = (row) => {
               },
             }}
             disableColumnFilter = {isMobile}
+            disableDensitySelector ={isMobile}
+           disableColumnSelector ={isMobile}
           />
       </Box>
     </Box>

@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import Axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
+import Message from './Message';
 const RecentSales = ({ name}) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -18,6 +19,7 @@ const RecentSales = ({ name}) => {
    const [selectedCancleRow, setSelectedCancleRow] = useState(null);
    const [isApproved, setIsApproved] = useState(false);
    const [isCancled, setIsCancled] = useState(false);
+   const [openAlert, setOpenAlert] = useState(true);
    const [message, setMessage] = useState('');
    const [reload, setReload] = useState(false);
    const isMobile = useMediaQuery('(max-width: 768px)');
@@ -88,8 +90,9 @@ const RecentSales = ({ name}) => {
           }
         });
     };
-
+  
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload]);
  
 
@@ -181,6 +184,8 @@ setSelectedRow(null);
       Approve Sales
     </DialogTitle>
         <DialogTitle>
+        <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+        <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
         </DialogTitle>
         <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Typography variant="body1">

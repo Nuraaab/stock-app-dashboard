@@ -1,8 +1,5 @@
 
 import { ResponsivePie } from '@nivo/pie'
-import { useEffect } from 'react';
-import { useState } from 'react';
-import Axios from 'axios';
 const MyResponsivePie = ({data}) => {
      console.log('fafffffffff' + data);
    

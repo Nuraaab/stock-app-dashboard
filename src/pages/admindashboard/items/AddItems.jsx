@@ -1,11 +1,11 @@
 import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik, resetForm } from "formik";
+import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import Axios from 'axios';
-import { useRef, useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +34,7 @@ const AddItems = () => {
     }else if(values.itemname === ""){
       setErrorMessage('Item Code can not be empty!');
       setIsAdded(false);
-    }{
+    }else{
       Axios.post('/items/add', {
         name: values.itemname,
         type: values.itemtype,
@@ -113,6 +113,7 @@ const AddItems = () => {
       }
       setLoading(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   return (
@@ -219,7 +220,7 @@ const AddItems = () => {
               
                 <FormControl sx={{gridColumn: "span 4" }}
                 error={!!touched.itemtype && !!errors.itemtype}>
-                <InputLabel id="demo-simple-select-helper-label">Select Item Type</InputLabel>
+                <InputLabel id="demo-simple-select-helper-label">Choose Item Type</InputLabel>
               <Select
                 fullWidth
                 variant="outlined"
@@ -240,7 +241,7 @@ const AddItems = () => {
               </FormControl>
               <FormControl sx={{gridColumn: "span 4" }}
                 error={!!touched.specification && !!errors.specification}>
-                <InputLabel id="demo-simple-select-helper-label">Item Specification(more than one can be selected)</InputLabel>
+                <InputLabel id="demo-simple-select-helper-label">Choose Item Specification</InputLabel>
                  <Select
                 fullWidth
                 variant="outlined"
@@ -253,7 +254,6 @@ const AddItems = () => {
                 onBlur={handleBlur}
                 onChange={(event) => handleSpecificationChange(event, handleChange)}
               >
-                <MenuItem value=''>Select Specification</MenuItem>
                 {filteredSpecifications.map((spec) => (
                   <MenuItem key={spec} value={spec}>{spec}</MenuItem>
                 ))}

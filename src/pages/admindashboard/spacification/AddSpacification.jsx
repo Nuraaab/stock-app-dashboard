@@ -1,5 +1,5 @@
-import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik, resetForm } from "formik";
+import { Box, Button, FormControl, FormHelperText,InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Formik} from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
@@ -8,7 +8,6 @@ import Axios from 'axios';
 import { useEffect, useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 import CircularProgress from "@mui/material/CircularProgress";
-import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from "react-router-dom";
 import Message from "../../../components/admincomponents/Message";
 const AddSpacifications = () => {
@@ -59,6 +58,7 @@ const AddSpacifications = () => {
         }
         setLoading(false);
        })
+       // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
 

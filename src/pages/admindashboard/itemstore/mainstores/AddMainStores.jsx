@@ -1,14 +1,12 @@
-import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
-import { Formik, resetForm } from "formik";
+import { Box, Button,  FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../../../components/Header";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 import { tokens } from "../../../../theme";
-import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from '@mui/material/CircularProgress';
-import LinearProgress from '@mui/material/LinearProgress';
 import Message from "../../../../components/admincomponents/Message";
 const AddMainStoreItems = () => {
   const [itemType , setItemType] = useState([]);
@@ -17,7 +15,6 @@ const AddMainStoreItems = () => {
   const [specification, setSpecification] = useState([]);
   const [itemName, setItemName] = useState([]);
   const [itemCode, setItemCode] = useState([]);
-  const [warehouseList, setWarehouseList] = useState([]);
   const [filteredWarehouseList, setFilteredWarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
@@ -26,8 +23,6 @@ const AddMainStoreItems = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [typeSelected, setTypeSelected] = useState(false);
   const handleFormSubmit = (values, { resetForm }) => {
     setLoading(true);
    Axios.post('/pending/add', {
@@ -61,7 +56,6 @@ const AddMainStoreItems = () => {
     console.log(filteredItems);
     setFilteredItemList(filteredItems);
     handleChange(event); 
-    setTypeSelected(true);
   };
   const handleItemNameChange = (event, handleChange) => {
     const selectedItemCode = event.target.value;
@@ -89,18 +83,15 @@ const AddMainStoreItems = () => {
         Axios.get('/warehouse/getall').then((response) => {
             const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Main Store");
             setFilteredWarehouseList(filteredWarehouse);
-            setInitialLoading(false);
             console.log('warehouse');
             console.log(filteredWarehouseList);
         }).catch((error) => {
             console.log(error);
             setErrorMessage(error.response.data);
-            setInitialLoading(false);
         })
         }).catch((error) => {
             console.log(error);
             setErrorMessage(error.response.data);
-            setInitialLoading(false);
         })
        }).catch((error) => {
         if (error.response && error.response.data) {
@@ -108,8 +99,8 @@ const AddMainStoreItems = () => {
         } else {
           setErrorMessage("An error occurred");
         }
-        setInitialLoading(false);
        })
+       // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
 
@@ -160,7 +151,7 @@ const AddMainStoreItems = () => {
               />
               <FormControl sx={{gridColumn: "span 4" }}
                 error={!!touched.itemtype && !!errors.itemtype}>
-                <InputLabel id="demo-simple-select-helper-label">Item Type</InputLabel>
+                <InputLabel id="demo-simple-select-helper-label">Choose Item Type</InputLabel>
               <Select
                fullWidth
                variant="outlined"
@@ -173,7 +164,6 @@ const AddMainStoreItems = () => {
                onBlur={handleBlur}
                onChange={(event) => handleItemTypeChange(event, handleChange)}
               >
-                <MenuItem value=''>Select Item Type</MenuItem>
                 {
                  itemType.map((item) => (
                     <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
@@ -185,7 +175,7 @@ const AddMainStoreItems = () => {
               </FormControl>
               <FormControl sx={{gridColumn: "span 4" }}
                 error={!!touched.name && !!errors.name}>
-                <InputLabel id="demo-simple-select-helper-label">{typeSelected ? 'First Select Item Name' : 'Select Item Name'}</InputLabel>
+                <InputLabel id="demo-simple-select-helper-label">{'Choose  Item Name'}</InputLabel>
               <Select
                fullWidth
                variant="outlined"

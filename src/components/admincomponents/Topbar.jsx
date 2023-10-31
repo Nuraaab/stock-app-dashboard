@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, Tooltip, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, ListItemIcon, Menu, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { useContext } from "react";
-import { ColorModeContext, tokens } from "../../theme";
-import InputBase from "@mui/material/InputBase";
+import { ColorModeContext } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import Badge from '@mui/material/Badge';
-import SearchIcon from "@mui/icons-material/Search";
 import { MenuItem } from 'react-pro-sidebar';
 import { Logout, Person, PersonAdd, Settings } from '@mui/icons-material';
 import axios from 'axios';
@@ -45,7 +42,6 @@ const Topbar = () => {
 
   const [anchorE2, setAnchorE2] = React.useState(null);
   const openNot = Boolean(anchorE2);
-  const [openAccountNot, setOpenAccountNot] = React.useState(false);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -84,29 +80,21 @@ const Topbar = () => {
     }
   }
   const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colorMode = useContext(ColorModeContext);
   const [notifications, setNotifiCations] = useState([]);
-  const [errorMessage, setErrorMessage] =useState('');
   const [count, setCount] = useState(0);
-
   useEffect(() => {
     Axios.get('/toshoppending/getall').then((response) => {
     setNotifiCations(response.data);
     setCount(response.data.length);
     console.log('count' + count);
      }).catch((error) => {
-      if (error.response && error.response.data) {
-        setErrorMessage(error.response.data);
-      } else {
-        setErrorMessage("An error occurred");
-      }
      })
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Box display="flex" justifyContent="end" p={2}>
-    
   <Account  fullScreen ={fullScreen} open= {openAccount}  handleClose = {handleCloseAccount}/>
       <Box display="flex">
         <IconButton onClick={colorMode.toggleColorMode}>

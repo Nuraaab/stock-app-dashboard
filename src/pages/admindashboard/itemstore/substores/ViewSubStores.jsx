@@ -1,4 +1,4 @@
-import { Alert, Box, Button,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Typography, useMediaQuery } from "@mui/material";
+import {  Box, Button,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -7,11 +7,13 @@ import Axios from 'axios';
 import { styled } from '@mui/material/styles';
 import { useEffect, useState } from "react";
 import * as React from 'react';
-import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from "@mui/material/CircularProgress";
 import Message from "../../../../components/admincomponents/Message";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import PropTypes from 'prop-types';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -23,14 +25,14 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     width: '100%', // Adjust the width as needed
   },
 }));
-const ViewSubStoreItems = () => {
+
+function CustomTabPanel(props) {
+  const { children, value, index, substoreitems, setReload, reload, ...other } = props;
   const [open, setOpen] = React.useState(false);
   const [openMove, setOpenMove] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
-  const [subStoreItems , setSubStoreItems] = useState([]);
   const [custName, setCustName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [quantityMove, setQuantityMove] = useState('');
@@ -50,353 +52,343 @@ const ViewSubStoreItems = () => {
   const [warehouseName, setWarehouseName] = useState('');
   const [storeType, setStoreType] = useState('');
   const [isSelected, setIsSelected] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [isSaled, setIsSaled] = useState(false);
   const [isMoved, setIsMoved] = useState(false);
   const [isMoveLoad, setIsMoveLoad] = useState(false);
   const [openCancle, setOpenCancle] = useState(false);
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [isCancled, setIsCancled] = useState(false);
-  const [reload, setReload] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const handleDelete = (row) => {
-       setIsCancled(true);
-      Axios.delete(`/Substore/delete/${row._id}`).then((response) => {
-        setMessage("Sale Deleted successfully!");
-        setIsCancled(false);
-        setOpenCancle(false);
-        setReload(!reload);
-     }).catch((error) => {
-      if (error.response && error.response.data) {
-        setErrorMessage(error.response.data);
-      } else {
-        setErrorMessage("An error occurred");
-      }
-      setIsCancled(false);
-      setOpenCancle(true);
-})
-  };
-  const handleSale = (selectedrow) => {
-    setIsSaled(true);
-    if(transactionType ==='credit'){
-      Axios.post(`/Substore/holesall/${selectedrow._id}`, {
-        quantity: quantity,
-        customerName: custName,
-        paymentMethod: transactionType,
-      }).then((response) => {
-        setReload(!reload);
-        Axios.post('/credit/add', {
-          amount: price,
-          customerName: custName,
-          itemCode: selectedrow.itemCode,
-          phone: phone,
-          warehouseName: selectedrow.warehouseName,
-          paymentDate: creditDate
-        }).then((response) => {
-          setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
-          setIsSaled(false);
-          setOpen(false);
-          setCustName('');
-          setPrice('');
-          setQuantity('');
-          setTransactionType('');
-          setErrorMessage('');
-          setTransfer(false);
-          setCredit(false);
-          setReload(!reload);
-        }).catch((error) => {
-          if (error.response && error.response.data) {
-            setErrorMessage(error.response.data);
-          } else {
-            setErrorMessage("An error occurred");
-          }
-          setIsSaled(false);
-        })
-      }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setIsSaled(false);
-      })
-    }else if(transactionType ==='transfer'){
-      Axios.post(`/Substore/holesall/${selectedrow._id}`, {
-        quantity: quantity,
-        customerName: custName,
-        paymentMethod: `${transactionType}(Bank Name: ${bankName}, Account Number: ${accountNumber})`,
-      }).then((response) => {
-        setOpen(false);
-        setIsSaled(false);
-        setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
-        setCustName('');
-        setPrice('');
-        setQuantity('');
-        setTransactionType('');
-        setErrorMessage('');
-        setTransfer(false);
-        setCredit(false);
-        setReload(!reload);
-      }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setIsSaled(false);
-      })
-    }else{
-      Axios.post(`/Substore/holesall/${selectedrow._id}`, {
-        quantity: quantity,
-        customerName: custName,
-        paymentMethod: transactionType,
-      }).then((response) => {
-        setOpen(false);
-        setIsSaled(false);
-        setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
-        setCustName('');
-        setPrice('');
-        setQuantity('');
-        setTransactionType('');
-        setErrorMessage('');
-        setTransfer(false);
-        setCredit(false);
-        setReload(!reload);
-      }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setIsSaled(false);
-      })
-    }
-    }
-  const handleTransactionType = (value) => {
-    console.log('value'+ value);
-        if(value === "transfer"){
-          setTransfer(true);
-          setCredit(false);
-          setTransactionType(value);
-          console.log('from transfer');
-          console.log(transactionType);
-        }else if(value === 'credit'){
-          setCredit(true);
-          setTransfer(false);
-          setTransactionType(value);
-          console.log('from credit');
-          console.log(transactionType);
-        }else{
-          setTransactionType(value);
-          setTransfer(false);
-          setCredit(false);
-          console.log('from cash');
-          console.log(transactionType);
-        }
-  }
-  const resetForm = () => {
-    setStoreType('');
-    setWarehouseName('');
-    setQuantityMove('');
-    setIsSelected(false);
-    setErrorMessage('');
-  };
-  const saleResetForm = () => {
-    setCustName('');
-    setPrice('');
-    setQuantity('');
-    setTransactionType('');
-    setIsSelected(false);
-    setErrorMessage('');
-    setTransfer(false);
-    setCredit(false);
-  };
-  const handleClickOpen = (row) => {
-    setOpen(true);
-    setSelectedRow(row);
-  };
-  const handleMoveClickOpen = (row) => {
-    setOpenMove(true);
-    setSelectedMoveRow(row);
-  };
-  const handleMoveClose = () => {
-    setOpenMove(false);
-    setSelectedMoveRow(null);
-  };
-  const handleClose = () => {
-    setOpen(false);
-    setSelectedRow(null);
-  };
-  const handleMove = (row) => {
-    setIsMoved(true);
-    if(storeType === "Sub Store"){
-       Axios.post(`/Substore/subtransaction/${row._id}`, {
-          quantity: quantityMove,  
-          warehouseName: warehouseName,
-       }).then((response) => {
-        setOpenMove(false);
-        setMessage(`${quantityMove} ${row.name} is succesfully moved at Sub Store to  ${warehouseName}`);
-        setIsMoved(false);
-        setReload(!reload);
-       }).catch((error) => {
-        setOpenMove(true);
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setIsMoved(false);
-       })
-    }else if(storeType === "Shop"){
-        Axios.post(`/Substore/transaction/${row._id}`, {
-          quantity: quantityMove,  
-          warehouseName: warehouseName,
-        }).then((response) => {
-          setOpenMove(false);
-          setMessage(`${quantityMove} ${row.name} is succesfully moved at Shop to ${warehouseName}`);
-          setIsMoved(false);
-          setReload(!reload);
-        }).catch((error) => {
-          if (error.response && error.response.data) {
-            setErrorMessage(error.response.data);
-          } else {
-            setErrorMessage("An error occurred");
-          }
-          setIsMoved(false);
-          setOpenMove(true);
-        })
-    }else{
-      setErrorMessage("Error happening!!");
-      setIsMoved(false);
-    }
-  };
-  const handleStoreType = (value, row) => {
-    setIsMoveLoad(true);
-    setStoreType(value);
-    if(value === ''){
-    setErrorMessage("The selected store type is invalid!!");
-    setIsSelected(false);
-    setIsMoveLoad(false);
-   }else{
-     Axios.get('/warehouse/getall').then((response) => {
-       const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === value && warehouse.name !== row.warehouseName);
-       console.log(filteredWarehouse.length);
-   if (filteredWarehouse.length === 0) {
-     setErrorMessage("No warehouses found for the selected Store Type!!");
-     setIsSelected(false);
-     setIsMoveLoad(false);
+    setIsCancled(true);
+   Axios.delete(`/Substore/delete/${row._id}`).then((response) => {
+     setMessage("Sale Deleted successfully!");
+     setIsCancled(false);
+     setOpenCancle(false);
+     setReload(!reload);
+  }).catch((error) => {
+   if (error.response && error.response.data) {
+     setErrorMessage(error.response.data);
    } else {
-     setwarehouseNameList(filteredWarehouse);
-     setIsSelected(true);
-     setIsMoveLoad(false);
+     setErrorMessage("An error occurred");
    }
-     }).catch((error) => {
-      if (error.response && error.response.data) {
-        setErrorMessage(error.response.data);
-      } else {
-        setErrorMessage("An error occurredf" + error);
-      }
-      setIsMoveLoad(false);
-      setIsSelected(false);
-     })
-   }
-   }
-   const handleCancleClose = () => {
-    setOpenCancle(false);
-    setSelectedCancleRow(null);
-  };
-  const handleCancleClickOpen = (row) => {
-    setOpenCancle(true);
-    setSelectedCancleRow(row);
+   setIsCancled(false);
+   setOpenCancle(true);
+})
 };
-  useEffect(() => {
-    Axios.get('/Substore/getall').then((response) => {
-        setSubStoreItems(response.data);
-        setLoading(false);
-       }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setLoading(false);
-       })
-}, [reload]);
+const handleSale = (selectedrow) => {
+ setIsSaled(true);
+ if(transactionType ==='credit'){
+   Axios.post(`/Substore/holesall/${selectedrow._id}`, {
+     quantity: quantity,
+     customerName: custName,
+     paymentMethod: transactionType,
+   }).then((response) => {
+     setReload(!reload);
+     Axios.post('/credit/add', {
+       amount: price,
+       customerName: custName,
+       itemCode: selectedrow.itemCode,
+       phone: phone,
+       warehouseName: selectedrow.warehouseName,
+       paymentDate: creditDate
+     }).then((response) => {
+       setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
+       setIsSaled(false);
+       setOpen(false);
+       setCustName('');
+       setPrice('');
+       setQuantity('');
+       setTransactionType('');
+       setErrorMessage('');
+       setTransfer(false);
+       setCredit(false);
+       setReload(!reload);
+     }).catch((error) => {
+       if (error.response && error.response.data) {
+         setErrorMessage(error.response.data);
+       } else {
+         setErrorMessage("An error occurred");
+       }
+       setIsSaled(false);
+     })
+   }).catch((error) => {
+     if (error.response && error.response.data) {
+       setErrorMessage(error.response.data);
+     } else {
+       setErrorMessage("An error occurred");
+     }
+     setIsSaled(false);
+   })
+ }else if(transactionType ==='transfer'){
+   Axios.post(`/Substore/holesall/${selectedrow._id}`, {
+     quantity: quantity,
+     customerName: custName,
+     paymentMethod: `${transactionType}(Bank Name: ${bankName}, Account Number: ${accountNumber})`,
+   }).then((response) => {
+     setOpen(false);
+     setIsSaled(false);
+     setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
+     setCustName('');
+     setPrice('');
+     setQuantity('');
+     setTransactionType('');
+     setErrorMessage('');
+     setTransfer(false);
+     setCredit(false);
+     setReload(!reload);
+   }).catch((error) => {
+     if (error.response && error.response.data) {
+       setErrorMessage(error.response.data);
+     } else {
+       setErrorMessage("An error occurred");
+     }
+     setIsSaled(false);
+   })
+ }else{
+   Axios.post(`/Substore/holesall/${selectedrow._id}`, {
+     quantity: quantity,
+     customerName: custName,
+     paymentMethod: transactionType,
+   }).then((response) => {
+     setOpen(false);
+     setIsSaled(false);
+     setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
+     setCustName('');
+     setPrice('');
+     setQuantity('');
+     setTransactionType('');
+     setErrorMessage('');
+     setTransfer(false);
+     setCredit(false);
+     setReload(!reload);
+   }).catch((error) => {
+     if (error.response && error.response.data) {
+       setErrorMessage(error.response.data);
+     } else {
+       setErrorMessage("An error occurred");
+     }
+     setIsSaled(false);
+   })
+ }
+ }
+const handleTransactionType = (value) => {
+ console.log('value'+ value);
+     if(value === "transfer"){
+       setTransfer(true);
+       setCredit(false);
+       setTransactionType(value);
+       console.log('from transfer');
+       console.log(transactionType);
+     }else if(value === 'credit'){
+       setCredit(true);
+       setTransfer(false);
+       setTransactionType(value);
+       console.log('from credit');
+       console.log(transactionType);
+     }else{
+       setTransactionType(value);
+       setTransfer(false);
+       setCredit(false);
+       console.log('from cash');
+       console.log(transactionType);
+     }
+}
+const resetForm = () => {
+ setStoreType('');
+ setWarehouseName('');
+ setQuantityMove('');
+ setIsSelected(false);
+ setErrorMessage('');
+};
+const saleResetForm = () => {
+ setCustName('');
+ setPrice('');
+ setQuantity('');
+ setTransactionType('');
+ setIsSelected(false);
+ setErrorMessage('');
+ setTransfer(false);
+ setCredit(false);
+};
+const handleClickOpen = (row) => {
+ setOpen(true);
+ setSelectedRow(row);
+};
+const handleMoveClickOpen = (row) => {
+ setOpenMove(true);
+ setSelectedMoveRow(row);
+};
+const handleMoveClose = () => {
+ setOpenMove(false);
+ setSelectedMoveRow(null);
+};
+const handleClose = () => {
+ setOpen(false);
+ setSelectedRow(null);
+};
+const handleMove = (row) => {
+ setIsMoved(true);
+ if(storeType === "Sub Store"){
+    Axios.post(`/Substore/subtransaction/${row._id}`, {
+       quantity: quantityMove,  
+       warehouseName: warehouseName,
+    }).then((response) => {
+     setOpenMove(false);
+     setMessage(`${quantityMove} ${row.name} is succesfully moved at Sub Store to  ${warehouseName}`);
+     setIsMoved(false);
+     setReload(!reload);
+    }).catch((error) => {
+     setOpenMove(true);
+     if (error.response && error.response.data) {
+       setErrorMessage(error.response.data);
+     } else {
+       setErrorMessage("An error occurred");
+     }
+     setIsMoved(false);
+    })
+ }else if(storeType === "Shop"){
+     Axios.post(`/Substore/transaction/${row._id}`, {
+       quantity: quantityMove,  
+       warehouseName: warehouseName,
+     }).then((response) => {
+       setOpenMove(false);
+       setMessage(`${quantityMove} ${row.name} is succesfully moved at Shop to ${warehouseName}`);
+       setIsMoved(false);
+       setReload(!reload);
+     }).catch((error) => {
+       if (error.response && error.response.data) {
+         setErrorMessage(error.response.data);
+       } else {
+         setErrorMessage("An error occurred");
+       }
+       setIsMoved(false);
+       setOpenMove(true);
+     })
+ }else{
+   setErrorMessage("Error happening!!");
+   setIsMoved(false);
+ }
+};
+const handleStoreType = (value, row) => {
+ setIsMoveLoad(true);
+ setStoreType(value);
+ if(value === ''){
+ setErrorMessage("The selected store type is invalid!!");
+ setIsSelected(false);
+ setIsMoveLoad(false);
+}else{
+  Axios.get('/warehouse/getall').then((response) => {
+    const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === value && warehouse.name !== row.warehouseName);
+    console.log(filteredWarehouse.length);
+if (filteredWarehouse.length === 0) {
+  setErrorMessage("No warehouses found for the selected Store Type!!");
+  setIsSelected(false);
+  setIsMoveLoad(false);
+} else {
+  setwarehouseNameList(filteredWarehouse);
+  setIsSelected(true);
+  setIsMoveLoad(false);
+}
+  }).catch((error) => {
+   if (error.response && error.response.data) {
+     setErrorMessage(error.response.data);
+   } else {
+     setErrorMessage("An error occurredf" + error);
+   }
+   setIsMoveLoad(false);
+   setIsSelected(false);
+  })
+}
+}
+const handleCancleClose = () => {
+ setOpenCancle(false);
+ setSelectedCancleRow(null);
+};
+const handleCancleClickOpen = (row) => {
+ setOpenCancle(true);
+ setSelectedCancleRow(row);
+};
+
 const getRowId = (row) => {
-    return row._id;
-  };
-  const columns = [
+  return row._id;
+};
+const columns = [
+  
     {
-        field: "warehouseName",
-        headerName: "Warehouse Name",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-    {
-      field: "name",
-      headerName: "Item Name",
-      flex: 1,
+      field: "itemCode",
+      headerName: "Item Code",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
-        field: "itemCode",
-        headerName: "Item Code",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "specification",
-        headerName: "Item Specification",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "type",
-        headerName: "Item Type",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "expireDate",
-        headerName: "Expire Date",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "quantity",
-        headerName: "Quantity",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
+      field: "name",
+      headerName: "Item Name",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
+    },
   
     {
-      field: "delete",
-      headerName: "Delete",
-      renderCell: ({ row }) => {
-        // Render the delete button here
-        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
-      },
+      field: "specification",
+      headerName: "Item Specification",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
     },
     {
-      field: "move",
-      headerName: "Move",
-      renderCell: ({ row }) => {
-        // Render the delete button here
-        return <button onClick={() => handleMoveClickOpen(row)} className="btn btn-primary mx-1 ">Move</button>;
-      },
+      field: "type",
+      headerName: "Item Type",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
     },
     {
-        field: "sale",
-        headerName: "Sale",
-        renderCell: ({ row }) => {
-          // Render the delete button here
-          return <button onClick={() => handleClickOpen(row)} className="btn btn-primary mx-1 ">Sale</button>;
-        },
+      field: "expireDate",
+      headerName: "Expire Date",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "quantity",
+      headerName: "Quantity",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
+    },
+
+  {
+    field: "delete",
+    headerName: "Delete",
+    renderCell: ({ row }) => {
+      // Render the delete button here
+      return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
+    },
+  },
+  {
+    field: "move",
+    headerName: "Move",
+    renderCell: ({ row }) => {
+      // Render the delete button here
+      return <button onClick={() => handleMoveClickOpen(row)} className="btn btn-primary mx-1 ">Move</button>;
+    },
+  },
+  {
+      field: "sale",
+      headerName: "Sale",
+      renderCell: ({ row }) => {
+        // Render the delete button here
+        return <button onClick={() => handleClickOpen(row)} className="btn btn-primary mx-1 ">Sale</button>;
       },
-  ];
+    },
+];
   return (
     <>
-      <BootstrapDialog
+     <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+    <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+<BootstrapDialog
         open={openMove}
         onClose={handleMoveClose}
         aria-labelledby="customized-dialog-title"
@@ -419,10 +411,10 @@ const getRowId = (row) => {
       >
         <CloseIcon />
       </IconButton>
-       {errorMessage || isMoveLoad && <DialogTitle>
-        <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+      <DialogTitle>
+       {errorMessage && <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>}
        {isMoveLoad && <LinearProgress color="secondary"/>}
-        </DialogTitle>}
+        </DialogTitle>
         <DialogContent dividers>
         <FormControl
           fullWidth
@@ -649,6 +641,155 @@ const getRowId = (row) => {
           </Button>
         </DialogActions>
       </BootstrapDialog>
+<div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        // <Box sx={{ p: 3 }}>
+        //   <Typography>{children}</Typography>
+        // </Box>
+
+        <Box
+        margin={0}
+         height="75vh"
+         sx={{
+           "& .MuiDataGrid-root": {
+             border: "none",
+           },
+           "& .MuiDataGrid-cell": {
+             borderBottom: "none",
+           },
+           "& .name-column--cell": {
+             color: colors.greenAccent[300],
+           },
+           "& .MuiDataGrid-columnHeaders": {
+             backgroundColor: colors.blueAccent[700],
+             borderBottom: "none",
+           },
+           "& .MuiDataGrid-virtualScroller": {
+             backgroundColor: colors.primary[400],
+           },
+           "& .MuiDataGrid-footerContainer": {
+             borderTop: "none",
+             backgroundColor: colors.blueAccent[700],
+           },
+           "& .MuiCheckbox-root": {
+             color: `${colors.greenAccent[200]} !important`,
+           },
+           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+             color: `${colors.grey[100]} !important`,
+           },
+           flexGrow: '1',
+           overflowX: 'auto',
+           scrollbarWidth: 'none',
+           msOverflowStyle: 'none',
+           '&::-webkit-scrollbar': {
+             width: '0.4em', 
+           },
+           '&::-webkit-scrollbar-thumb': {
+             backgroundColor: 'transparent', 
+           },
+          padding:'0px'
+         }}
+       
+       >
+       {
+         <div style={{ height: 400, width: '100%' }}>
+         <DataGrid
+             rows={substoreitems}
+             columns={columns}
+             components={{ Toolbar: GridToolbar }}
+             getRowId={getRowId}
+             slotProps={{
+               toolbar: {
+                 showQuickFilter: true,
+                 style: { color: "red" },
+               },
+             }}
+             initialState={{
+               pagination: {
+                 paginationModel: { page: 0, pageSize: 5 },
+               },
+             }}
+             disableColumnFilter={isMobile}
+             disableDensitySelector ={isMobile}
+             disableColumnSelector ={isMobile}
+           />
+           </div>
+           }
+       </Box>
+      )}
+    </div>
+    </>
+  );
+}
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+const ViewSubStoreItems = () => {
+  const [substoreItems, setSubStoreItems] = useState([]);
+  const [openAlert, setOpenAlert] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(false);
+  const [warehouse, setWarehouse] = useState([]);
+  const [value, setValue] = React.useState(0);
+  const [tabName, setTabName] = useState('');
+  const [intialWarehouse, setInitialWarehouse] = useState('');
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    setTabName(warehouse[newValue].name);
+    console.log('tab data ' + warehouse[newValue].name);
+  };
+  useEffect(() => {
+    Axios.get('/Substore/getall').then((response) => {
+        setSubStoreItems(response.data);
+        setLoading(false);
+       }).catch((error) => {
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setLoading(false);
+       })
+}, [reload]);
+useEffect(() => {
+  Axios.get('/warehouse/getall')
+    .then((response) => {
+      const filteredData = response.data.filter((data) => data.type === "Sub Store");
+      setInitialWarehouse(filteredData[0].name);
+      setWarehouse(filteredData);
+      setLoading(false);
+      setValue(0); // Set the initial selected tab to the first tab
+    })
+    .catch((error) => {
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+        console.log('error' +error);
+      }
+      setLoading(false);
+    });
+}, []);
+
+  return (
+    <>
+      
     <Box 
     margin={0}
     padding={0}
@@ -657,54 +798,23 @@ const getRowId = (row) => {
         title="SUB STORE ITEMS"
       />
        {loading && <LinearProgress color="secondary" />}
-       <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
-      <Box
-       margin={0}
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-        }}
-      >
-        <DataGrid
-            rows={subStoreItems}
-            columns={columns}
-            components={{ Toolbar: GridToolbar }}
-            getRowId={getRowId}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                style: { color: "red" },
-              },
-            }}
-           disableColumnFilter ={isMobile}
-          />
+      <Box sx={{ width: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        {warehouse.map((item, index) => (
+          <Tab label={item.name} key={index} sx={{
+            '&.Mui-selected': {
+              color: 'red', // Set your desired active color
+            },
+          }} {...a11yProps(index)} />
+        ))}
+      </Tabs>
       </Box>
+      <CustomTabPanel value={value} index={value}  substoreitems ={value === 0 ? substoreItems.filter((item) => item.warehouseName === intialWarehouse) : substoreItems.filter((item) => item.warehouseName === tabName)} setReload ={setReload} reload = {reload}>
+          
+      </CustomTabPanel>
+    </Box>
     </Box>
     </>
   );

@@ -3,12 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -41,12 +36,11 @@ const defaultTheme = createTheme();
 export default function ForgotPassword() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
-  const [isEmailsent, setIsEmailSent] = useState(false);
-  const [isUserVerified, setIsUserVerified] = useState(false);
+  // const [isEmailsent, setIsEmailSent] = useState(false);
+  // const [isUserVerified, setIsUserVerified] = useState(false);
   const navigate = useNavigate();
   const { refreshUser } = useContext(AuthContext)
   const handleSubmit = (event) => {
@@ -92,7 +86,6 @@ export default function ForgotPassword() {
             alignItems: "center",
           }}
         >
-         <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
          <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
          
          <Avatar sx={{ m: 0, bgcolor: 'secondary.main', width: '80px', 
@@ -122,7 +115,7 @@ export default function ForgotPassword() {
               autoComplete="email"
               autoFocus
             />
-           { isEmailsent && <TextField
+           {/* { isEmailsent && <TextField
               margin="normal"
               required
               fullWidth
@@ -141,7 +134,7 @@ export default function ForgotPassword() {
               type="password"
               id="password"
               autoComplete="new-password"
-            />}
+            />} */}
             {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"

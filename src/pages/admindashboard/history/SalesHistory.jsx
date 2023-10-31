@@ -1,32 +1,24 @@
-import { Alert, Box, IconButton, Modal, useMediaQuery } from "@mui/material";
+import { Box,useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
-import Collapse from '@mui/material/Collapse';
-import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import Message from "../../../components/admincomponents/Message";
 const SalesHistory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [salesHistoryList , setSalesHistory] = useState([]);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [openAlert, setOpenAlert] = useState(true);
-  const navigate = useNavigate();
 //   const handleEdit = (row) => {
 //     navigate(`/edit_spacification`, { state: { rowData: row } });
 //   };
   
-  const handleDelete = (row) => {
-    console.log(row);
-  };
   useEffect(() => {
     Axios.get('/salleshistory/getall').then((response) => {
         setSalesHistory(response.data);
@@ -47,50 +39,58 @@ const getRowId = (row) => {
     {
       field: "itemCode",
       headerName: "Item Code",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
       field: "name",
       headerName: "Item Name",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
    
       {
         field: "specification",
         headerName: "Item Specification",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "type",
         headerName: "Item Type",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "from",
         headerName: "From",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "to",
         headerName: "To",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "paymentMethod",
         headerName: "Payment Method",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "quantity",
         headerName: "Quantity",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
     // {
@@ -116,7 +116,6 @@ const getRowId = (row) => {
       <Header
         title="VIEW SALES HISTORY"
       />
-       {message && <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>}
       {errorMessage && <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>}
     {loading && <LinearProgress color="secondary" />}
       <Box
@@ -163,6 +162,8 @@ const getRowId = (row) => {
               },
             }}
           disableColumnFilter ={isMobile}
+          disableDensitySelector ={isMobile}
+          disableColumnSelector ={isMobile}
           />
       </Box>
     </Box>

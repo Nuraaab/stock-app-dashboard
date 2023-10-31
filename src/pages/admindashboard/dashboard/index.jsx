@@ -1,33 +1,20 @@
-import { Box, Button, IconButton,  Typography, useTheme } from "@mui/material";
-import { mockDataTeam, mockTransactions, warehouses } from "../../../data/mockData";
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import EmailIcon from "@mui/icons-material/Email";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import { Box,Typography, useTheme } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
-import Header from "../../../components/Header";
 import LineChart from "../../../components/LineChart";
-import GeographyChart from "../../../components/GeographyChart";
-import BarChart from "../../../components/BarChart";
 import StatBox from "../../../components/StatBox";
-import ProgressCircle from "../../../components/ProgressCircle";
 import  List from "@mui/icons-material/List";
 import Store from "@mui/icons-material/Store";
 import  LockClockOutlined  from "@mui/icons-material/LockClockOutlined";
 import Shop2Outlined from "@mui/icons-material/Shop2Outlined";
 import HistoryOutlined from "@mui/icons-material/HistoryOutlined";
-import ContactPage from "@mui/icons-material/ContactPage";
 import { tokens } from "../../../theme";
 import { useEffect, useState } from "react";
 import Axios from 'axios';
 import { Link } from "react-router-dom";
-import PieChart from "../../../components/PieChart";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import RecentSales from "../../../components/admincomponents/RecentSales";
 import LinearProgress from "@mui/material/LinearProgress";
-import Formatting from "../../../components/admincomponents/PiChart";
 import MyResponsivePie from "../../../components/admincomponents/PiChart";
-import TestLine from "../../../components/admincomponents/TestLine";
+import Message from "../../../components/admincomponents/Message";
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -40,17 +27,15 @@ const Dashboard = () => {
   const [totalSubStoreItems, setTotalSubStoreItems] = useState(0);
   const [totalShopItems, setTotalShopItems] = useState(0);
   const [warehouseList, setWarehouseList] =useState([]);
-  const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [lineData, setLineData] = useState([]);
-  const [mainstoreData, setMainstoreData] = useState([]);
-  const [subStoreData, setSubstoreData] = useState([]);
+  const [openAlert, setOpenAlert] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const amountResponse = await Axios.get("http://localhost:8000/api/salleshistory/lineamount");
-        const quantityResponse = await Axios.get("http://localhost:8000/api/salleshistory/linequantity");
+        const amountResponse = await Axios.get("/salleshistory/lineamount");
+        const quantityResponse = await Axios.get("/salleshistory/linequantity");
         // const shopResponse = await Axios.get("/shop/line");
   
         const AmountData = {
@@ -76,6 +61,7 @@ const Dashboard = () => {
     };
   
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   useEffect(() => {
@@ -83,12 +69,13 @@ const Dashboard = () => {
   }, [lineData]);
     const [piData, setPiData] = useState('');
     useEffect(() => {
-      Axios.get('http://localhost:8000/api/mainstore/pie').then((response) => {
+      Axios.get('/mainstore/pie').then((response) => {
           setPiData(response.data);
           console.log('lineData:', lineData);
          }).catch((error) => {
           console.log(error);
          })
+         // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     setLoading(true);
@@ -197,48 +184,6 @@ const Dashboard = () => {
      setLoading(false);
     })
    }, []);
-   const getRowId = (row) => {
-    return row._id;
-  };
-  const columns = [
-    {
-      field: "id",
-      headerName: "Id",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-        field: "name",
-        headerName: "Name",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "email",
-        headerName: "Email",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "age",
-        headerName: "Age",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "phone",
-        headerName: "Phone",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "access",
-        headerName: "Access",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-     
-    ];
   return (
     <Box m="0px"
     // sx={{
@@ -256,6 +201,7 @@ const Dashboard = () => {
     // }}
     padding={0}
     >
+    <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
       {loading && <LinearProgress  color="secondary"/>}
       <Box
         display="grid"

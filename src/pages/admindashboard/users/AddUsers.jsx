@@ -19,7 +19,6 @@ const AddUsers = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCashier, setIsCashier] = useState(false);
   const [warehouseList, setwarehouseList] = useState([]);
-  const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(true);
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values) => {
@@ -67,7 +66,7 @@ const AddUsers = () => {
         }
         setLoading(false);
        })
-}, [reload]);
+}, []);
   return (
     <Box m="20px">
       <Header title="ADD NEW USER" subtitle="" />
@@ -200,18 +199,18 @@ const AddUsers = () => {
                 <MenuItem value='admin'>Admin</MenuItem>
                 <MenuItem value='cashier'>Cashier</MenuItem>
               </Select>
-              <FormHelperText>{touched.warehouse && errors.warehouse}</FormHelperText>
+              <FormHelperText>{touched.type && errors.type}</FormHelperText>
               </FormControl>
 
               {
-                isCashier && <FormControl sx={{gridColumn: "span 4" }}
-                 error={!!touched.warehouse && !!errors.warehouse}>
+             !isAdmin && isCashier && <FormControl sx={{gridColumn: "span 4" }}
+                 error={ isCashier && !!touched.warehouse && !!errors.warehouse}>
                  <InputLabel id="demo-simple-select-helper-label">Select warehouse the cashier control</InputLabel>
                 <Select
                 fullWidth
                 variant="outlined"
-                error={!!touched.warehouse && !!errors.warehouse}
-                helperText={touched.warehouse && errors.warehouse}
+                error={isCashier && !!touched.warehouse && !!errors.warehouse}
+                helperText={isCashier && touched.warehouse && errors.warehouse}
                 sx={{ gridColumn: "span 4" ,color: "white"}}
                 value={values.warehouse}
                 name="warehouse"
@@ -225,18 +224,18 @@ const AddUsers = () => {
                   ))
                   }
                </Select>
-               <FormHelperText>{touched.warehouse && errors.warehouse}</FormHelperText>
+              { isCashier && <FormHelperText>{ touched.warehouse && errors.warehouse}</FormHelperText>}
                </FormControl>
               }
               {
-                isCashier && <FormControl sx={{gridColumn: "span 4" }}
-                 error={!!touched.substoreController && !!errors.substoreController}>
+              !isAdmin &&  isCashier && <FormControl sx={{gridColumn: "span 4" }}
+                 error={isCashier && !!touched.substoreController && !!errors.substoreController}>
                  <InputLabel id="demo-simple-select-helper-label">Is the cashier control substore?</InputLabel>
                 <Select
                 fullWidth
                 variant="outlined"
-                error={!!touched.substoreController && !!errors.substoreController}
-                helperText={touched.substoreController && errors.substoreController}
+                error={ isCashier && !!touched.substoreController && !!errors.substoreController}
+                helperText={ isCashier && touched.substoreController && errors.substoreController}
                 sx={{ gridColumn: "span 4" ,color: "white"}}
                 value={values.substoreController}
                 name="substoreController"
@@ -244,10 +243,10 @@ const AddUsers = () => {
                 onBlur={handleBlur}
                 onChange={(e) => handleUserTypeChange(e, handleChange)}
                >
-                 <MenuItem value='yes'>Yes</MenuItem>
-                 <MenuItem value='no'>No</MenuItem>
+                 <MenuItem value='true'>Yes</MenuItem>
+                 <MenuItem value='false'>No</MenuItem>
                </Select>
-               <FormHelperText>{touched.substoreController && errors.substoreController}</FormHelperText>
+               {isCashier && <FormHelperText>{ touched.substoreController && errors.substoreController}</FormHelperText>}
                </FormControl>
               }
               <TextField

@@ -3,12 +3,9 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -41,7 +38,6 @@ const defaultTheme = createTheme();
 export default function SignIn() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
@@ -88,9 +84,9 @@ export default function SignIn() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            overflow:'scroll'
           }}
         >
-         <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
          <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
          
          <Avatar sx={{ m: 0, bgcolor: 'secondary.main', width: '80px', 
@@ -146,11 +142,6 @@ export default function SignIn() {
               <Grid item xs>
                 <Link href="/forgotPass" variant="body2">
                   Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>

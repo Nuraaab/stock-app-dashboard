@@ -1,13 +1,11 @@
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, MenuItem, Modal, Select, TextField, Typography, useMediaQuery } from "@mui/material";
+import {Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton,Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import * as React from 'react';
-import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from "@mui/material/CircularProgress";
@@ -29,13 +27,8 @@ const PendingShopSale = () => {
   const [openCancle, setOpenCancle] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const colors = tokens(theme.palette.mode);
   const [pendingList , setPendingList] = useState([]);
-  const [warehouseList, setWarehouseList] = useState([]);
-  const [warehouseName, setWarehouseName] = useState('');
-  const [filteredWarehouseList, setFilteredWarehouseList] = useState([]);
-  const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [message, setMessage] = useState('');
@@ -43,8 +36,6 @@ const PendingShopSale = () => {
   const [loading, setLoading] = useState(true);
   const [isApproved, setIsApproved] = useState(false);
   const [isCancled, setIsCancled] = useState(false);
-  
-  const [warehouseLoading, setWarehouseLoading] = useState(true);
   const [reload, setReload] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 //   const handleEdit = (row) => {
@@ -129,49 +120,57 @@ const getRowId = (row) => {
     {
       field: "itemCode",
       headerName: "Item Code",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
         field: "name",
         headerName: "Item Name",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
     {
         field: "specification",
         headerName: "Specification",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "type",
         headerName: "Item Type",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "expireDate",
         headerName: "Expire Date",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "cashierName",
         headerName: "Cashier Name",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "quantity",
         headerName: "Quantity",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "warehouseType",
         headerName: "Warehouse Type",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
@@ -183,13 +182,15 @@ const getRowId = (row) => {
       {
         field: "from",
         headerName: "From",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
         field: "to",
         headerName: "To",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
 
@@ -355,6 +356,8 @@ const getRowId = (row) => {
               },
             }}
            disableColumnFilter = {isMobile}
+           disableDensitySelector ={isMobile}
+           disableColumnSelector ={isMobile}
           />
       </Box>
     </Box>
