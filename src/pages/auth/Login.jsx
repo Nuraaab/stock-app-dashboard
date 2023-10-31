@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useTheme } from "@mui/material";
+import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, useTheme } from "@mui/material";
 import { tokens } from '../../theme';
 import { useNavigate } from 'react-router-dom';
 import  Axios  from 'axios';
@@ -18,6 +18,7 @@ import Message from '../../components/admincomponents/Message';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/Context';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 // function Copyright(props) {
 //   return (
 //     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -41,8 +42,10 @@ export default function SignIn() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
+  const [showPassword, setShowPassword] = React.useState(false);
   const navigate = useNavigate();
   const { refreshUser } = useContext(AuthContext)
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleSubmit = (event) => {
     setIsLoggedIn(true);
     event.preventDefault();
@@ -116,16 +119,30 @@ export default function SignIn() {
               autoComplete="email"
               autoFocus
             />
-            <TextField
+            <FormControl fullWidth>
+              <InputLabel>Password</InputLabel>
+            <OutlinedInput
               margin="normal"
               required
               fullWidth
               name="password"
               label="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               autoComplete="current-password"
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
             />
+            </FormControl>
             {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
