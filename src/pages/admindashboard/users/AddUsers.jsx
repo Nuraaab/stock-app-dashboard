@@ -10,6 +10,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import CloseIcon from '@mui/icons-material/Close';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 const AddUsers = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
@@ -24,6 +25,38 @@ const AddUsers = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const colors = tokens(theme.palette.mode);
+  const phoneRegExp =
+  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
+
+const checkoutSchema = yup.object().shape({
+  fullname: yup.string().required("Full name required"),
+  warehouse: yup.string().when('isCashier', {
+    is: true,
+    then: yup.string().required('Warehouse name is required'),
+  }),
+  substoreController: yup.string().when('isCashier', {
+    is: true,
+    then: yup.string().required('Substore controller is required'),
+  }),
+  type: yup.string().required("User type required"),
+  email: yup.string().email("invalid email").required("Email required"),
+  phone: yup
+    .string()
+    .matches(phoneRegExp, "Phone number is not valid").required('Phone Number required'),
+  password: yup.string().required("Password required"),
+  rpassword: yup.string().required("Confirm password required"),
+});
+const initialValues = {
+  fullname: "",
+  email: "",
+  phone: "",
+  password: "",
+  rpassword: "",
+  type: "",
+  warehouse: "",
+  substoreController:""
+};
+  const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowConfirmPasssword = () => setShowConfirmPassword((show) => !show);
   const handleFormSubmit = (values) => {
@@ -32,12 +65,14 @@ const AddUsers = () => {
       adminName:values.fullname,
       email: values.email,
       phone: values.phone,
+      warehouseName: values.warehouse,
+      isSubstore: values.substoreController,
       type: values.type,
-      // isSubstore: values.substoreController,
       password: values.password,
     }).then((response) => {
         setMessage(`User added successfully!`);
         setIsAdded(false);
+        navigate('/view_users');
     }).catch((error) => {
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
@@ -45,7 +80,9 @@ const AddUsers = () => {
         setErrorMessage("An error occurred");
       }
       setIsAdded(false);
+      console.log('error' + error);
     })
+    
     console.log(values);
   };
   const handleUserTypeChange = (event, handleChange) => {
@@ -61,7 +98,7 @@ const AddUsers = () => {
   };
   useEffect(() => {
     Axios.get('/warehouse/getall').then((response) => {
-        setwarehouseList(response.data);
+        setwarehouseList(response.data.filter((data) => data.type === "Shop"));
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
@@ -248,13 +285,13 @@ const AddUsers = () => {
                 onBlur={handleBlur}
                 onChange={(e) => handleUserTypeChange(e, handleChange)}
                >
-                 <MenuItem value='true'>Yes</MenuItem>
-                 <MenuItem value='false'>No</MenuItem>
+                 <MenuItem value = {true}>Yes</MenuItem>
+                 <MenuItem value = {false}>No</MenuItem>
                </Select>
                {isCashier && <FormHelperText>{ touched.substoreController && errors.substoreController}</FormHelperText>}
                </FormControl>
               }
-              <FormControl fullWidth>
+              <FormControl sx={{gridColumn: "span 4" }} fullWidth>
               <InputLabel>Password</InputLabel>
               <OutlinedInput
                 fullWidth
@@ -281,7 +318,7 @@ const AddUsers = () => {
                 }
               />
               </FormControl>
-              <FormControl fullWidth>
+              <FormControl sx={{gridColumn: "span 4" }} fullWidth>
               <InputLabel>Confirm Password</InputLabel>
               <OutlinedInput
                 fullWidth
@@ -322,30 +359,6 @@ const AddUsers = () => {
   );
 };
 
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
-const checkoutSchema = yup.object().shape({
-  fullname: yup.string().required("Full name required"),
-  warehouse: yup.string().required("Warehouse name required"),
-  substoreController: yup.string().required("required"),
-  type: yup.string().required("User type required"),
-  email: yup.string().email("invalid email").required("Email required"),
-  phone: yup
-    .string()
-    .matches(phoneRegExp, "Phone number is not valid").required('Phone Number required'),
-  password: yup.string().required("Password required"),
-  rpassword: yup.string().required("Confirm password required"),
-});
-const initialValues = {
-  fullname: "",
-  email: "",
-  phone: "",
-  password: "",
-  rpassword: "",
-  type: "",
-  warehouse: "",
-  substoreController:""
-};
 
 export default AddUsers;

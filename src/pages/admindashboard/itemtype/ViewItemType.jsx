@@ -11,6 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from "@mui/material/CircularProgress";
 import { styled } from '@mui/material/styles';
 import Message from "../../../components/admincomponents/Message";
+import AddIcon from '@mui/icons-material/Add';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -115,6 +116,7 @@ const getRowId = (row) => {
       <Header
         title="ITEM TYPE"
       />
+      
        <BootstrapDialog
         open={openCancle}
         onClose={handleCancleClose}
@@ -152,6 +154,16 @@ const getRowId = (row) => {
       </BootstrapDialog>
       <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            href="/add_item_type"
+            startIcon={<AddIcon />}
+            sx={{ marginLeft: 'auto' }}
+          >
+            Add Item Type
+          </Button>
+        </Box>
       {loading && <LinearProgress color="secondary"/>}
       <Box
         margin={0}

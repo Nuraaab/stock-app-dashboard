@@ -39,6 +39,10 @@ export default function ForgotPassword() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmited, setIsSubmited] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
+  // const [submitStatus, setSubmitStatus] = useState(false);
+  // const [submitPhoneNumber, setSubmitPhoneNumber] = useState(true);
+  // const [phone, setPhone] = useState('');
+  // const [isPhoneSubmitted, setIsphoneSubmitted] = useState(false);
   // const [isEmailsent, setIsEmailSent] = useState(false);
   // const [isUserVerified, setIsUserVerified] = useState(false);
   const navigate = useNavigate();
@@ -69,7 +73,16 @@ export default function ForgotPassword() {
         setIsSubmited(false)
        })
   };
-
+        // const handlePhone = () => {
+        //   setIsphoneSubmitted(true);
+        // Axios.post('/auth/forgot', {
+        //   phone: phone,
+        // }).then((response) => {
+        //   setIsphoneSubmitted(false);
+        // }).catch((error) => {
+        //   setIsphoneSubmitted(false);
+        // })
+        // }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -78,7 +91,7 @@ export default function ForgotPassword() {
           sx={{
             boxShadow: 3,
             borderRadius: 2,
-            px: 4,
+            px: 2,
             py: 6,
             marginTop: 8,
             display: "flex",
@@ -104,17 +117,27 @@ export default function ForgotPassword() {
               }}>
           Enter the credentials below to reset your password
         </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit}  sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="number"
+              label="Enter Phone Number"
+              name="phone"
+              autoComplete="phone"
               autoFocus
+              // onChange={(e) => setPhone(e.target.value)}
             />
+            {/* {submitPhoneNumber &&  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            sx={{ marginLeft: 'auto' }}
+            onClick={() => handlePhone()}
+          >
+            {isPhoneSubmitted ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit Phone'}
+          </Button>
+        </Box>} */}
            {/* { isEmailsent && <TextField
               margin="normal"
               required
@@ -139,7 +162,7 @@ export default function ForgotPassword() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             /> */}
-            <Button
+           <Button
               type="submit"
               fullWidth
               variant="contained"

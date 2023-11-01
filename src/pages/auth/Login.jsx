@@ -54,7 +54,7 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     });
-    Axios.post('https://adminapi.besal10.com/api/auth/login', {
+    Axios.post('/auth/login', {
         email: data.get('email'),
         password: data.get('password'),
        }).then((response) => {
@@ -153,7 +153,7 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-            {isLoggedIn ? <CircularProgress color='primary' size={30}/> : 'Sign In'}
+            {isLoggedIn ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Sign In'}
             </Button>
             <Grid container>
               <Grid item xs>

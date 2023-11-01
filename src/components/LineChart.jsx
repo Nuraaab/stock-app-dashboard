@@ -45,7 +45,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }
         },
       }}
       colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
-      margin={{ top: 50, right: isMobile ? 5 : 150, bottom: isMobile ? 60 : 50, left: isMobile ? 10 : 60 }}
+      margin={{ top: 50, right: isMobile ? 5 : 150, bottom: isMobile ? 60 : 50, left: isMobile ? 40 : 60 }}
       xScale={{ type: "point" }}
       yScale={{
         type: "linear",
@@ -87,14 +87,14 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }
       useMesh={true}
       legends={[
         {
-          anchor: isMobile ? "bottom" : "bottom-right",
-          direction: "row",
+          anchor: isMobile ? "top-left" : "bottom-right",
+          direction:"column",
           justify: false,
           translateX: 100,
           translateY: 0,
           itemsSpacing: 0,
           itemDirection: "left-to-right",
-          itemWidth: 50,
+          itemWidth: 80,
           itemHeight: 20,
           itemOpacity: 0.75,
           symbolSize: 10,

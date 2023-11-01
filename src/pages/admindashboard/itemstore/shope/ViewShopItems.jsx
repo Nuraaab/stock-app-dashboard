@@ -568,8 +568,10 @@ useEffect(() => {
   Axios.get('/warehouse/getall')
     .then((response) => {
       const filteredData = response.data.filter((data) => data.type === "Shop");
-      setInitialWarehouse(filteredData[0].name);
-      setWarehouse(filteredData);
+      if(filteredData && filteredData.length !== 0){
+        setInitialWarehouse(filteredData[0].name);
+        setWarehouse(filteredData);
+      }
       setLoading(false);
       setValue(0); // Set the initial selected tab to the first tab
     })

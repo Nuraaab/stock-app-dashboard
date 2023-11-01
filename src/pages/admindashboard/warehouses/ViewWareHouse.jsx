@@ -126,7 +126,7 @@ const getRowId = (row) => {
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
-            href="/import"
+            href="/add_ware_house"
             startIcon={<AddIcon />}
             sx={{ marginLeft: 'auto' }}
           >

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Divider, IconButton, ListItemIcon, Menu, Tooltip, useMediaQuery, useTheme } from "@mui/material";
+import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -18,20 +18,21 @@ import { formatDistanceToNow } from 'date-fns';
 import Account from './Account';
 const styles = {
   notification: {
-    padding: '10px',
-    borderRadius: '5px',
-    cursor:'pointer'
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px',
   },
   notificationInfo: {
     fontSize: '14px',
-    color: '#fff',
-    margin: '0',
+    color: 'white',
   },
   cashier: {
     fontWeight: 'bold',
+    marginRight: '5px',
   },
   quantity: {
-    fontStyle: 'italic',
+    fontWeight: 'bold',
+    marginRight: '5px',
   },
 };
 const Topbar = () => {
@@ -240,14 +241,15 @@ const Topbar = () => {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
               {notifications.map((message) => (
-          <div key={message._id} style={styles.notification}>
-            <p style={styles.notificationInfo}>
-              <Link style={{color: 'white'}} to='/pendingshopitems'>
+        <div key={message._id} style={styles.notification}>
+          <Avatar style={{width:'20px', height:'20px'}}/>
+          <p style={styles.notificationInfo}>
+            <Link style={{ color: 'white' }} to='/pendingshopitems'>
               <span style={styles.cashier}>{message.cashierName}</span> requested <span style={styles.quantity}>{message.quantity}</span> {message.name} {formatDistanceToNow(new Date(message.createdAt))} ago
-              </Link>
-            </p>
-          </div>
-        ))}
+            </Link>
+          </p>
+        </div>
+      ))}
       </Menu>
     </Box>
   );
