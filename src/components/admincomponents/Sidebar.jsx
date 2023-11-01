@@ -3,7 +3,7 @@ import Axios from 'axios';
 import { ProSidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
 import '@fortawesome/fontawesome-free/css/all.css';
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Skeleton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -85,8 +85,10 @@ const Sidebar = () => {
   const [role, setRole] = useState('');
   const [isMobile, setisMobile] = useState(false);
   const [breakPoint, setBreakPoint] = useState(false);
+  const [profilLoding, setProfilLoding] = useState(true);
   const [display, setDisplay] = useState('');
   useEffect(() => {
+    setProfilLoding(true);
     Axios.post('/auth/refresh',{
       withCredentials: true,
     }).then((response) => {
@@ -96,8 +98,10 @@ const Sidebar = () => {
         setProfile(response.data.profile);
         console.log(username);
         console.log(email);
+        setProfilLoding(false);
        }).catch((error) => {
         console.log(error);
+        setProfilLoding(false);
        })
        // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
@@ -191,13 +195,14 @@ const Sidebar = () => {
           {!isCollapsed && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
-                <img
+              {profilLoding ?<Skeleton variant="circular" width={100} height={100} />
+                : <img
                   alt="profile-user"
                   width="100px"
                   height="100px"
                   src={profile ? profile : `../../assets/user.png`}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
+                />}
               </Box>
               <Box textAlign="center">
                 <Typography

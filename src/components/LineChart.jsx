@@ -1,11 +1,11 @@
 import { ResponsiveLine } from "@nivo/line";
-import { useTheme } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 import { tokens } from "../theme";
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  
+  const isMobile = useMediaQuery('(max-width: 768px)');
  console.log(lineData);
   return (
     <ResponsiveLine
@@ -45,7 +45,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }
         },
       }}
       colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
-      margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+      margin={{ top: 50, right: isMobile ? 5 : 150, bottom: isMobile ? 60 : 50, left: isMobile ? 10 : 60 }}
       xScale={{ type: "point" }}
       yScale={{
         type: "linear",
@@ -62,7 +62,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }
         orient: "bottom",
         tickSize: 0,
         tickPadding: 5,
-        tickRotation: -45, // Rotate the x-axis tick labels by -45 degrees
+        tickRotation: isMobile ? -60 : 0, // Rotate the x-axis tick labels by -45 degrees
         legend: isDashboard ? undefined : "transportation",
         legendOffset: 36,
         legendPosition: "middle",
@@ -87,17 +87,17 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }
       useMesh={true}
       legends={[
         {
-          anchor: "bottom-right",
-          direction: "column",
+          anchor: isMobile ? "bottom" : "bottom-right",
+          direction: "row",
           justify: false,
           translateX: 100,
           translateY: 0,
           itemsSpacing: 0,
           itemDirection: "left-to-right",
-          itemWidth: 80,
+          itemWidth: 50,
           itemHeight: 20,
           itemOpacity: 0.75,
-          symbolSize: 12,
+          symbolSize: 10,
           symbolShape: "circle",
           symbolBorderColor: "rgba(0, 0, 0, .5)",
           effects: [

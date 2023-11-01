@@ -37,14 +37,14 @@ export default function ForgotPassword() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSubmited, setIsSubmited] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
   // const [isEmailsent, setIsEmailSent] = useState(false);
   // const [isUserVerified, setIsUserVerified] = useState(false);
   const navigate = useNavigate();
   const { refreshUser } = useContext(AuthContext)
   const handleSubmit = (event) => {
-    setIsLoggedIn(true);
+    setIsSubmited(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -56,7 +56,7 @@ export default function ForgotPassword() {
         password: data.get('password'),
        }).then((response) => {
         // setMessage("You are logged in successfully!!")
-        setIsLoggedIn(false);
+        setIsSubmited(false);
         refreshUser(response.data||  null)
         localStorage.setItem("user", JSON.stringify(response.data  ||null))
           navigate('/');
@@ -66,7 +66,7 @@ export default function ForgotPassword() {
         } else {
           setErrorMessage("An error occurred");
         }
-        setIsLoggedIn(false)
+        setIsSubmited(false)
        })
   };
 
@@ -145,7 +145,7 @@ export default function ForgotPassword() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-            {isLoggedIn ? <CircularProgress color='primary' size={30}/> : 'Submit'}
+            {isSubmited ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit'}
             </Button>
           </Box>
         </Box>

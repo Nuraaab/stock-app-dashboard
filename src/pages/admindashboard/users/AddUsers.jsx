@@ -1,14 +1,15 @@
-import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, TextField, useTheme } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import Axios from 'axios';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import CloseIcon from '@mui/icons-material/Close';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 const AddUsers = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
@@ -20,7 +21,11 @@ const AddUsers = () => {
   const [isCashier, setIsCashier] = useState(false);
   const [warehouseList, setwarehouseList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const colors = tokens(theme.palette.mode);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowConfirmPasssword = () => setShowConfirmPassword((show) => !show);
   const handleFormSubmit = (values) => {
     setIsAdded(true);
     Axios.post('/auth/add', {
@@ -28,7 +33,7 @@ const AddUsers = () => {
       email: values.email,
       phone: values.phone,
       type: values.type,
-      isSubstore: values.substoreController,
+      // isSubstore: values.substoreController,
       password: values.password,
     }).then((response) => {
         setMessage(`User added successfully!`);
@@ -183,7 +188,7 @@ const AddUsers = () => {
               />
               <FormControl sx={{gridColumn: "span 2" }}
                 error={!!touched.type && !!errors.type}>
-                <InputLabel id="demo-simple-select-helper-label">Select User Type</InputLabel>
+                <InputLabel id="demo-simple-select-helper-label">Choose User Type</InputLabel>
                <Select
                fullWidth
                variant="outlined"
@@ -205,7 +210,7 @@ const AddUsers = () => {
               {
              !isAdmin && isCashier && <FormControl sx={{gridColumn: "span 4" }}
                  error={ isCashier && !!touched.warehouse && !!errors.warehouse}>
-                 <InputLabel id="demo-simple-select-helper-label">Select warehouse the cashier control</InputLabel>
+                 <InputLabel id="demo-simple-select-helper-label">Choose the warehouse that the cashier will oversee.</InputLabel>
                 <Select
                 fullWidth
                 variant="outlined"
@@ -230,7 +235,7 @@ const AddUsers = () => {
               {
               !isAdmin &&  isCashier && <FormControl sx={{gridColumn: "span 4" }}
                  error={isCashier && !!touched.substoreController && !!errors.substoreController}>
-                 <InputLabel id="demo-simple-select-helper-label">Is the cashier control substore?</InputLabel>
+                 <InputLabel id="demo-simple-select-helper-label">Does the cashier oversee the substore?</InputLabel>
                 <Select
                 fullWidth
                 variant="outlined"
@@ -249,10 +254,12 @@ const AddUsers = () => {
                {isCashier && <FormHelperText>{ touched.substoreController && errors.substoreController}</FormHelperText>}
                </FormControl>
               }
-              <TextField
+              <FormControl fullWidth>
+              <InputLabel>Password</InputLabel>
+              <OutlinedInput
                 fullWidth
                 variant="outlined"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 label="Password"
                 onBlur={handleBlur}
                 onChange={handleChange}
@@ -261,12 +268,25 @@ const AddUsers = () => {
                 error={!!touched.password && !!errors.password}
                 helperText={touched.password && errors.password}
                 sx={{ gridColumn: "span 4" }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
               />
-              <TextField
+              </FormControl>
+              <FormControl fullWidth>
+              <InputLabel>Confirm Password</InputLabel>
+              <OutlinedInput
                 fullWidth
-                
                 variant="outlined"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 label="Confirm Password"
                 onBlur={handleBlur}
                 onChange={handleChange}
@@ -275,23 +295,19 @@ const AddUsers = () => {
                 error={!!touched.rpassword && !!errors.rpassword}
                 helperText={touched.rpassword && errors.rpassword}
                 sx={{ gridColumn: "span 4" }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowConfirmPasssword}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
               />
-              
-               {/* <label htmlFor="btn-upload">
-                <input
-                  id="btn-upload"
-                  name="upload"
-                  style={{ display: 'none'}}
-                  type="file"
-                  onChange={values.upload} />
-                <Button
-                style={{backgroundColor: colors.grey[200]}}
-                  className="btn-choose"
-                  variant="outlined"
-                  component="span" >
-                  Choose Files
-                </Button>
-              </label> */}
+              </FormControl>
               <Box display="flex" justifyContent="end" mt="10px"  >
               <Button type="submit" color="secondary" variant="contained" disabled ={isAdded}>
                 {isAdded ? <CircularProgress color="secondary" size={30}/> : 'ADD NEW USERS'}

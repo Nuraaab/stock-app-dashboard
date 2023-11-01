@@ -2,28 +2,32 @@ import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useTheme } from "@mui/material";
+import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, useTheme } from "@mui/material";
 import { tokens } from '../../theme';
 import { useNavigate } from 'react-router-dom';
 import  Axios  from 'axios';
 import { useState } from 'react';
 import Message from '../../components/admincomponents/Message';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 
 export default function ChangePassword() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSubmited, setIsSubmited] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const navigate = useNavigate();
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowNewPassword = () => setShowNewPassword((show) => !show);
   const handleSubmit = (event) => {
-    setIsLoggedIn(true);
+    setIsSubmited(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -34,8 +38,7 @@ export default function ChangePassword() {
       oldPassword: data.get('oldpassword'),
       newPassword: data.get('newpassword'),
        }).then((response) => {
-        // setMessage("You are logged in successfully!!")
-        setIsLoggedIn(false);
+        setIsSubmited(false);
           navigate('/');
        }).catch((error) => {
         if (error.response && error.response.data) {
@@ -43,7 +46,7 @@ export default function ChangePassword() {
         } else {
           setErrorMessage("An error occurred");
         }
-        setIsLoggedIn(false)
+        setIsSubmited(false)
        })
   };
 
@@ -82,26 +85,54 @@ export default function ChangePassword() {
           Enter the credentials below to change your password
         </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
+          <FormControl fullWidth>
+              <InputLabel>Enter Old Password</InputLabel>
+            <OutlinedInput
               margin="normal"
               required
               fullWidth
               name="oldpassword"
               label="Enter Old Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               autoComplete="current-password"
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
             />
-             <TextField
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel>Enter New Password</InputLabel>
+            <OutlinedInput
               margin="normal"
               required
               fullWidth
               name="newpassword"
               label="Enter New Password"
-              type="password"
+              type={showNewPassword ? "text" : "password"}
               id="password"
               autoComplete="current-password"
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowNewPassword}
+                    edge="end"
+                  >
+                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
             />
+            </FormControl>
             {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -112,7 +143,7 @@ export default function ChangePassword() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-            {isLoggedIn ? <CircularProgress color='primary' size={30}/> : 'Submit'}
+            {isSubmited ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit'}
             </Button>
            
           </Box>
