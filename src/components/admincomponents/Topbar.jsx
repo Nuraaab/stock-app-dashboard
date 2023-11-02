@@ -85,6 +85,7 @@ const Topbar = () => {
   const colorMode = useContext(ColorModeContext);
   const [notifications, setNotifiCations] = useState([]);
   const [count, setCount] = useState(0);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   useEffect(() => {
     Axios.get('/toshoppending/getall').then((response) => {
     setNotifiCations(response.data);
@@ -95,7 +96,7 @@ const Topbar = () => {
      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <Box display="flex" justifyContent="end" py={2}>
+    <Box display="flex" justifyContent= {isMobile ? `flex-end` : `flex-end`} py={2}>
   <Account  fullScreen ={fullScreen} open= {openAccount}  handleClose = {handleCloseAccount}/>
       <Box >
         <IconButton onClick={colorMode.toggleColorMode}>
