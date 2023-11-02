@@ -1,4 +1,4 @@
-import { Box, Button, TextField, useTheme } from "@mui/material";
+import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -24,6 +24,7 @@ const EditUsers = () => {
     fullname: rowData.adminName,
     email: rowData.email,
     phone: rowData.phone,
+    type: rowData.type,
   };
   const handleFormSubmit = (values, {resetForm}) => {
     setIsEdited(true);
@@ -31,6 +32,7 @@ const EditUsers = () => {
     adminName: values.fullname,
     email: values.email,
     phone: values.phone,
+    type:values.type,
    }).then((response) => {
     console.log(response.data);
     console.log('Updating successfull');
@@ -124,6 +126,26 @@ const EditUsers = () => {
                 helperText={touched.phone && errors.phone}
                 sx={{ gridColumn: "span 2" }}
               />
+               <FormControl sx={{gridColumn: "span 2" }}
+                error={!!touched.type && !!errors.type}>
+                <InputLabel id="demo-simple-select-helper-label">Choose User Type</InputLabel>
+               <Select
+               fullWidth
+               variant="outlined"
+               error={!!touched.type && !!errors.type}
+               helperText={touched.type && errors.type}
+               sx={{ gridColumn: "span 2" ,color: "white"}}
+               value={values.type}
+               name="type"
+               label="User Type"
+               onBlur={handleBlur}
+               onChange={handleChange}
+              >
+                <MenuItem value='admin'>Admin</MenuItem>
+                <MenuItem value='cashier'>Cashier</MenuItem>
+              </Select>
+              <FormHelperText>{touched.type && errors.type}</FormHelperText>
+              </FormControl>
               <Box display="flex" justifyContent="end" mt="10px"  >
               <Button type="submit" color="secondary" variant="contained">
                {isEdited ? <CircularProgress color="secondary" size={25}/> : 'EDIT USER'}
@@ -143,6 +165,7 @@ const phoneRegExp =
 
 const checkoutSchema = yup.object().shape({
   fullname: yup.string().required("required"),
+  type: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
   phone: yup
     .string()
