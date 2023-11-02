@@ -8,7 +8,7 @@ import {
 } from "react-router-dom"
 import Topbar from "./components/admincomponents/Topbar";
 import Sidebar from "./components/admincomponents/Sidebar";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider, useMediaQuery } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import AddSpacifications from "./pages/admindashboard/spacification/AddSpacification";
 import ViewSpacifications from "./pages/admindashboard/spacification/ViewSpacification";
@@ -48,6 +48,7 @@ function App() {
 
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const ProtectedRoute = ({ children }) => {
     const { currentUser } = useContext(AuthContext)
 
@@ -67,10 +68,14 @@ function App() {
           <CssBaseline />
           <div className="app">
             <Sidebar isSidebar={isSidebar} />
-            <main className="content">
+            {isMobile ? <main className="content" style={{ padding: 0 }}>
               <Topbar setIsSidebar={setIsSidebar} />
               <Outlet />
-            </main>
+            </main> :
+              <main className="content">
+                <Topbar setIsSidebar={setIsSidebar} />
+                <Outlet />
+              </main>}
           </div>
         </ThemeProvider>
       </ColorModeContext.Provider>

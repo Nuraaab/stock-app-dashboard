@@ -80,19 +80,14 @@ const handleSale = (selectedrow) => {
  setIsSaled(true);
  if(transactionType ==='credit'){
    Axios.post(`/Substore/holesall/${selectedrow._id}`, {
-     quantity: quantity,
-     customerName: custName,
-     paymentMethod: transactionType,
+    quantity: quantity,
+    customerName: custName,
+    paymentMethod: transactionType,
+    amount: price,
+    phone: phone,
+    paymentDate: creditDate,
+    cheque: '',
    }).then((response) => {
-     setReload(!reload);
-     Axios.post('/credit/add', {
-       amount: price,
-       customerName: custName,
-       itemCode: selectedrow.itemCode,
-       phone: phone,
-       warehouseName: selectedrow.warehouseName,
-       paymentDate: creditDate
-     }).then((response) => {
        setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
        setIsSaled(false);
        setOpen(false);
@@ -112,14 +107,6 @@ const handleSale = (selectedrow) => {
        }
        setIsSaled(false);
      })
-   }).catch((error) => {
-     if (error.response && error.response.data) {
-       setErrorMessage(error.response.data);
-     } else {
-       setErrorMessage("An error occurred");
-     }
-     setIsSaled(false);
-   })
  }else if(transactionType ==='transfer'){
    Axios.post(`/Substore/holesall/${selectedrow._id}`, {
      quantity: quantity,
@@ -397,7 +384,7 @@ const columns = [
        <DialogTitle
       id="customized-dialog-title"
     >
-      Moving Items
+      Moving {selectedMoveRow && selectedMoveRow.name}
     </DialogTitle>
     <IconButton
         aria-label="close"
@@ -468,7 +455,7 @@ const columns = [
             fullWidth
             variant="outlined"
             type="number"
-            label="Quantity"
+            label={`How Many ${selectedMoveRow && selectedMoveRow.name} ?`}
             value={quantityMove}
             name="quantity"
             onChange={(e) => setQuantityMove(e.target.value)}
@@ -491,7 +478,7 @@ const columns = [
        <DialogTitle
       id="customized-dialog-title"
     >
-      Sale Sub Store Items
+      Sale of {selectedRow && selectedRow.name}  from Sub Store
     </DialogTitle>
     <IconButton
         aria-label="close"
@@ -519,8 +506,8 @@ const columns = [
           />
         <TextField
            required
-            label="Quantity"
-            value={quantity}
+            label={`How Many ${selectedRow && selectedRow.name} ?`}
+            value={quantity} 
             onChange={(e) => setQuantity(e.target.value)}
             fullWidth
             type="number"
@@ -528,7 +515,7 @@ const columns = [
           />
            <TextField
            required
-            label="Price"
+            label={`Unit Price (Price of 1 ${selectedRow && selectedRow.name}) `}
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             fullWidth

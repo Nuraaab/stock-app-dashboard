@@ -45,7 +45,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }
         },
       }}
       colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
-      margin={{ top: 50, right: isMobile ? 5 : 150, bottom: isMobile ? 60 : 50, left: isMobile ? 40 : 60 }}
+      margin={{ top: 50, right: isMobile ? 5 : 150, bottom: isMobile ? 60 : 50, left: isMobile ? 50 : 60 }}
       xScale={{ type: "point" }}
       yScale={{
         type: "linear",

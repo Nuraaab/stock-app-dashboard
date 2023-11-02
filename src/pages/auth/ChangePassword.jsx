@@ -9,11 +9,11 @@ import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, use
 import { tokens } from '../../theme';
 import { useNavigate } from 'react-router-dom';
 import  Axios  from 'axios';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Message from '../../components/admincomponents/Message';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
+import { AuthContext } from '../../context/Context';
 
 export default function ChangePassword() {
   const theme = useTheme();
@@ -39,7 +39,9 @@ export default function ChangePassword() {
       newPassword: data.get('newpassword'),
        }).then((response) => {
         setIsSubmited(false);
-          navigate('/');
+        refreshUser(null)
+        localStorage.setItem("user", JSON.stringify(null))
+          navigate('/login');
        }).catch((error) => {
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
@@ -49,7 +51,7 @@ export default function ChangePassword() {
         setIsSubmited(false)
        })
   };
-
+  const { refreshUser } = useContext(AuthContext)
   return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />

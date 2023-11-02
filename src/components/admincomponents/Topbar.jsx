@@ -95,9 +95,9 @@ const Topbar = () => {
      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <Box display="flex" justifyContent="end" p={2}>
+    <Box display="flex" justifyContent="end" py={2}>
   <Account  fullScreen ={fullScreen} open= {openAccount}  handleClose = {handleCloseAccount}/>
-      <Box display="flex">
+      <Box >
         <IconButton onClick={colorMode.toggleColorMode}>
           <Tooltip title={theme.palette.mode === "dark" ? "Light mode" : "Dark mode"}>
             {theme.palette.mode === "dark" ? (

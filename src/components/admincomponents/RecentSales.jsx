@@ -111,43 +111,50 @@ setSelectedRow(null);
         {
           field: "name",
           headerName: "Name",
-          flex: 1,
+          width:isMobile&& 120,
+          flex:!isMobile&&1,
           cellClassName: "name-column--cell",
         },
         {
             field: "itemCode",
             headerName: "Item Code",
-            flex: 1,
+            width:isMobile&& 120,
+            flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "specification",
             headerName: "Specification",
-            flex: 1,
+            width:isMobile&& 120,
+            flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "type",
             headerName: "Item Type",
-            flex: 1,
+            width:isMobile&& 120,
+            flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "from",
             headerName: "From",
-            flex: 1,
+            width:isMobile&& 120,
+            flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "to",
             headerName: "To",
-            flex: 1,
+            width:isMobile&& 120,
+            flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "paymentMethod",
             headerName: "Payment Method",
-            flex: 1,
+            width:isMobile&& 120,
+            flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
@@ -280,6 +287,8 @@ setSelectedRow(null);
               },
             }}
            disableColumnFilter = {isMobile}
+           disableDensitySelector ={isMobile}
+           disableColumnSelector ={isMobile}
           /> 
         
             

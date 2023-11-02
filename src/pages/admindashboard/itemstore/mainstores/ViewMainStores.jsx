@@ -156,16 +156,11 @@ function CustomTabPanel(props) {
         quantity: quantity,
         customerName: custName,
         paymentMethod: transactionType,
+        amount: price,
+        phone: phone,
+        paymentDate: creditDate,
+        cheque: '',
       }).then((response) => {
-        setReload(!reload);
-        Axios.post('/credit/add', {
-          amount: price,
-          customerName: custName,
-          itemCode: selectedrow.itemCode,
-          phone: phone,
-          warehouseName: selectedrow.warehouseName,
-          paymentDate: creditDate
-        }).then((response) => {
           setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
           setSaleLoading(false);
           setOpen(false);
@@ -185,18 +180,11 @@ function CustomTabPanel(props) {
           }
           setSaleLoading(false);
         })
-      }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setSaleLoading(false);
-      })
     }else if(transactionType ==='transfer'){
       Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
         quantity: quantity,
         customerName: custName,
+        amount: price,
         paymentMethod: `${transactionType}(Bank Name: ${bankName}, Account Number: ${accountNumber})`,
       }).then((response) => {
         setOpen(false);
@@ -222,6 +210,7 @@ function CustomTabPanel(props) {
       Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
         quantity: quantity,
         customerName: custName,
+        amount: price,
         paymentMethod: transactionType,
       }).then((response) => {
         setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
@@ -406,7 +395,7 @@ const columns = [
     <DialogTitle
    id="customized-dialog-title"
  >
-   Moveing Items
+   Moveing {selectedMoveRow && selectedMoveRow.name}
  </DialogTitle>
  <IconButton
      aria-label="close"
@@ -429,7 +418,7 @@ const columns = [
  <FormControl
        fullWidth
        sx={{gridColumn: "span 4" }}>
-             <InputLabel id="demo-simple-select-helper-label">Choose the destination store for the item</InputLabel>
+             <InputLabel id="demo-simple-select-helper-label">Choose the destination store for the {selectedMoveRow && selectedMoveRow.name}</InputLabel>
  <Select
  sx={{
    marginBottom: '5px'
@@ -478,7 +467,7 @@ const columns = [
          fullWidth
          variant="outlined"
          type="number"
-         label="Quantity"
+         label={`How Many ${selectedMoveRow && selectedMoveRow.name} ?`}
          value={quantityMove}
          name="quantity"
          onChange={(e) => setQuantityMove(e.target.value)}
@@ -501,7 +490,7 @@ const columns = [
     <DialogTitle
    id="customized-dialog-title"
  >
-   Sale Main Store Items
+   Sale of {selectedRow && selectedRow.name} from  Main Store 
  </DialogTitle>
  <IconButton
      aria-label="close"
@@ -529,7 +518,7 @@ const columns = [
        />
     <TextField
          required
-         label="Quantity"
+         label={`How Many ${selectedRow && selectedRow.name} ?`}
          value={quantity}
          onChange={(e) => setQuantity(e.target.value)}
          fullWidth
@@ -538,7 +527,7 @@ const columns = [
        />
         <TextField
          required
-         label="Price"
+         label= {`Unit Price for 1 ${selectedRow && selectedRow.name}`}
          value={price}
          onChange={(e) => setPrice(e.target.value)}
          fullWidth
