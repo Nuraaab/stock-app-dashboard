@@ -156,7 +156,7 @@ const EditWareHouse = () => {
                 <MenuItem value=''>Select Warehouse</MenuItem>
                 <MenuItem value='Main Store'>Main Store</MenuItem>
                 <MenuItem value='Sub Store'>Sub Store</MenuItem>
-                <MenuItem value='Shope'>Shope</MenuItem>
+                <MenuItem value='Shope'>Shop</MenuItem>
               </Select>
     
               
