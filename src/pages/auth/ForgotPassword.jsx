@@ -45,6 +45,7 @@ export default function ForgotPassword() {
   const [phone, setPhone] = useState('');
   const [isPhoneSubmitted, setIsphoneSubmitted] = useState(false);
   const [isPhoneSent, setIsPhoneSent] = useState(false);
+  const [isOtpSubmited, setIsOtpSubmitted] = useState(false);
   const [otp, setOtp] = useState('');
   const navigate = useNavigate();
   const { refreshUser } = useContext(AuthContext)
@@ -68,7 +69,9 @@ export default function ForgotPassword() {
               console.log('otp sent');
               setIsPhoneSent(true);
               setIsphoneSubmitted(false);
+              setIsOtpSubmitted(true);
             }).catch((error) => {
+              console.log('error');
               console.log(error);
               setIsPhoneSent(false);
               setIsphoneSubmitted(false);
@@ -93,6 +96,7 @@ export default function ForgotPassword() {
             refreshUser(null)
             localStorage.setItem("user", JSON.stringify(null))
               navigate('/login');
+              setIsSubmited(false);
             console.log('success');
           }).catch((error) => {
             if (error.response && error.response.data) {
@@ -100,8 +104,15 @@ export default function ForgotPassword() {
             } else {
               setErrorMessage("An error occurred");
             }
+            setIsSubmited(false);
           })
         }
+        }
+
+        const handleOtp = (e) => {
+
+              setOtp(e);
+
         }
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -137,7 +148,7 @@ export default function ForgotPassword() {
               }}>
           Enter the credentials below to reset your password
         </Typography>
-          <Box component="form"  sx={{ mt: 1 }} width='100%' padding={0} margin={0}>
+          <Box   sx={{ mt: 1 }} width='100%' padding={0} margin={0}>
             {!isPhoneSent &&<TextField
               margin="normal"
               required
@@ -167,8 +178,17 @@ export default function ForgotPassword() {
               type="number"
               id="otp"
               autoComplete="otp"
-              onChange={(e) => setOtp(e.target.value)}
+              onChange={(e) => handleOtp(e.target.value)}
             />}
+             {isOtpSubmited &&  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            // sx={{ marginLeft: 'auto' }}
+            onClick={() => handlePhone()}
+          >
+            {isPhoneSubmitted ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit Otp'}
+          </Button>
+        </Box>}
             
             {isPhoneSent &&   <FormControl fullWidth>
               <InputLabel>Enter New Password</InputLabel>
@@ -227,7 +247,6 @@ export default function ForgotPassword() {
               label="Remember me"
             /> */}
           {isPhoneSent && <Button
-              type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}

@@ -1,4 +1,4 @@
-import { Box, Button,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl,  IconButton,  InputLabel,  MenuItem,  Select, TextField, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button,  Checkbox,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl,  FormControlLabel,  IconButton,  InputLabel,  MenuItem,  Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -60,6 +60,11 @@ function CustomTabPanel(props) {
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [isCancled, setIsCancled] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const [checked, setChecked] = React.useState(false);
+
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+  };
   const getRowId = (row) => {
     return row._id;
   };
@@ -577,6 +582,16 @@ const columns = [
          fullWidth
          margin="normal"
        />}
+       {credit && <FormControlLabel required control={<Checkbox onChange={handleChange} />} label="Have Check Book?"  />}
+       {credit && checked && <TextField
+         required
+         label="Enter Check Number"
+         value={phone}
+         onChange={(e) => setPhone(e.target.value)}
+         fullWidth
+         margin="normal"
+         type="number"
+       />}
        {credit && <TextField
        required
          label="phone Number"
@@ -584,6 +599,7 @@ const columns = [
          onChange={(e) => setPhone(e.target.value)}
          fullWidth
          margin="normal"
+         type="number"
        />}
        {
          credit && <TextField
