@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import React from 'react'
 import { tokens } from '../../theme';
@@ -7,9 +7,21 @@ import { useEffect } from 'react';
 import Axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 import Message from './Message';
+import CloseIcon from '@mui/icons-material/Close';
+import { styled } from '@mui/material/styles';
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+  '& .MuiDialog-paper': {
+    width: '100%', // Adjust the width as needed
+  },
+}));
 const RecentSales = ({ name}) => {
     const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
    const colors = tokens(theme.palette.mode);
    const [todaySales, setTodaySales] = useState('');
    const [errorMessage, setErrorMessage] = useState('');
@@ -176,30 +188,41 @@ setSelectedRow(null);
         ];
   return (
     <>
-     <Dialog
-        fullScreen={fullScreen}
+     <BootstrapDialog
         open={open}
         onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
+        aria-labelledby="customized-dialog-title"
         // maxWidth="md" // Set the desired width here
         fullWidth
       >
        <DialogTitle
-      id="responsive-dialog-title"
+      id="customized-dialog-title"
       style={{ textAlign: 'center' }}
     >
       Approve Sales
     </DialogTitle>
+    <IconButton
+     aria-label="close"
+     onClick={() => {handleClose()}}
+     sx={{
+       position: 'absolute',
+       right: 8,
+       top: 8,
+       color: (theme) => theme.palette.grey[500],
+     }}
+   >
+     <CloseIcon />
+   </IconButton>
         <DialogTitle>
         <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
         <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
         </DialogTitle>
-        <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <DialogContent dividers  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Typography variant="body1">
          Do yo want to approve this sale?
          </Typography>
         </DialogContent>
-        <DialogActions style={{ justifyContent: 'center' }}>
+        <DialogActions dividers style={{ justifyContent: 'center' }}>
         <Button variant="outlined" color="inherit" onClick={() => handleClose()} >
             No
           </Button>
@@ -207,20 +230,29 @@ setSelectedRow(null);
             {isApproved ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
           </Button>
         </DialogActions>
-      </Dialog>
-      <Dialog
-        fullScreen={fullScreen}
+      </BootstrapDialog>
+      <BootstrapDialog
         open={openCancle}
         onClose={handleCancleClose}
-        aria-labelledby="responsive-dialog-title"
+        aria-labelledby="customized-dialog-title"
         // maxWidth="md" // Set the desired width here
         fullWidth
       >
-      <DialogTitle id="responsive-dialog-title" style={{ textAlign: 'center' }}>
+      <DialogTitle id="customized-dialog-title" style={{ textAlign: 'center' }}>
           Cancel Sale
         </DialogTitle>
-        <DialogTitle>
-        </DialogTitle>
+        <IconButton
+     aria-label="close"
+     onClick={() => {handleCancleClose()}}
+     sx={{
+       position: 'absolute',
+       right: 8,
+       top: 8,
+       color: (theme) => theme.palette.grey[500],
+     }}
+   >
+     <CloseIcon />
+   </IconButton>
         <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Typography variant="body1">
             Are you sure you want to cancel this sale?
@@ -235,13 +267,12 @@ setSelectedRow(null);
             {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
           </Button>
         </DialogActions>
-      </Dialog>
+      </BootstrapDialog>
    {todaySales.length !== 0 && <Box
            gridColumn={{ xs: "span 12", sm: "span 12" }}
            gridRow={{ xs: 'span 3', sm: 'span 2'}}
            backgroundColor={colors.primary[400]}
-           p={2}
-           pb={4}
+           py={2}
            
         sx={{
           "& .MuiDataGrid-root": {
@@ -272,7 +303,7 @@ setSelectedRow(null);
           },
         }}
       >
-        <Typography variant="h5" fontWeight="600">
+        <Typography variant="h5" fontWeight="600" pl={1}>  
             Recent Sales From {name}
           </Typography>
           <DataGrid

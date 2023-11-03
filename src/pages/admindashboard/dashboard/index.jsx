@@ -1,4 +1,4 @@
-import { Box,Typography, useTheme } from "@mui/material";
+import { Box,Typography, useMediaQuery, useTheme } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LineChart from "../../../components/LineChart";
 import StatBox from "../../../components/StatBox";
@@ -31,6 +31,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [lineData, setLineData] = useState([]);
   const [openAlert, setOpenAlert] = useState(true);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -199,7 +200,7 @@ const Dashboard = () => {
     //     backgroundColor: 'transparent', // Customize scrollbar color
     //   },
     // }}
-    padding={0}
+    pb={isMobile ? 5 : undefined}
     >
     <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
       {loading && <LinearProgress  color="secondary"/>}

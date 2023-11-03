@@ -159,7 +159,8 @@ const Sidebar = () => {
           color: "#6870fa !important",
         },
         height: '100vh',
-        width: isMobile ? '0px' : undefined
+        width: isMobile ? '0px' : undefined,
+        pb: isMobile ? '20px' :undefined,
       }}
     >
       <ProSidebar collapsed={isCollapsed} breakPoint={breakPoint ? 'sm': ''}>

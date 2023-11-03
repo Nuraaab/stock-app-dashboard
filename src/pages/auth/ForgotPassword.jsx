@@ -114,11 +114,11 @@ export default function ForgotPassword() {
         const handleChange = (newValue) => {
           setOtp(newValue);
         }
-        const handleOtp = () => {
+        const handleOtp = (value) => {
           setIsOtpSubmitted(true);
         Axios.post('/auth/otpcheck', {
           phone:phone,
-          otp:otp,
+          otp:value,
         }).then((response) => {
            setIsOtpSent(false);
            setIsOtpSubmitted(false);
@@ -166,7 +166,7 @@ export default function ForgotPassword() {
           sx={{
             fontSize: 14, 
               }}>
-          Enter the credentials below to reset your password
+          {!isPhoneSent ? 'Enter Your phone number' : (isOtpSent ? "Please enter the 6-digit OTP sent to your phone within 3 minutes." : 'Enter the credentials below to reset your password')}
         </Typography>
           <Box   sx={{ mt: 1 }} width='100%' padding={0} margin={0}>
             {!isPhoneSent &&<TextField
@@ -189,15 +189,15 @@ export default function ForgotPassword() {
             {isPhoneSubmitted ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit Phone'}
           </Button>
         </Box>}
-        {isOtpSent && <Typography>Enter the 6 digit code</Typography>}
-        {isOtpSent && <MuiOtpInput value={otp} onChange={handleChange} length={6}/>}
+        {isOtpSubmited && <CircularProgress  color='secondary'/>}
+        {isOtpSent && <MuiOtpInput value={otp} onChange={handleChange} length={6} onComplete={handleOtp}/>}
         {isOtpSent &&  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
             sx={{ marginLeft: 'auto', mt:'5px'}}
-            onClick={() => handleOtp()}
+            onClick={() => handlePhone()}
           >
-            {isOtpSubmited ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit OTP'}
+            {isPhoneSubmitted ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : "Did not receive the OTP?"}
           </Button>
         </Box>}
             {isPassword &&   <FormControl fullWidth>
@@ -210,6 +210,7 @@ export default function ForgotPassword() {
               label="Enter New Password"
               type={showPassword ? "text" : "password"}
               id="password"
+              sx={{mb:'5px'}}
               autoComplete="new-password"
               onChange={(e) => setPassword(e.target.value)}
               endAdornment={

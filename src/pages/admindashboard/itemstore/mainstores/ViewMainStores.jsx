@@ -41,6 +41,7 @@ function CustomTabPanel(props) {
   const [accountNumber, setAccountNumber] = useState('');
   const [bankName, setBankName] = useState('');
   const [phone, setPhone] = useState('');
+  const [chequeNumber, setChequeNumber] = useState('');
   const [creditDate, setCreditDate] = useState('');
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedMoveRow, setSelectedMoveRow] = useState(null);
@@ -582,12 +583,12 @@ const columns = [
          fullWidth
          margin="normal"
        />}
-       {credit && <FormControlLabel required control={<Checkbox onChange={handleChange} />} label="Have Check Book?"  />}
+       {credit && <FormControlLabel required control={<Checkbox onChange={handleChange} />} label="Have Cheque book?"  />}
        {credit && checked && <TextField
          required
-         label="Enter Check Number"
-         value={phone}
-         onChange={(e) => setPhone(e.target.value)}
+         label="Enter Cheque Number?"
+         value={chequeNumber}
+         onChange={(e) => setChequeNumber(e.target.value)}
          fullWidth
          margin="normal"
          type="number"

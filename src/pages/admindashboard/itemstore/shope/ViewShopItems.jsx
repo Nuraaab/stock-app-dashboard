@@ -1,4 +1,4 @@
-import {Box, Button,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery } from "@mui/material";
+import {Box, Button,  Checkbox,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -38,6 +38,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   const [accountNumber, setAccountNumber] = useState('');
   const [bankName, setBankName] = useState('');
   const [phone, setPhone] = useState('');
+  const [chequeNumber, setChequeNumber] = useState('');
   const [creditDate, setCreditDate] = useState('');
   const [credit, setCredit] = useState(false);
   const [transfer, setTransfer] = useState(false);
@@ -48,6 +49,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   const [openCancle, setOpenCancle] = useState(false);
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [isCancled, setIsCancled] = useState(false);
+  const [checked, setChecked] = React.useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const handleTransactionType = (value) => {
     console.log('value'+ value);
@@ -115,7 +117,7 @@ const handleClickOpen = (row) => {
         amount: price,
         phone: phone,
         paymentDate: creditDate,
-        cheque: '',
+        cheque: chequeNumber,
       }).then((response) => {
           setIsSaled(false);
           setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
@@ -196,7 +198,9 @@ const handleClickOpen = (row) => {
       setOpenCancle(true);
       setSelectedCancleRow(row);
   };
-
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+  };
   const getRowId = (row) => {
     return row._id;
   };
@@ -395,6 +399,16 @@ const handleClickOpen = (row) => {
             fullWidth
             margin="normal"
           />}
+          {credit && <FormControlLabel required control={<Checkbox onChange={handleChange} />} label="Have Cheque book?"  />}
+          {credit && checked && <TextField
+         required
+         label="Enter Cheque Number?"
+         value={chequeNumber}
+         onChange={(e) => setChequeNumber(e.target.value)}
+         fullWidth
+         margin="normal"
+         type="number"
+       />}
           {credit && <TextField
           required
             label="phone Number"
