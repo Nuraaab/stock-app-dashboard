@@ -17,6 +17,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/Context';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { MuiOtpInput } from 'mui-one-time-password-input';
 // function Copyright(props) {
 //   return (
 //     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -45,7 +46,9 @@ export default function ForgotPassword() {
   const [phone, setPhone] = useState('');
   const [isPhoneSubmitted, setIsphoneSubmitted] = useState(false);
   const [isPhoneSent, setIsPhoneSent] = useState(false);
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const [isOtpSubmited, setIsOtpSubmitted] = useState(false);
+  const [isPassword, setIsPassword] =useState(false);
   const [otp, setOtp] = useState('');
   const navigate = useNavigate();
   const { refreshUser } = useContext(AuthContext)
@@ -62,18 +65,18 @@ export default function ForgotPassword() {
   );
         const handlePhone = () => {
           setIsphoneSubmitted(true);
-          
             Axios.post('/auth/forgot', {
               phone: phone,
             }).then((response) => {
               console.log('otp sent');
               setIsPhoneSent(true);
+              setIsOtpSent(true);
               setIsphoneSubmitted(false);
-              setIsOtpSubmitted(true);
             }).catch((error) => {
               console.log('error');
               console.log(error);
               setIsPhoneSent(false);
+              setIsOtpSent(false);
               setIsphoneSubmitted(false);
               if (error.response && error.response.data) {
                 setErrorMessage(error.response.data);
@@ -108,11 +111,28 @@ export default function ForgotPassword() {
           })
         }
         }
-
-        const handleOtp = (e) => {
-
-              setOtp(e);
-
+        const handleChange = (newValue) => {
+          setOtp(newValue);
+        }
+        const handleOtp = () => {
+          setIsOtpSubmitted(true);
+        Axios.post('/auth/otpcheck', {
+          phone:phone,
+          otp:otp,
+        }).then((response) => {
+           setIsOtpSent(false);
+           setIsOtpSubmitted(false);
+           setIsPassword(true);
+           console.log('otp ==' + otp);
+        }).catch((error) => {
+         setIsOtpSent(false);
+         setIsOtpSubmitted(false);
+         if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        })
         }
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -169,28 +189,18 @@ export default function ForgotPassword() {
             {isPhoneSubmitted ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit Phone'}
           </Button>
         </Box>}
-           { isPhoneSent && <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="otp"
-              label="Enter the 6 digit code"
-              type="number"
-              id="otp"
-              autoComplete="otp"
-              onChange={(e) => handleOtp(e.target.value)}
-            />}
-             {isOtpSubmited &&  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        {isOtpSent && <Typography>Enter the 6 digit code</Typography>}
+        {isOtpSent && <MuiOtpInput value={otp} onChange={handleChange} length={6}/>}
+        {isOtpSent &&  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
-            // sx={{ marginLeft: 'auto' }}
-            onClick={() => handlePhone()}
+            sx={{ marginLeft: 'auto', mt:'5px'}}
+            onClick={() => handleOtp()}
           >
-            {isPhoneSubmitted ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit Otp'}
+            {isOtpSubmited ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit OTP'}
           </Button>
         </Box>}
-            
-            {isPhoneSent &&   <FormControl fullWidth>
+            {isPassword &&   <FormControl fullWidth>
               <InputLabel>Enter New Password</InputLabel>
             <OutlinedInput
               margin="normal"
@@ -216,7 +226,7 @@ export default function ForgotPassword() {
             />
             </FormControl>
             }
-            {isPhoneSent &&  <FormControl fullWidth>
+            {isPassword &&  <FormControl fullWidth>
               <InputLabel>Confirm Password</InputLabel>
             <OutlinedInput
               margin="normal"
@@ -242,11 +252,7 @@ export default function ForgotPassword() {
             />
             </FormControl>
             }
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
-          {isPhoneSent && <Button
+          {isPassword && <Button
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
@@ -256,7 +262,7 @@ export default function ForgotPassword() {
             </Button>}
             <Grid container>
               <Grid item xs>
-                <Link href="/login" variant="body2">
+                <Link to="/login" variant="body2">
                  Back to login
                 </Link>
               </Grid>
