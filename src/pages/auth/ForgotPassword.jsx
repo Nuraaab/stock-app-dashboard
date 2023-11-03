@@ -7,15 +7,16 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useTheme } from "@mui/material";
+import { FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, useTheme } from "@mui/material";
 import { tokens } from '../../theme';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import  Axios  from 'axios';
 import { useState } from 'react';
 import Message from '../../components/admincomponents/Message';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/Context';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 // function Copyright(props) {
 //   return (
 //     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -39,50 +40,69 @@ export default function ForgotPassword() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmited, setIsSubmited] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
-  // const [submitStatus, setSubmitStatus] = useState(false);
-  // const [submitPhoneNumber, setSubmitPhoneNumber] = useState(true);
-  // const [phone, setPhone] = useState('');
-  // const [isPhoneSubmitted, setIsphoneSubmitted] = useState(false);
-  // const [isEmailsent, setIsEmailSent] = useState(false);
-  // const [isUserVerified, setIsUserVerified] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [isPhoneSubmitted, setIsphoneSubmitted] = useState(false);
+  const [isPhoneSent, setIsPhoneSent] = useState(false);
+  const [otp, setOtp] = useState('');
   const navigate = useNavigate();
   const { refreshUser } = useContext(AuthContext)
-  const handleSubmit = (event) => {
-    setIsSubmited(true);
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-    Axios.post('/auth/login', {
-        email: data.get('email'),
-        password: data.get('password'),
-       }).then((response) => {
-        // setMessage("You are logged in successfully!!")
-        setIsSubmited(false);
-        refreshUser(response.data||  null)
-        localStorage.setItem("user", JSON.stringify(response.data  ||null))
-          navigate('/');
-       }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
+  const { currentUser } = useContext(AuthContext)
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const handlleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  React.useEffect(() => {
+    if (currentUser) {
+      navigate("/")
+    }
+  }
+  );
+        const handlePhone = () => {
+          setIsphoneSubmitted(true);
+          
+            Axios.post('/auth/forgot', {
+              phone: phone,
+            }).then((response) => {
+              console.log('otp sent');
+              setIsPhoneSent(true);
+              setIsphoneSubmitted(false);
+            }).catch((error) => {
+              console.log(error);
+              setIsPhoneSent(false);
+              setIsphoneSubmitted(false);
+              if (error.response && error.response.data) {
+                setErrorMessage(error.response.data);
+              } else {
+                setErrorMessage("An error occurred");
+              }
+            })
+        
         }
-        setIsSubmited(false)
-       })
-  };
-        // const handlePhone = () => {
-        //   setIsphoneSubmitted(true);
-        // Axios.post('/auth/forgot', {
-        //   phone: phone,
-        // }).then((response) => {
-        //   setIsphoneSubmitted(false);
-        // }).catch((error) => {
-        //   setIsphoneSubmitted(false);
-        // })
-        // }
+        const handleReset = () => {
+          setIsSubmited(true);
+          if(password !== confirmPassword){
+            setErrorMessage("Password should be the same.");
+          }else{
+          Axios.post('/auth/reset', {
+            phone:phone,
+            newPassword:password,
+            otp:otp,
+          }).then((response) => {
+            refreshUser(null)
+            localStorage.setItem("user", JSON.stringify(null))
+              navigate('/login');
+            console.log('success');
+          }).catch((error) => {
+            if (error.response && error.response.data) {
+              setErrorMessage(error.response.data);
+            } else {
+              setErrorMessage("An error occurred");
+            }
+          })
+        }
+        }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -117,8 +137,8 @@ export default function ForgotPassword() {
               }}>
           Enter the credentials below to reset your password
         </Typography>
-          <Box component="form" onSubmit={handleSubmit}  sx={{ mt: 1 }}>
-            <TextField
+          <Box component="form"  sx={{ mt: 1 }} width='100%' padding={0} margin={0}>
+            {!isPhoneSent &&<TextField
               margin="normal"
               required
               fullWidth
@@ -127,49 +147,101 @@ export default function ForgotPassword() {
               name="phone"
               autoComplete="phone"
               autoFocus
-              // onChange={(e) => setPhone(e.target.value)}
-            />
-            {/* {submitPhoneNumber &&  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              onChange={(e) => setPhone(e.target.value)}
+            />}
+            {!isPhoneSent &&  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
-            sx={{ marginLeft: 'auto' }}
+            // sx={{ marginLeft: 'auto' }}
             onClick={() => handlePhone()}
           >
             {isPhoneSubmitted ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit Phone'}
           </Button>
-        </Box>} */}
-           {/* { isEmailsent && <TextField
+        </Box>}
+           { isPhoneSent && <TextField
               margin="normal"
               required
               fullWidth
               name="otp"
-              label="Enter the code sent to your email"
+              label="Enter the 6 digit code"
               type="number"
               id="otp"
               autoComplete="otp"
+              onChange={(e) => setOtp(e.target.value)}
             />}
-            {isEmailsent && isUserVerified && <TextField
+            
+            {isPhoneSent &&   <FormControl fullWidth>
+              <InputLabel>Enter New Password</InputLabel>
+            <OutlinedInput
               margin="normal"
               required
               fullWidth
               name="password"
               label="Enter New Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               autoComplete="new-password"
-            />} */}
+              onChange={(e) => setPassword(e.target.value)}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            </FormControl>
+            }
+            {isPhoneSent &&  <FormControl fullWidth>
+              <InputLabel>Confirm Password</InputLabel>
+            <OutlinedInput
+              margin="normal"
+              required
+              fullWidth
+              name="cpassword"
+              label="Confirm Password"
+              type={showConfirmPassword ? "text" : "password"}
+              id="password"
+              autoComplete="c-password"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handlleClickShowConfirmPassword}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            </FormControl>
+            }
             {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             /> */}
-           <Button
+          {isPhoneSent && <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={() => handleReset()}
             >
             {isSubmited ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit'}
-            </Button>
+            </Button>}
+            <Grid container>
+              <Grid item xs>
+                <Link href="/login" variant="body2">
+                 Back to login
+                </Link>
+              </Grid>
+            </Grid>
           </Box>
         </Box>
       </Container>

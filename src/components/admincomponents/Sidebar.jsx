@@ -335,7 +335,7 @@ const Sidebar = () => {
                 <Menu>
                   <MenuItem
                     active={selected === "Pending Orders"}
-                    icon ={<i className="fas fa-exchange-alt"></i>}
+                    icon ={<i className="fas fa-clock"></i>}
                     onClick={() => setSelected("Pending Orders")}
                   >
                     <Typography>Pending Orders</Typography>
@@ -343,18 +343,18 @@ const Sidebar = () => {
                   </MenuItem>
                   <MenuItem
                     active={selected === "Pending Shop Sales"}
-                    icon={<i className="fas fa-history"></i>}
+                    icon={<i className="fas fa-clock"></i>}
                     onClick={() => setSelected("Pending Shop Sales")}
                   >
-                    <Typography>Pending Shop Sales</Typography>
+                    <Typography>Pending Sales</Typography>
                     <Link to="/pendingshopsales" />
                   </MenuItem>
                   <MenuItem
                     active={selected === "Pending Shop Items"}
-                    icon={<i className="fas fa-history"></i>}
+                    icon={<i className="fas fa-exclamation-circle"></i>}
                     onClick={() => setSelected("Pending Shop Items")}
                   >
-                    <Typography>Pending Shop Items</Typography>
+                    <Typography>Pending Items</Typography>
                     <Link to="/pendingshopitems" />
                   </MenuItem>
                 </Menu>

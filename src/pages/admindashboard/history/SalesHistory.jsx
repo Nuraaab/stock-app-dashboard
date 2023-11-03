@@ -93,6 +93,13 @@ const getRowId = (row) => {
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
+      {
+        field: "amount",
+        headerName: "Total Price",
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
+        cellClassName: "name-column--cell",
+      },
     // {
     //   field: "edit",
     //   headerName: "Edit",
@@ -114,7 +121,7 @@ const getRowId = (row) => {
     padding={0}
     >
       <Header
-        title="VIEW SALES HISTORY"
+        title="SALES HISTORY"
       />
       {errorMessage && <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>}
     {loading && <LinearProgress color="secondary" />}

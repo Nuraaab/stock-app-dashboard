@@ -4,12 +4,13 @@ import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
-import { useEffect, useState } from "react";
+import {React,  useEffect, useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
 import { styled } from '@mui/material/styles';
 import Message from "../../../components/admincomponents/Message";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -33,16 +34,18 @@ const Credit = () => {
   const [openCancle, setOpenCancle] = useState(false);
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [isCancled, setIsCancled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [isApproved, setIsApproved] = useState(false);
   const [reload, setReload] = useState(false);
-//   const handleEdit = (row) => {
-//     navigate(`/edit_spacification`, { state: { rowData: row } });
-//   };
+  const navigate = useNavigate();
   
-  const handleDelete = (row) => {
+  const handleCancle = (row) => {
     setIsCancled(true);
-        Axios.delete(`/credit/delete/${row._id}`).then((response) => {
-          setMessage("Credit Deleted successfully!");
+        Axios.post(`/credit/cancele/${row._id}`).then((response) => {
+          setMessage("Credit Cancled successfully!");
           setIsCancled(false);
+          
           setOpenCancle(false);
           setReload(!reload);
        }).catch((error) => {
@@ -55,6 +58,29 @@ const Credit = () => {
         setOpenCancle(true);
   })
   };
+  const handleApprove = (selectedrow) => {
+    setIsApproved(true);
+    Axios.post(`/credit/approve/${selectedrow._id}`).then((response) => {
+        setOpen(false);
+        console.log(response.data);
+        setIsApproved(false);
+        setMessage(`Approving  successfull!`);
+        navigate('/saleshistory');
+       }).catch((error) => {
+        setOpen(true);
+        console.log(error);
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+        setIsApproved(false);
+       })
+    }
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedRow(null);
+  };
   const handleCancleClose = () => {
     setOpenCancle(false);
     setSelectedCancleRow(null);
@@ -63,6 +89,11 @@ const Credit = () => {
     setOpenCancle(true);
     setSelectedCancleRow(row);
  };
+ const handleClickOpen = (row) => {
+  setOpen(true);
+  setSelectedRow(row);
+
+ }
   useEffect(() => {
     Axios.get('/credit/getall').then((response) => {
         setCreditList(response.data);
@@ -122,21 +153,21 @@ const getRowId = (row) => {
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
-      
-    // {
-    //   field: "edit",
-    //   headerName: "Edit",
-    //   renderCell: ({ row }) => {
-    //     return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
-    //   },
-    // },
+      {
+        field: "cancle",
+        headerName: "Cancle",
+        renderCell: ({ row }) => {
+          return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Cancle</button>;
+        },
+      },
     {
-      field: "delete",
-      headerName: "Delete",
+      field: "approve",
+      headerName: "Approve",
       renderCell: ({ row }) => {
-        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
+        return <button onClick={() => handleClickOpen(row)} className="btn btn-success mx-1">Approve</button>;
       },
     },
+   
   ];
   return (
     <Box 
@@ -144,8 +175,43 @@ const getRowId = (row) => {
     padding={0}
     >
       <Header
-        title="VIEW CREDIT INFORMATION"
+        title="CREDIT INFORMATION"
       />
+       <BootstrapDialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="customized-dialog-title"
+        // maxWidth="md" // Set the desired width here
+        fullWidth
+      >
+      <DialogTitle id="delete-confirmation-dialog-title" >Approve Credit</DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={() => handleClose()}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="body1">
+            Are you sure you want to Approve this credit?
+          </Typography>
+        </DialogContent>
+        <DialogActions dividers style={{ justifyContent: 'center' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleClose()} >
+            No
+          </Button>
+          <Button  variant="contained"
+            color="primary" onClick={() => handleApprove(selectedRow)}  disabled ={isApproved}>
+            {isApproved ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
+          </Button>
+        </DialogActions>
+      </BootstrapDialog>
        <BootstrapDialog
         open={openCancle}
         onClose={handleCancleClose}
@@ -153,7 +219,7 @@ const getRowId = (row) => {
         // maxWidth="md" // Set the desired width here
         fullWidth
       >
-      <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>
+      <DialogTitle id="delete-confirmation-dialog-title" >Confirm Cancle</DialogTitle>
       <IconButton
         aria-label="close"
         onClick={() => handleCancleClose()}
@@ -168,7 +234,7 @@ const getRowId = (row) => {
       </IconButton>
         <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Typography variant="body1">
-            Are you sure you want to delete this Credit?
+            Are you sure you want to Cancle this Credit?
           </Typography>
         </DialogContent>
         <DialogActions dividers style={{ justifyContent: 'center' }}>
@@ -176,7 +242,7 @@ const getRowId = (row) => {
             No
           </Button>
           <Button  variant="contained"
-            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
+            color="primary" onClick={() => handleCancle(selectedCancleRow)}  disabled ={isCancled}>
             {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
           </Button>
         </DialogActions>

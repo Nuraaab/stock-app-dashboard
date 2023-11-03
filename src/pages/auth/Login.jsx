@@ -45,6 +45,7 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = React.useState(false);
   const navigate = useNavigate();
   const { refreshUser } = useContext(AuthContext)
+  const { currentUser } = useContext(AuthContext)
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleSubmit = (event) => {
     setIsLoggedIn(true);
@@ -72,7 +73,12 @@ export default function SignIn() {
         setIsLoggedIn(false)
        })
   };
-
+  React.useEffect(() => {
+    if (currentUser) {
+      navigate("/")
+    }
+  }
+  );
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
