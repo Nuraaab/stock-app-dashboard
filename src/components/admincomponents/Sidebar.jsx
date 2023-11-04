@@ -383,17 +383,6 @@ const Sidebar = () => {
               setIsCollapsed={setIsCollapsed}
               handleSidebar={handleSidebar}
             />
-            <Item
-              title="Item Spacification"
-              to= '/view_spacification'
-              icon={<i class="fa-solid fa-file-contract"></i>}
-              selected={selected}
-              setSelected={setSelected}
-              isCollapsed={isCollapsed}
-              isMobile={isMobile}
-              setIsCollapsed={setIsCollapsed}
-              handleSidebar={handleSidebar}
-            />
              <Item
               title="Item Type"
               to= '/view_item_type'

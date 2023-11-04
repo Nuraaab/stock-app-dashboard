@@ -9,6 +9,8 @@ import { useState } from "react";
 import Axios from 'axios';
 import CircularProgress from "@mui/material/CircularProgress";
 import Message from "../../../components/admincomponents/Message";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList } from "@fortawesome/free-solid-svg-icons";
 const EditUsers = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
@@ -57,6 +59,16 @@ const EditUsers = () => {
       <Header title="EDIT USERS" subtitle="" />
       <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end',mb:'20px' }}>
+        <Button
+          variant="contained"
+          href="/view_users"
+          startIcon={<FontAwesomeIcon icon={faList}  size="30px"/>}
+          sx={{ marginLeft: 'auto' }}
+        >
+          User List
+        </Button>
+      </Box>
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}

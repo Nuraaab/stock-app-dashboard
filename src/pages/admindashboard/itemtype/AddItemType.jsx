@@ -9,6 +9,8 @@ import Header from "../../../components/Header";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import CloseIcon from '@mui/icons-material/Close';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList } from "@fortawesome/free-solid-svg-icons";
 const AddItemType = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
@@ -87,6 +89,16 @@ const AddItemType = () => {
         </Alert>
       </Collapse>
     </Box>}
+    <Box sx={{ display: 'flex', justifyContent: 'flex-end',mb:'20px' }}>
+        <Button
+          variant="contained"
+          href="/view_item_type"
+          startIcon={<FontAwesomeIcon icon={faList}  size="30px"/>}
+          sx={{ marginLeft: 'auto' }}
+        >
+          Item-type List
+        </Button>
+      </Box>
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}

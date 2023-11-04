@@ -9,6 +9,8 @@ import {useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useLocation, useNavigate } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
+import { faList } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const EditItems = () => {
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -97,6 +99,16 @@ const EditItems = () => {
         </Alert>
       </Collapse>
     </Box>}
+    <Box sx={{ display: 'flex', justifyContent: 'flex-end',mb:'20px' }}>
+        <Button
+          variant="contained"
+          href="/view_items"
+          startIcon={<FontAwesomeIcon icon={faList}  size="30px"/>}
+          sx={{ marginLeft: 'auto' }}
+        >
+          Item List
+        </Button>
+      </Box>
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}

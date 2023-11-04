@@ -147,6 +147,13 @@ const getRowId = (row) => {
         cellClassName: "name-column--cell",
       },
       {
+        field: "cheque",
+        headerName: "Cheque Number",
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
+        cellClassName: "name-column--cell",
+      },
+      {
         field: "paymentDate",
         headerName: "Payment Deadline",
         width:isMobile&& 120,

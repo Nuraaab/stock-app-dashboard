@@ -9,6 +9,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Message from "../../../components/admincomponents/Message";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList } from "@fortawesome/free-solid-svg-icons";
 const AddWareHouse = () => {
   // const [warehouseList , setwarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -50,6 +52,16 @@ const AddWareHouse = () => {
       <Header title="ADD WAREHOUSE" />
       <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end',mb:'20px' }}>
+        <Button
+          variant="contained"
+          href="/view_ware_house"
+          startIcon={<FontAwesomeIcon icon={faList}  size="30px"/>}
+          sx={{ marginLeft: 'auto' }}
+        >
+          Warehouse List
+        </Button>
+      </Box>
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}

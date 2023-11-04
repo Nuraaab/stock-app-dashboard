@@ -11,6 +11,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import CloseIcon from '@mui/icons-material/Close';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList } from "@fortawesome/free-solid-svg-icons";
 const AddUsers = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
@@ -110,7 +112,7 @@ const initialValues = {
        })
 }, []);
   return (
-    <Box m="20px">
+    <Box m="10px">
       <Header title="ADD NEW USER" subtitle="" />
       {errorMessage && <Box sx={{ width: '100%' }}>
       <Collapse in={openAlert}>
@@ -155,6 +157,16 @@ const initialValues = {
         </Alert>
       </Collapse>
     </Box>}
+    <Box sx={{ display: 'flex', justifyContent: 'flex-end',mb:'20px' }}>
+        <Button
+          variant="contained"
+          href="/view_users"
+          startIcon={<FontAwesomeIcon icon={faList}  size="30px"/>}
+          sx={{ marginLeft: 'auto' }}
+        >
+          User List
+        </Button>
+      </Box>
     {isCashier && loading && <LinearProgress color="secondary"/>}
       <Formik
         onSubmit={handleFormSubmit}

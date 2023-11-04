@@ -165,7 +165,7 @@ function CustomTabPanel(props) {
         amount: price,
         phone: phone,
         paymentDate: creditDate,
-        cheque: '',
+        cheque: chequeNumber,
       }).then((response) => {
           setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
           setSaleLoading(false);

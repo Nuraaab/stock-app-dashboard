@@ -9,6 +9,8 @@ import {  useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from "@mui/material/CircularProgress";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList } from "@fortawesome/free-solid-svg-icons";
 const EditWareHouse = () => {
   // const [warehouseList , setwarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -98,7 +100,16 @@ const EditWareHouse = () => {
         </Alert>
       </Collapse>
     </Box>}
-    
+    <Box sx={{ display: 'flex', justifyContent: 'flex-end',mb:'20px' }}>
+        <Button
+          variant="contained"
+          href="/view_ware_house"
+          startIcon={<FontAwesomeIcon icon={faList}  size="30px"/>}
+          sx={{ marginLeft: 'auto' }}
+        >
+          Warehouse List
+        </Button>
+      </Box>
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}

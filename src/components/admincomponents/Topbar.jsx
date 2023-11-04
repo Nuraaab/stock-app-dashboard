@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, Tooltip, useMediaQuery, useTheme } from "@mui/material";
+import { Avatar, Box, Button, Divider, IconButton, ListItemIcon, Menu, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -23,7 +23,7 @@ const styles = {
     marginBottom: '10px',
   },
   notificationInfo: {
-    fontSize: '14px',
+    fontSize: '12px',
     color: 'white',
   },
   cashier: {
@@ -40,7 +40,7 @@ const Topbar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const [openAccount, setOpenAccount] = React.useState(false);
-
+  const [showMore, setShowMore] = useState(false);
   const [anchorE2, setAnchorE2] = React.useState(null);
   const openNot = Boolean(anchorE2);
   const handleClick = (event) => {
@@ -205,7 +205,6 @@ const Topbar = () => {
         id="account-menu"
         open={openNot}
         onClose={handleCloseNot}
-        onClick={handleCloseNot}
         
         PaperProps={{
           elevation: 0,
@@ -241,16 +240,63 @@ const Topbar = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-              {notifications.map((message) => (
-        <div key={message._id} style={styles.notification}>
-          <Avatar style={{width:'20px', height:'20px'}}/>
-          <p style={styles.notificationInfo}>
-            <Link style={{ color: 'white' }} to='/pendingshopitems'>
-              <span style={styles.cashier}>{message.cashierName}</span> requested <span style={styles.quantity}>{message.quantity}</span> {message.name} {formatDistanceToNow(new Date(message.createdAt))} ago
-            </Link>
-          </p>
-        </div>
-      ))}
+              {notifications
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, showMore ? notifications.length : 3)
+  .map((message) => (
+    <div key={message._id} style={styles.notification}>
+      <Avatar style={{ width: '20px', height: '20px' }} />
+      <p style={styles.notificationInfo}>
+        <Link style={{ color: 'white' }} to='/pendingshopitems'>
+          <span style={styles.cashier}>{message.cashierName}</span> requested <span style={styles.quantity}>{message.quantity}</span> {message.name} {formatDistanceToNow(new Date(message.createdAt))} ago
+        </Link>
+      </p>
+    </div>
+  ))}
+  {notifications.length > 3 && !showMore && (
+    <Box  sx={{
+      display:'flex',
+      justifyContent:'end'
+    }}>
+      <Button
+      variant="outlined"
+      onClick={() => setShowMore(true)}
+      sx={{
+        color:'white'
+      }}
+    >
+      More
+    </Button>
+    </Box>
+    )}
+
+{showMore && (<>{notifications
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(3)
+  .map((message) => (
+    <div key={message._id} style={styles.notification}>
+      <Avatar style={{ width: '20px', height: '20px' }} />
+      <p style={styles.notificationInfo}>
+        <Link style={{ color: 'white' }} to='/pendingshopitems'>
+          <span style={styles.cashier}>{message.cashierName}</span> requested <span style={styles.quantity}>{message.quantity}</span> {message.name} {formatDistanceToNow(new Date(message.createdAt))} ago
+        </Link>
+      </p>
+    </div>
+  ))}
+  <Box sx={{
+      display:'flex',
+      justifyContent:'end'
+    }}>
+  <Button
+  variant="outlined"
+  onClick={() => setShowMore(false)}
+  sx={{
+    color: 'white', 
+  }}
+>
+  Less
+</Button>
+</Box>
+  </>
+  )}
       </Menu>
     </Box>
   );

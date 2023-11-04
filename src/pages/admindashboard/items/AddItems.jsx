@@ -6,12 +6,13 @@ import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import Axios from 'axios';
 import {useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList } from '@fortawesome/free-solid-svg-icons';
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import CloseIcon from '@mui/icons-material/Close';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const AddItems = () => {
   const [itemType, setItemType] = useState([]);
   const [specification, setSpecification] = useState([]);
@@ -22,6 +23,8 @@ const AddItems = () => {
   const [isAdded, setIsAdded] = useState(false);
   const [loading, setLoading] = useState(true);
   const [openAlert, setOpenAlert] = useState(true);
+  const [specii, setSpeci] = useState('');
+  const [isSpecificationAdded, setIsSpecificationAdded] = useState(false);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
   const theme = useTheme();
@@ -71,14 +74,24 @@ const AddItems = () => {
     setFilteredSpecifications(filteredSpecs);
     handleChange(event); 
   };
-  const handleSpecificationChange = (event, handleChange) => {
-    const selectedSpec = event.target.value;
-    const updatedSpecs = filteredSpecifications.filter(
-      (spec) => spec !== selectedSpec
-    );
-    setSelectedSpecifications([...selectedSpecifications, selectedSpec]);
-    setFilteredSpecifications(updatedSpecs);
-    handleChange(event); 
+  const handleSpecificationChange = () => {
+    // const selectedSpec = event.target.value;
+    // const updatedSpecs = filteredSpecifications.filter(
+    //   (spec) => spec !== selectedSpec
+    // );
+    setIsSpecificationAdded(false);
+    const isSpecification = selectedSpecifications.includes(specii);
+      if (!isSpecification) {
+        setSelectedSpecifications([...selectedSpecifications, specii]);
+        setSpeci('');
+        setIsSpecificationAdded(true);
+      } else {
+        setErrorMessage('The specification is already added.');
+        setIsSpecificationAdded(true);
+      }
+    
+    // setFilteredSpecifications(updatedSpecs);
+    // handleChange(event); 
   };
   const handleRemoveSpecification = (specification) => {
     const updatedSpecifications = selectedSpecifications.filter(
@@ -163,6 +176,17 @@ const AddItems = () => {
         </Alert>
       </Collapse>
     </Box>}
+    
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end',mb:'20px' }}>
+        <Button
+          variant="contained"
+          href="/view_items"
+          startIcon={<FontAwesomeIcon icon={faList}  size="30px"/>}
+          sx={{ marginLeft: 'auto' }}
+        >
+          Item List
+        </Button>
+      </Box>
      {loading && <LinearProgress color="secondary"/>}
       <Formik
         onSubmit={handleFormSubmit}
@@ -237,9 +261,27 @@ const AddItems = () => {
                   <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
                 ))}
               </Select>
-              <FormHelperText>{touched.specification && errors.specification}</FormHelperText>
+              <FormHelperText>{touched.type && errors.type}</FormHelperText>
               </FormControl>
-              <FormControl sx={{gridColumn: "span 4" }}
+              <TextField
+                fullWidth
+                variant="outlined"
+                type="text"
+                label={values.itemtype ? "Item Specifications" : "Item Type must be selected first"}
+                onBlur={handleBlur}
+                onChange={(e) => setSpeci(e.target.value)}
+                value={specii}
+                name="specification"
+                error={!!touched.specification && !!errors.specification}
+                helperText={touched.specification && errors.specification}
+                sx={{ gridColumn: "span 3" }}
+              />
+              <Box display="flex" justifyContent="end" mt="10px">
+                <Button onClick={() => handleSpecificationChange()} color="secondary" variant="contained" disabled ={!values.itemtype}>
+                 {isSpecificationAdded ? 'ADD MORE' : 'ADD SPECIFICATIONS'}
+                </Button>
+              </Box>
+              {/* <FormControl sx={{gridColumn: "span 4" }}
                 error={!!touched.specification && !!errors.specification}>
                 <InputLabel id="demo-simple-select-helper-label">Choose Item Specification</InputLabel>
                  <Select
@@ -259,7 +301,8 @@ const AddItems = () => {
                 ))}
               </Select>
               <FormHelperText>{touched.specification && errors.specification}</FormHelperText>
-              </FormControl>
+              </FormControl> */}
+
               <div className="row">
                 {selectedSpecifications.map((specification) => (
                   <div key={specification} className="col-auto d-flex align-items-center">
@@ -270,7 +313,7 @@ const AddItems = () => {
                   </div>
                 ))}
               </div>
-              <Box display="flex" justifyContent="end" mt="10px">
+              <Box display="flex" justifyContent="flex-end" mt="10px" py={1} sx={{width:'100%'}}>
                 <Button type="submit" color="secondary" variant="contained" disabled ={isAdded}>
                  {isAdded ? <CircularProgress color="secondary" size={30}/> : 'ADD NEW ITEMS'}
                 </Button>
@@ -287,7 +330,6 @@ const checkoutSchema = yup.object().shape({
   itemcode: yup.string().required("Item Code Required"),
   itemname: yup.string().required("Item Name Required"),
   itemtype: yup.string().required("required"),
-  specification: yup.string().required("required"),
 });
 
 const initialValues = {
