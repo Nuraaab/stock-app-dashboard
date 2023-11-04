@@ -42,7 +42,7 @@ const AddItems = () => {
         name: values.itemname,
         type: values.itemtype,
         itemCode: values.itemcode,
-        specification: selectedSpecifications.join("/"),
+        specification: !isSpecificationAdded ? specii : selectedSpecifications.join("/"),
       }).then((response) => {
         console.log(response.data);
         console.log('Adding successful');

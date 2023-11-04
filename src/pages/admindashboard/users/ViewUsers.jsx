@@ -43,7 +43,9 @@ const ViewUsers = () => {
   
   const handleDelete = (row) => {
     setIsCancled(true);
-      Axios.delete(`/auth/delete/${row._id}`).then((response) => {
+      Axios.delete(`/auth/delete/${row._id}`, {
+        type:row.type,
+      }).then((response) => {
         setMessage("User Deleted successfully!");
         setIsCancled(false);
         setOpenCancle(false);

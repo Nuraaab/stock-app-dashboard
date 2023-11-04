@@ -255,7 +255,7 @@ const Topbar = () => {
   {notifications.length > 3 && !showMore && (
     <Box  sx={{
       display:'flex',
-      justifyContent:'end'
+      justifyContent:isMobile ? 'flex-end': 'flex-end'
     }}>
       <Button
       variant="outlined"
@@ -283,7 +283,7 @@ const Topbar = () => {
   ))}
   <Box sx={{
       display:'flex',
-      justifyContent:'end'
+      justifyContent:isMobile ? 'flex-end': 'flex-end'
     }}>
   <Button
   variant="outlined"
