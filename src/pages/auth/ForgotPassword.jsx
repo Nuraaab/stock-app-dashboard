@@ -14,6 +14,7 @@ import  Axios  from 'axios';
 import { useState } from 'react';
 import Message from '../../components/admincomponents/Message';
 import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/Context';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -189,7 +190,7 @@ export default function ForgotPassword() {
             {isPhoneSubmitted ? (<span style={{display:"flex"}}>please wait... <CircularProgress color='primary' size={30} /></span>) : 'Submit Phone'}
           </Button>
         </Box>}
-        {isOtpSubmited && <CircularProgress  color='secondary'/>}
+        {isOtpSubmited && <LinearProgress  color='secondary'/>}
         {isOtpSent && <MuiOtpInput value={otp} onChange={handleChange} length={6} onComplete={handleOtp}/>}
         {isOtpSent &&  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
