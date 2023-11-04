@@ -41,7 +41,7 @@ function CustomTabPanel(props) {
   const [accountNumber, setAccountNumber] = useState('');
   const [bankName, setBankName] = useState('');
   const [phone, setPhone] = useState('');
-  const [chequeNumber, setChequeNumber] = useState('');
+  const [chequeNumber, setChequeNumber] = useState(null);
   const [creditDate, setCreditDate] = useState('');
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedMoveRow, setSelectedMoveRow] = useState(null);
@@ -65,6 +65,9 @@ function CustomTabPanel(props) {
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
+    if(event.target.checked === false){
+      setChequeNumber(null)
+    }
   };
   const getRowId = (row) => {
     return row._id;

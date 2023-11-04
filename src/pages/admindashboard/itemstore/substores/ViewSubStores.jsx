@@ -57,7 +57,7 @@ function CustomTabPanel(props) {
   const [isMoveLoad, setIsMoveLoad] = useState(false);
   const [openCancle, setOpenCancle] = useState(false);
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
-  const [chequeNumber, setChequeNumber] = useState('');
+  const [chequeNumber, setChequeNumber] = useState(null);
   const [isCancled, setIsCancled] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [checked, setChecked] = React.useState(false);
@@ -300,6 +300,9 @@ const handleCancleClickOpen = (row) => {
 };
 const handleChange = (event) => {
   setChecked(event.target.checked);
+  if(event.target.checked === false){
+    setChequeNumber(null)
+  }
 };
 const getRowId = (row) => {
   return row._id;
