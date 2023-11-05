@@ -29,22 +29,16 @@ const EditSubStoreItems = () => {
     warehouseName: values.warehouseName,
     quantity: values.quantity,
    }).then((response) => {
-    console.log(response.data);
-    console.log('Adding successfull');
     setMessage('Items  Added to Main Store  Successfully!');
     resetForm();
    }).catch((error) => {
-    console.log(error);
     setMessage('Error happens while adding Items To Main Store!');
    })
-    console.log(values);
   };
   const handleItemTypeChange = (event, handleChange) => {
     const selectedItemType = event.target.value;
     const filteredItems = itemList
       .filter((item) => item.type === selectedItemType);
-      console.log('hello');
-    console.log(filteredItems);
     setFilteredItemList(filteredItems);
     handleChange(event); 
   };
@@ -55,7 +49,6 @@ const EditSubStoreItems = () => {
       const selectedName = filteredItems[0].name;
       const selectedItemCode = filteredItems[0].itemCode;
       const selectedSpecification = filteredItems[0].specification;
-      console.log(selectedName, selectedSpecification);
       setItemName(selectedName);
       setItemCode(selectedItemCode);
       setSpecification(selectedSpecification);
@@ -68,22 +61,16 @@ const EditSubStoreItems = () => {
   useEffect(() => {
     Axios.get('/type/getall').then((response) => {
         setItemType(response.data);
-        console.log(itemType);
         Axios.get('/items/getall').then((response) => {
         setItemList(response.data);
         Axios.get('/warehouse/getall').then((response) => {
             const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Main Store");
             setFilteredWarehouseList(filteredWarehouse);
-            console.log('warehouse');
-            console.log(filteredWarehouseList);
         }).catch((error) => {
-            console.log(error);
         })
         }).catch((error) => {
-            console.log(error);
         })
        }).catch((error) => {
-        console.log(error);
        })
         // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
@@ -232,8 +219,6 @@ const checkoutSchema = yup.object().shape({
   itemtype: yup.string().required("required"),
   name: yup.string().required("required"),
   expireDate: yup.string().required("required"),
-//   specification: yup.string().required("required"),
-//   company: yup.string().required("required"),
   quantity: yup.string().required("required"),
   warehouseName: yup.string().required("required"),
 });

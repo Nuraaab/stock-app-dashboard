@@ -35,22 +35,21 @@ const EditUsers = () => {
     phone: values.phone,
     type:rowData.type,
    }).then((response) => {
-    console.log(response.data);
-    console.log('Updating successfull');
     setIsEdited(false);
+    setOpenAlert(true);
     setMessage('User Updated Successfully!');
     resetForm();
     navigate('/view_users');
    }).catch((error) => {
-    console.log(error);
     if (error.response && error.response.data) {
+      setOpenAlert(true);
       setErrorMessage(error.response.data);
     } else {
+      setOpenAlert(true);
       setErrorMessage("An error occurred");
     }
     setIsEdited(false);
    })
-    console.log(values);
   };
  
 

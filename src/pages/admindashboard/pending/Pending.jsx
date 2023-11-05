@@ -20,7 +20,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
   },
   '& .MuiDialog-paper': {
-    width: '100%', // Adjust the width as needed
+    width: '100%',
   },
 }));
 const Pending = () => {
@@ -43,21 +43,20 @@ const Pending = () => {
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [reload, setReload] = useState(false);
   const [isCancled, setIsCancled] = useState(false);
-//   const handleEdit = (row) => {
-//     navigate(`/edit_main_store_items`, { state: { rowData: row } });
-//   };
-  
   const handleDelete = (row) => {
     setIsCancled(true);
       Axios.delete(`/pending/delete/${row._id}`).then((response) => {
+        setOpenAlert(true);
         setMessage("Sale Deleted successfully!");
         setIsCancled(false);
         setOpenCancle(false);
         setReload(!reload);
      }).catch((error) => {
       if (error.response && error.response.data) {
+        setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setIsCancled(false);
@@ -70,17 +69,17 @@ const Pending = () => {
         warehouseName: warehouseName,
        }).then((response) => {
         setOpen(false);
-        console.log(response.data);
-        console.log('Adding successfull');
         setIsApproved(false);
+        setOpenAlert(true);
         setMessage(`Adding ${response.data.name} is successfull!`);
         navigate('/mainstore');
        }).catch((error) => {
         setOpen(true);
-        console.log(error);
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsApproved(false);
@@ -93,13 +92,12 @@ const Pending = () => {
         const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Main Store");
         setFilteredWarehouseList(filteredWarehouse);
         setWarehouseLoading(false);
-        console.log('warehouse');
-        console.log(filteredWarehouseList);
     }).catch((error) => {
-        console.log(error);
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setWarehouseLoading(false);
@@ -125,8 +123,10 @@ const Pending = () => {
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);
@@ -186,19 +186,10 @@ const getRowId = (row) => {
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
-    // {
-    //   field: "edit",
-    //   headerName: "Edit",
-    //   renderCell: ({ row }) => {
-    //     // Render the edit button here
-    //     return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
-    //   },
-    // },
     {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        // Render the delete button here
         return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
@@ -206,7 +197,6 @@ const getRowId = (row) => {
         field: "approve",
         headerName: "Approve",
         renderCell: ({ row }) => {
-          // Render the delete button here
           return <button onClick={()=>handleClickOpen(row)} className="btn btn-success mx-1">Approve</button>;
         },
       },
@@ -214,14 +204,10 @@ const getRowId = (row) => {
   return (
     <>
      <div>
-      {/* <Button variant="outlined" onClick={handleClickOpen}>
-        Open responsive dialog
-      </Button> */}
      <BootstrapDialog
         open={open}
         onClose={handleClose}
         aria-labelledby="Costomized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
        <DialogTitle

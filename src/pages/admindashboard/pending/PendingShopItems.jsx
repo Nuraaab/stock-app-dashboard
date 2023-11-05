@@ -28,7 +28,6 @@ const PendingShopItem = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [pendingList , setPendingList] = useState([]);
-  const [filteredWarehouseList, setFilteredWarehouseList] = useState([]);
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -39,24 +38,21 @@ const PendingShopItem = () => {
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [reload, setReload] = useState(false);
-//   const handleEdit = (row) => {
-//     navigate(`/edit_main_store_items`, { state: { rowData: row } });
-//   };
-  
   const handleDelete = (row) => {
     setIsCancled(true);
     Axios.delete(`/ToShopPending/undo/${row._id}`).then((response) => {
       setOpenCancle(false);
-      console.log(response.data);
       setIsCancled(false);
+      setOpenAlert(true);
       setMessage(`Item Movement  Cancled successfully!!!`);
       setReload(!reload);
      }).catch((error) => {
       setOpenCancle(true);
-      console.log(error);
       if (error.response && error.response.data) {
+        setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setIsCancled(false);
@@ -77,16 +73,17 @@ const handleCancleClose = () => {
         quantity: selectedrow.quantity,
        }).then((response) => {
         setOpen(false);
-        console.log(response.data);
         setIsApproved(false);
+        setOpenAlert(true);
         setMessage(`Sales Approved successfully!`);
         setReload(!reload);
        }).catch((error) => {
         setOpen(true);
-        console.log(error);
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsApproved(false);
@@ -95,20 +92,6 @@ const handleCancleClose = () => {
   const handleClickOpen = (row) => {
             setOpen(true);
             setSelectedRow(row);
-    Axios.get('/warehouse/getall').then((response) => {
-        const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Shop");
-        setFilteredWarehouseList(filteredWarehouse);
-        console.log('warehouse');
-        console.log(filteredWarehouseList);
-    }).catch((error) => {
-        console.log(error);
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setSelectedRow(null);
-    })
   };
 
   const handleClose = () => {
@@ -122,8 +105,10 @@ const handleCancleClose = () => {
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);
@@ -196,21 +181,10 @@ const getRowId = (row) => {
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
-
-    // {
-    //   field: "edit",
-    //   headerName: "Edit",
-    //   renderCell: ({ row }) => {
-    //     // Render the edit button here
-    //     return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
-    //   },
-    // },
-
     {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        // Render the delete button here
         return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Cancle</button>;
       },
     },
@@ -218,7 +192,6 @@ const getRowId = (row) => {
         field: "approve",
         headerName: "Approve",
         renderCell: ({ row }) => {
-          // Render the delete button here
           return <button onClick={()=>handleClickOpen(row)} className="btn btn-success mx-1">Approve</button>;
         },
       },
@@ -226,14 +199,10 @@ const getRowId = (row) => {
   return (
     <>
      <div>
-      {/* <Button variant="outlined" onClick={handleClickOpen}>
-        Open responsive dialog
-      </Button> */}
      <BootstrapDialog
         open={open}
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
        <DialogTitle

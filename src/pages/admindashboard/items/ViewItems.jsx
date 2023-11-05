@@ -43,14 +43,17 @@ const ViewItems = () => {
   const handleDelete = (row) => {
     setIsCancled(true);
       Axios.delete(`/items/delete/${row._id}`).then((response) => {
+        setOpenAlert(true);
         setMessage(`${row.name} deleted successfully!`);
         setReload(!reload);
         setIsCancled(false);
         setOpenCancle(false);
       }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsCancled(false);
@@ -71,8 +74,10 @@ const ViewItems = () => {
       setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);

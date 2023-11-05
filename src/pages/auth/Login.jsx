@@ -19,21 +19,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/Context';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-// function Copyright(props) {
-//   return (
-//     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-//       {'Copyright © '}
-//       <Link color="inherit" href="https://mui.com/">
-//         Your Website
-//       </Link>{' '}
-//       {new Date().getFullYear()}
-//       {'.'}
-//     </Typography>
-//   );
-// }
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
 const defaultTheme = createTheme();
 
 export default function SignIn() {
@@ -51,23 +36,20 @@ export default function SignIn() {
     setIsLoggedIn(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
     Axios.post('/auth/login', {
         email: data.get('email'),
         password: data.get('password'),
        }).then((response) => {
-        // setMessage("You are logged in successfully!!")
         setIsLoggedIn(false);
         refreshUser(response.data||  null)
         localStorage.setItem("user", JSON.stringify(response.data  ||null))
           navigate('/');
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred" + error);
         }
         setIsLoggedIn(false)
@@ -149,10 +131,6 @@ export default function SignIn() {
               }
             />
             </FormControl>
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth

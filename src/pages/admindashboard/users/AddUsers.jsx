@@ -72,20 +72,20 @@ const initialValues = {
       type: values.type,
       password: values.password,
     }).then((response) => {
+        setOpenAlert(true);
         setMessage(`User added successfully!`);
         setIsAdded(false);
         navigate('/view_users');
     }).catch((error) => {
       if (error.response && error.response.data) {
+        setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setIsAdded(false);
-      console.log('error' + error);
     })
-    
-    console.log(values);
   };
   const handleUserTypeChange = (event, handleChange) => {
     const selecteduserType = event.target.value;
@@ -104,8 +104,10 @@ const initialValues = {
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);

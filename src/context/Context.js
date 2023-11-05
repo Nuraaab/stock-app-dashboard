@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from "react";
-// import { makeRequest } from "../axios";
 import axios from "axios"
 axios.defaults.withCredentials = true;
 
@@ -22,7 +21,6 @@ export const AuthContextProvider = ({ children }) => {
                 setCurrentUser(res.data , null)
                 localStorage.setItem("user", JSON.stringify(res.data) || null)
             } catch (err) {
-                console.log(err)
                 setCurrentUser(null)
                 localStorage.setItem("user", null)
             }

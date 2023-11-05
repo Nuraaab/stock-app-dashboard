@@ -6,7 +6,6 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false, lineData }
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isMobile = useMediaQuery('(max-width: 768px)');
- console.log(lineData);
   return (
     <ResponsiveLine
       data={lineData}

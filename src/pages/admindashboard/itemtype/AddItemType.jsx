@@ -25,22 +25,21 @@ const AddItemType = () => {
    Axios.post('/type/add', {
     type: values.itemtype,
    }).then((response) => {
-    console.log(response.data);
-    console.log('Adding successfull');
     setisEdited(false);
+    setOpenAlert(true);
     setMessage('Item Type Added Successfully!');
     resetForm();
     navigate('/view_item_type');
    }).catch((error) => {
-    console.log(error);
     if (error.response && error.response.data) {
+      setOpenAlert(true);
       setErrorMessage(error.response.data);
     } else {
+      setOpenAlert(true);
       setErrorMessage("An error occurred");
     }
     setisEdited(false);
    })
-    console.log(values);
   };
 
   return (

@@ -12,7 +12,6 @@ import Message from "../../../components/admincomponents/Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
 const AddWareHouse = () => {
-  // const [warehouseList , setwarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -27,22 +26,21 @@ const AddWareHouse = () => {
     name: values.name,
     type: values.type,
    }).then((response) => {
-    console.log(response.data);
-    console.log('Adding successfull');
     setIsAdded(false);
+    setOpenAlert(true);
     setMessage('Warehouse Added Successfully!');
     resetForm();
     navigate('/view_ware_house');
    }).catch((error) => {
-    console.log(error);
     if (error.response && error.response.data) {
+      setOpenAlert(true);
       setErrorMessage(error.response.data);
     } else {
+      setOpenAlert(true);
       setErrorMessage("An error occurred");
     }
     setIsAdded(false);
    })
-    console.log(values);
   };
 
 

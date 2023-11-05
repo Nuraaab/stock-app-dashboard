@@ -17,7 +17,6 @@ const AddMainStoreItems = () => {
   const [specification, setSpecification] = useState([]);
   const [itemName, setItemName] = useState([]);
   const [itemCode, setItemCode] = useState([]);
-  const [filteredWarehouseList, setFilteredWarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -36,15 +35,16 @@ const AddMainStoreItems = () => {
     company: values.company,
     quantity: values.quantity,
    }).then((response) => {
-    console.log(response.data);
-    console.log('Adding successfull');
+    setOpenAlert(true);
     setMessage(`Adding ${response.data.name} is in pending!`);
     setLoading(false);
     resetForm();
    }).catch((error) => {
     if (error.response && error.response.data) {
+      setOpenAlert(true);
       setErrorMessage(error.response.data);
     } else {
+      setOpenAlert(true);
       setErrorMessage("An error occurred");
     }
     setLoading(false);
@@ -54,8 +54,6 @@ const AddMainStoreItems = () => {
     const selectedItemType = event.target.value;
     const filteredItems = itemList
       .filter((item) => item.type === selectedItemType);
-      console.log('hello');
-    console.log(filteredItems);
     setFilteredItemList(filteredItems);
     handleChange(event); 
   };
@@ -66,7 +64,6 @@ const AddMainStoreItems = () => {
       const selectedName = filteredItems[0].name;
       const selectedItemCode = filteredItems[0].itemCode;
       const selectedSpecification = filteredItems[0].specification;
-      console.log(selectedName, selectedSpecification);
       setItemName(selectedName);
       setItemCode(selectedItemCode);
       setSpecification(selectedSpecification);
@@ -79,26 +76,23 @@ const AddMainStoreItems = () => {
   useEffect(() => {
     Axios.get('/type/getall').then((response) => {
         setItemType(response.data);
-        console.log(itemType);
         Axios.get('/items/getall').then((response) => {
         setItemList(response.data);
-        Axios.get('/warehouse/getall').then((response) => {
-            const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Main Store");
-            setFilteredWarehouseList(filteredWarehouse);
-            console.log('warehouse');
-            console.log(filteredWarehouseList);
         }).catch((error) => {
-            console.log(error);
-            setErrorMessage(error.response.data);
-        })
-        }).catch((error) => {
-            console.log(error);
-            setErrorMessage(error.response.data);
+            if (error.response && error.response.data) {
+              setOpenAlert(true);
+          setErrorMessage(error.response.data);
+        } else {
+          setOpenAlert(true);
+          setErrorMessage("An error occurred");
+        }
         })
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
        })
@@ -238,9 +232,6 @@ const AddMainStoreItems = () => {
                 sx={{ gridColumn: "span 2" }}
               />
               <Box display="flex" justifyContent="end" mt="10px" >
-              {/* <Button type="submit" color="secondary" variant="contained">
-                ADD ITEMS
-              </Button> */}
               <Button type="submit" color="secondary" variant="contained" disabled={loading}>
               {loading ? <CircularProgress color="secondary" size={24} /> : 'ADD ITEMS'}
             </Button>
@@ -259,7 +250,6 @@ const checkoutSchema = yup.object().shape({
   itemtype: yup.string().required("Item type required!!!"),
   name: yup.string().required("Item name required!!!"),
   expireDate: yup.string().required("Expired Date required!!!"),
-//   specification: yup.string().required("required"),
   company: yup.string().required("Campany name required!!!"),
   quantity: yup.string().required("Quantity required!!!"),
 });

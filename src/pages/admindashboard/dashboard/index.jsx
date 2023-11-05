@@ -37,7 +37,6 @@ const Dashboard = () => {
       try {
         const amountResponse = await Axios.get("/salleshistory/lineamount");
         const quantityResponse = await Axios.get("/salleshistory/linequantity");
-        // const shopResponse = await Axios.get("/shop/line");
   
         const AmountData = {
           id: "Amount Salled",
@@ -50,14 +49,8 @@ const Dashboard = () => {
           color: tokens("dark").blueAccent[300],
           data: quantityResponse.data,
         };
-        console.log('quantiy:', QuantityData);
-        console.log('ammount:', AmountData);
-  
-        console.log('Before setLineData:', lineData);
         setLineData([AmountData, QuantityData]);
-        console.log('After setLineData:', lineData);
       } catch (error) {
-        console.error("Error fetching data:", error);
       }
     };
   
@@ -66,15 +59,12 @@ const Dashboard = () => {
   }, []);
   
   useEffect(() => {
-    console.log('lineData ddddddddddd:', lineData);
   }, [lineData]);
     const [piData, setPiData] = useState('');
     useEffect(() => {
       Axios.get('/mainstore/pie').then((response) => {
           setPiData(response.data);
-          console.log('lineData:', lineData);
          }).catch((error) => {
-          console.log(error);
          })
          // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -85,8 +75,10 @@ const Dashboard = () => {
      setLoading(false);
    }).catch((error) => {
     if (error.response && error.response.data) {
+      setOpenAlert(true);
       setErrorMessage(error.response.data);
     } else {
+      setOpenAlert(true);
       setErrorMessage("An error occurred");
     }
     setLoading(false);
@@ -98,8 +90,10 @@ const Dashboard = () => {
       setTotalUsers(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
+      setOpenAlert(true);
        setErrorMessage(error.response.data);
      } else {
+      setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
      setLoading(false);
@@ -111,8 +105,10 @@ const Dashboard = () => {
       setTotalPending(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
+      setOpenAlert(true);
        setErrorMessage(error.response.data);
      } else {
+      setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
      setLoading(false);
@@ -123,11 +119,12 @@ const Dashboard = () => {
     Axios.get('/warehouse/getall').then((response) => {
       setTotalWarehouse(response.data.length);
       setWarehouseList(response.data);
-      console.log('name' + response.data._id)
     }).catch((error) => {
      if (error.response && error.response.data) {
+      setOpenAlert(true);
        setErrorMessage(error.response.data);
      } else {
+      setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
      setLoading(false);
@@ -139,8 +136,10 @@ const Dashboard = () => {
       setTotalSale(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
+      setOpenAlert(true);
        setErrorMessage(error.response.data);
      } else {
+      setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
      setLoading(false);
@@ -152,8 +151,10 @@ const Dashboard = () => {
       setTotalMainStoreItems(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
+      setOpenAlert(true);
        setErrorMessage(error.response.data);
      } else {
+      setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
      setLoading(false);
@@ -178,8 +179,10 @@ const Dashboard = () => {
       setTotalShopItems(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
+      setOpenAlert(true);
        setErrorMessage(error.response.data);
      } else {
+      setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
      setLoading(false);
@@ -187,20 +190,7 @@ const Dashboard = () => {
    }, []);
   return (
     <Box m="0px"
-    // sx={{
-    //   height: '100vh',
-    //   flexGrow: '1',
-    //   overflowY: 'auto',
-    //   scrollbarWidth: 'none', // Hide scrollbar for Firefox
-    //   msOverflowStyle: 'none', // Hide scrollbar for IE and Edge
-    //   '&::-webkit-scrollbar': {
-    //     width: '0.4em', // Customize scrollbar width
-    //   },
-    //   '&::-webkit-scrollbar-thumb': {
-    //     backgroundColor: 'transparent', // Customize scrollbar color
-    //   },
-    // }}
-    pb={isMobile ? 5 : undefined}
+    mb={isMobile ? 10 : undefined}
     >
     <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
       {loading && <LinearProgress  color="secondary"/>}
@@ -210,7 +200,6 @@ const Dashboard = () => {
         gridAutoRows="140px"
         gap="20px"
       >
-        {/* ROW 1 */}
         <Box
           gridColumn={{ xs: "span 12", sm: "span 3", }} 
           backgroundColor={colors.primary[400]}
@@ -223,8 +212,6 @@ const Dashboard = () => {
           <StatBox
             title={totalItem}
             subtitle="Items"
-            progress="0.75"
-            increase="+14%"
             icon={
               <List 
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -244,8 +231,6 @@ const Dashboard = () => {
           <StatBox
             title={totalUsers}
             subtitle="Users"
-            progress="0.30"
-            increase="+5%"
             icon={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -266,8 +251,6 @@ const Dashboard = () => {
           <StatBox
             title={totalPending}
             subtitle="Pendings"
-            progress="0.80"
-            increase="+43%"
             icon={
               <LockClockOutlined
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -289,8 +272,6 @@ const Dashboard = () => {
           <StatBox
             title={totalWarehouse}
             subtitle="WareHouses"
-            progress="0.80"
-            increase="+43%"
             icon={
               <Shop2Outlined
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -311,8 +292,6 @@ const Dashboard = () => {
           <StatBox
             title={totalSale}
             subtitle="Sales"
-            progress="0.80"
-            increase="+43%"
             icon={
               <HistoryOutlined
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -332,8 +311,6 @@ const Dashboard = () => {
           <StatBox
             title={totalMainStoreItems}
             subtitle="Main Store Items"
-            progress="0.50"
-            increase="+21%"
             icon={
               <Store
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -353,8 +330,6 @@ const Dashboard = () => {
           <StatBox
             title={totalSubStoreItems}
             subtitle="Sub Store Items"
-            progress="0.50"
-            increase="+21%"
             icon={
               <Store
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -374,8 +349,6 @@ const Dashboard = () => {
           <StatBox
             title={totalShopItems}
             subtitle="Shop Items"
-            progress="0.50"
-            increase="+21%"
             icon={
               <Store
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -384,7 +357,6 @@ const Dashboard = () => {
           />
           </Link>
         </Box>
-        {/* ROW 2 */}
         <Box
           gridColumn={{ xs: "span 12", sm: "span 12" }} 
           gridRow={{xs:'span 2', sm: 'span 3'}}
@@ -410,8 +382,6 @@ const Dashboard = () => {
           </Box>
           <Box height={{xs:'250px', sm:'400px'}} m="-20px 0 0 0">
            {lineData && <LineChart isDashboard={true}  lineData={lineData}/>}
-            {/* <TestLine /> */}
-          
           </Box>
         </Box>
         <Box
@@ -420,96 +390,17 @@ const Dashboard = () => {
           backgroundColor={colors.primary[400]}
          p={2}
         >
-          {/* <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
-            p="10px"
-          >
-            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Report
-            </Typography>
-           
-          </Box> */}
           <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
              Items Report
             </Typography>
-          {/* <PieChart size = '80' /> */}
          {piData && <MyResponsivePie data={piData} />}
          
         </Box>
-        
-      
        {
         warehouseList.map((warehouse) => (
           <RecentSales name={warehouse.name}/>
         ))
        }
-
-
-
-        {/* ROW 3 */}
-        {/* <Box
-          gridColumn={{ xs: "span 12", sm: "span 4" }}
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          p="30px"
-        >
-          <Typography variant="h5" fontWeight="600">
-            Campaign
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            mt="25px"
-          >
-            <ProgressCircle size="125" />
-            <Typography
-              variant="h5"
-              color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
-            >
-              $48,352 revenue generated
-            </Typography>
-            <Typography>Includes extra misc expenditures and costs</Typography>
-          </Box>
-        </Box> */}
-        {/* <Box
-          gridColumn={{ xs: "span 12", sm: "span 4" }}
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ padding: "30px 30px 0 30px" }}
-          >
-            Sales Quantity
-          </Typography>
-          <Box height="250px" mt="-20px">
-            <BarChart isDashboard={true} />
-          </Box>
-        </Box> */}
-        {/* <Box
-          gridColumn={{ xs: "span 12", sm: "span 4" }}
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          padding="30px"
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ marginBottom: "15px" }}
-          >
-            Geography Based Traffic
-          </Typography>
-          <Box height="200px">
-            <GeographyChart isDashboard={true} />
-          </Box>
-        </Box> */}
       </Box>
     </Box>
   );

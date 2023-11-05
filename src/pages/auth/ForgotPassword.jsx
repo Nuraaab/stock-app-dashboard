@@ -19,23 +19,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../context/Context';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { MuiOtpInput } from 'mui-one-time-password-input';
-// function Copyright(props) {
-//   return (
-//     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-//       {'Copyright © '}
-//       <Link color="inherit" href="https://mui.com/">
-//         Your Website
-//       </Link>{' '}
-//       {new Date().getFullYear()}
-//       {'.'}
-//     </Typography>
-//   );
-// }
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
 const defaultTheme = createTheme();
-
 export default function ForgotPassword() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -69,19 +53,18 @@ export default function ForgotPassword() {
             Axios.post('/auth/forgot', {
               phone: phone,
             }).then((response) => {
-              console.log('otp sent');
               setIsPhoneSent(true);
               setIsOtpSent(true);
               setIsphoneSubmitted(false);
             }).catch((error) => {
-              console.log('error');
-              console.log(error);
               setIsPhoneSent(false);
               setIsOtpSent(false);
               setIsphoneSubmitted(false);
               if (error.response && error.response.data) {
+                setOpenAlert(true);
                 setErrorMessage(error.response.data);
               } else {
+                setOpenAlert(true);
                 setErrorMessage("An error occurred");
               }
             })
@@ -101,11 +84,12 @@ export default function ForgotPassword() {
             localStorage.setItem("user", JSON.stringify(null))
               navigate('/login');
               setIsSubmited(false);
-            console.log('success');
           }).catch((error) => {
             if (error.response && error.response.data) {
+              setOpenAlert(true);
               setErrorMessage(error.response.data);
             } else {
+              setOpenAlert(true);
               setErrorMessage("An error occurred");
             }
             setIsSubmited(false);
@@ -124,13 +108,14 @@ export default function ForgotPassword() {
            setIsOtpSent(false);
            setIsOtpSubmitted(false);
            setIsPassword(true);
-           console.log('otp ==' + otp);
         }).catch((error) => {
-         setIsOtpSent(false);
+         setIsOtpSent(true);
          setIsOtpSubmitted(false);
          if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         })

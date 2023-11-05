@@ -74,10 +74,8 @@ const Topbar = () => {
         localStorage.setItem("user", JSON.stringify(null))
         Navigate("/")
       }).catch((error) => {
-        console.log(error);
       })
     } catch (err) {
-      console.log(err)
     }
   }
   const theme = useTheme();
@@ -90,7 +88,6 @@ const Topbar = () => {
     Axios.get('/toshoppending/getall').then((response) => {
     setNotifiCations(response.data);
     setCount(response.data.length);
-    console.log('count' + count);
      }).catch((error) => {
      })
      // eslint-disable-next-line react-hooks/exhaustive-deps

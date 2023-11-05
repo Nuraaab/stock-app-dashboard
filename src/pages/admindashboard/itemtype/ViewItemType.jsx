@@ -44,14 +44,17 @@ const ViewItemType = () => {
   const handleDelete = (row) => {
     setIsCancled(true);
    Axios.delete(`/type/delete/${row._id}`).then((response) => {
+     setOpenAlert(true);
      setMessage(`${row.name} deleted successfully!`);
      setIsCancled(false);
      setOpenCancle(false);
      setReload(!reload);
    }).catch((error) => {
      if (error.response && error.response.data) {
+      setOpenAlert(true);
        setErrorMessage(error.response.data);
      } else {
+      setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
      setIsCancled(false);
@@ -70,11 +73,12 @@ const ViewItemType = () => {
     Axios.get('/type/getall').then((response) => {
         setItemType(response.data);
         setLoading(false);
-        console.log(itemType);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);
@@ -97,7 +101,6 @@ const getRowId = (row) => {
       field: "edit",
       headerName: "Edit",
       renderCell: ({ row }) => {
-        // Render the edit button here
         return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
       },
     },
@@ -105,7 +108,6 @@ const getRowId = (row) => {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        // Render the delete button here
         return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },

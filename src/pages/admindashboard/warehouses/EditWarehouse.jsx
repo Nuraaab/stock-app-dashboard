@@ -12,7 +12,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
 const EditWareHouse = () => {
-  // const [warehouseList , setwarehouseList] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -34,26 +33,22 @@ const EditWareHouse = () => {
     name: values.name,
     type: values.type,
    }).then((response) => {
-    console.log(response.data);
-    console.log('Updating successfull');
     setIsEdited(false);
+    setOpenAlert(true);
     setMessage('Warehouse Updated Successfully!');
     resetForm();
     navigate('/view_ware_house');
    }).catch((error) => {
-    console.log(error);
     if (error.response && error.response.data) {
+      setOpenAlert(true);
       setErrorMessage(error.response.data);
     } else {
+      setOpenAlert(true);
       setErrorMessage("An error occurred");
     }
     setIsEdited(false);
    })
-    console.log(values);
   };
-
-
-
   return (
     <Box m="20px">
       <Header title="EDIT WAREHOUSE" />

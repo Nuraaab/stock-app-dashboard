@@ -38,25 +38,21 @@ const PendingShopSale = () => {
   const [isCancled, setIsCancled] = useState(false);
   const [reload, setReload] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
-//   const handleEdit = (row) => {
-//     navigate(`/edit_main_store_items`, { state: { rowData: row } });
-//   };
-  
   const handleCancle = (row) => {
     setIsCancled(true);
     Axios.delete(`/sallespending/undo/${row._id}`).then((response) => {
       setOpenCancle(false);
-      console.log(response.data);
-      console.log('Adding successfull');
       setIsCancled(false);
+      setOpenAlert(true);
       setMessage(`Sale Cancled successfully!!!`);
       setReload(!reload);
      }).catch((error) => {
       setOpenCancle(true);
-      console.log(error);
       if (error.response && error.response.data) {
+        setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setIsCancled(false);
@@ -66,17 +62,17 @@ const PendingShopSale = () => {
     setIsApproved(true);
     Axios.post(`/sallespending/approve/${selectedrow._id}`).then((response) => {
         setOpen(false);
-        console.log(response.data);
-        console.log('Adding successfull');
         setIsApproved(false);
+        setOpenAlert(true);
         setMessage(`Sale Approved successfully!!!`);
         setReload(!reload);
        }).catch((error) => {
         setOpen(true);
-        console.log(error);
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsApproved(false);
@@ -105,8 +101,10 @@ const PendingShopSale = () => {
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);
@@ -193,21 +191,10 @@ const getRowId = (row) => {
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
-
-    // {
-    //   field: "edit",
-    //   headerName: "Edit",
-    //   renderCell: ({ row }) => {
-    //     // Render the edit button here
-    //     return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
-    //   },
-    // },
-
     {
       field: "cancle",
       headerName: "cancle",
       renderCell: ({ row }) => {
-        // Render the delete button here
         return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Cancle</button>;
       },
     },
@@ -215,7 +202,6 @@ const getRowId = (row) => {
         field: "approve",
         headerName: "Approve",
         renderCell: ({ row }) => {
-          // Render the delete button here
           return <button onClick={()=>handleClickOpen(row)} className="btn btn-success mx-1">Approve</button>;
         },
       },
@@ -223,14 +209,10 @@ const getRowId = (row) => {
   return (
     <>
      <div>
-      {/* <Button variant="outlined" onClick={handleClickOpen}>
-        Open responsive dialog
-      </Button> */}
      <BootstrapDialog
         open={open}
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
        <DialogTitle
@@ -268,7 +250,6 @@ const getRowId = (row) => {
         open={openCancle}
         onClose={handleCancleClose}
         aria-labelledby="customized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
       <DialogTitle id="customized-dialog-title" >

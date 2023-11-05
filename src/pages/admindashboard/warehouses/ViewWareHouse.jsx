@@ -20,7 +20,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
   },
   '& .MuiDialog-paper': {
-    width: '100%', // Adjust the width as needed
+    width: '100%',
   },
 }));
 const ViewWareHouses = () => {
@@ -44,14 +44,17 @@ const ViewWareHouses = () => {
   const handleDelete = (row) => {
      setIsCancled(true);
       Axios.delete(`/warehouse/delete/${row._id}`).then((response) => {
+        setOpenAlert(true);
         setMessage(`${row.name} deleted successfully!`);
         setIsCancled(false);
         setOpenCancle(false);
         setReload(!reload);
       }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsCancled(false);
@@ -72,8 +75,10 @@ const ViewWareHouses = () => {
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);
@@ -137,7 +142,6 @@ const getRowId = (row) => {
         open={openCancle}
         onClose={handleCancleClose}
         aria-labelledby="costomized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
       <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>

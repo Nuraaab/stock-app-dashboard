@@ -46,14 +46,17 @@ const ViewUsers = () => {
       Axios.post(`/auth/delete/${row._id}`, {
         type:row.type,
       }).then((response) => {
+        setOpenAlert(true);
         setMessage("User Deleted successfully!");
         setIsCancled(false);
         setOpenCancle(false);
         setReload(!reload);
      }).catch((error) => {
       if (error.response && error.response.data) {
+        setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setIsCancled(false);
@@ -71,13 +74,14 @@ const ViewUsers = () => {
   useEffect(() => {
     Axios.get('/auth/getall', {
     }).then((response) => {
-      console.log('hi'+ response.data.adminName);
       setUserList(response.data);
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);
@@ -119,7 +123,6 @@ const getRowId = (row) => {
       field: "edit",
       headerName: "Edit",
       renderCell: ({ row }) => {
-        // Render the edit button here
         return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
       },
     },
@@ -127,7 +130,6 @@ const getRowId = (row) => {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        // Render the delete button here
         return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
@@ -154,7 +156,6 @@ const getRowId = (row) => {
         open={openCancle}
         onClose={handleCancleClose}
         aria-labelledby="costomized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
       <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>

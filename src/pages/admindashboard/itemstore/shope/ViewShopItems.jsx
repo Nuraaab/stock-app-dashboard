@@ -52,25 +52,18 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   const [checked, setChecked] = React.useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const handleTransactionType = (value) => {
-    console.log('value'+ value);
         if(value === "transfer"){
           setTransfer(true);
           setCredit(false);
           setTransactionType(value);
-          console.log('from transfer');
-          console.log(transactionType);
         }else if(value === 'credit'){
           setCredit(true);
           setTransfer(false);
           setTransactionType(value);
-          console.log('from credit');
-          console.log(transactionType);
         }else{
           setTransactionType(value);
           setTransfer(false);
           setCredit(false);
-          console.log('from cash');
-          console.log(transactionType);
         }
   }
 const handleClickOpen = (row) => {
@@ -84,14 +77,17 @@ const handleClickOpen = (row) => {
   const handleDelete = (row) => {
     setIsCancled(true);
       Axios.delete(`/Shop/delete/${row._id}`).then((response) => {
+        setOpenAlert(true);
         setMessage("Sale Deleted successfully!");
         setIsCancled(false);
         setOpenCancle(false);
         setReload(!reload);
      }).catch((error) => {
       if (error.response && error.response.data) {
+        setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setIsCancled(false);
@@ -120,6 +116,7 @@ const handleClickOpen = (row) => {
         cheque: chequeNumber,
       }).then((response) => {
           setIsSaled(false);
+          setOpenAlert(true);
           setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
           setOpen(false);
           setCustName('');
@@ -132,8 +129,10 @@ const handleClickOpen = (row) => {
           setReload(!reload);
         }).catch((error) => {
           if (error.response && error.response.data) {
+            setOpenAlert(true);
             setErrorMessage(error.response.data);
           } else {
+            setOpenAlert(true);
             setErrorMessage("An error occurred");
           }
           setIsSaled(false);
@@ -146,6 +145,7 @@ const handleClickOpen = (row) => {
       }).then((response) => {
         setOpen(false);
         setIsSaled(false);
+        setOpenAlert(true);
         setMessage("Sale Adedded successfully!! ");
         setCustName('');
         setPrice('');
@@ -157,8 +157,10 @@ const handleClickOpen = (row) => {
         setReload(!reload);
       }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsSaled(false);
@@ -171,6 +173,7 @@ const handleClickOpen = (row) => {
       }).then((response) => {
         setOpen(false);
         setIsSaled(false);
+        setOpenAlert(true);
         setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
         setCustName('');
         setPrice('');
@@ -182,8 +185,10 @@ const handleClickOpen = (row) => {
         setReload(!reload);
       }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsSaled(false);
@@ -255,7 +260,6 @@ const handleClickOpen = (row) => {
       field: "delete",
       headerName: "Delete",
       renderCell: ({ row }) => {
-        // Render the delete button here
         return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
       },
     },
@@ -263,7 +267,6 @@ const handleClickOpen = (row) => {
         field: "sale",
         headerName: "Sale",
         renderCell: ({ row }) => {
-          // Render the delete button here
           return <button onClick={() => handleClickOpen(row)} className="btn btn-primary mx-1 ">Sale</button>;
         },
       },
@@ -276,7 +279,6 @@ const handleClickOpen = (row) => {
         open={openCancle}
         onClose={handleCancleClose}
         aria-labelledby="Costomized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
       <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>
@@ -448,10 +450,6 @@ const handleClickOpen = (row) => {
       {...other}
     >
       {value === index && (
-        // <Box sx={{ p: 3 }}>
-        //   <Typography>{children}</Typography>
-        // </Box>
-
         <Box
         margin={0}
          height="75vh"
@@ -551,7 +549,6 @@ const ViewShopItems = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     setTabName(warehouse[newValue].name);
-    console.log('tab data ' + warehouse[newValue].name);
   };
  
   useEffect(() => {
@@ -576,14 +573,13 @@ useEffect(() => {
         setWarehouse(filteredData);
       }
       setLoading(false);
-      setValue(0); // Set the initial selected tab to the first tab
+      setValue(0);
     })
     .catch((error) => {
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
       } else {
         setErrorMessage("An error occurred");
-        console.log('error' +error);
       }
       setLoading(false);
     });
@@ -602,11 +598,15 @@ useEffect(() => {
     {loading && <LinearProgress color="secondary" />}
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-      <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+      <Tabs value={value} onChange={handleChange}
+          variant="scrollable"
+          scrollButtons
+          allowScrollButtonsMobile
+         aria-label="basic tabs example">
         {warehouse.map((item, index) => (
           <Tab label={item.name} key={index} sx={{
             '&.Mui-selected': {
-              color: 'red', // Set your desired active color
+              color: 'red', 
             },
           }} {...a11yProps(index)} />
         ))}

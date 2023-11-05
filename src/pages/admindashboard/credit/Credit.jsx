@@ -43,15 +43,17 @@ const Credit = () => {
   const handleCancle = (row) => {
     setIsCancled(true);
         Axios.post(`/credit/cancele/${row._id}`).then((response) => {
+          setOpenAlert(true);
           setMessage("Credit Cancled successfully!");
           setIsCancled(false);
-          
           setOpenCancle(false);
           setReload(!reload);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsCancled(false);
@@ -62,16 +64,17 @@ const Credit = () => {
     setIsApproved(true);
     Axios.post(`/credit/approve/${selectedrow._id}`).then((response) => {
         setOpen(false);
-        console.log(response.data);
         setIsApproved(false);
+        setOpenAlert(true);
         setMessage(`Approving  successfull!`);
         navigate('/saleshistory');
        }).catch((error) => {
         setOpen(true);
-        console.log(error);
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsApproved(false);
@@ -100,8 +103,10 @@ const Credit = () => {
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);
@@ -188,7 +193,6 @@ const getRowId = (row) => {
         open={open}
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
       <DialogTitle id="delete-confirmation-dialog-title" >Approve Credit</DialogTitle>
@@ -223,7 +227,6 @@ const getRowId = (row) => {
         open={openCancle}
         onClose={handleCancleClose}
         aria-labelledby="costomized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
       <DialogTitle id="delete-confirmation-dialog-title" >Confirm Cancle</DialogTitle>

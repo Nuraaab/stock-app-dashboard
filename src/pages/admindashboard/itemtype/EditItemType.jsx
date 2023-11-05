@@ -31,22 +31,21 @@ const EditItemType = () => {
    Axios.post(`/type/update/${rowData._id}`, {
     type: values.itemtype,
    }).then((response) => {
-    console.log(response.data);
-    console.log('Updating successfull');
     setisEdited(false);
+    setOpenAlert(true);
     setMessage('Item Type Updated Successfully!');
     resetForm();
     navigate('/view_item_type');
    }).catch((error) => {
-    console.log(error);
     if (error.response && error.response.data) {
+      setOpenAlert(true);
       setErrorMessage(error.response.data);
     } else {
+      setOpenAlert(true);
       setErrorMessage("An error occurred");
     }
     setisEdited(false);
    })
-    console.log(values);
   };
 
   return (

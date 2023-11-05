@@ -56,9 +56,8 @@ const Account = ({fullScreen, open, handleClose}) => {
     reader.onload = () => {
       setProfileImage((prev) => ({ ...prev, profile: reader.result }))
     };
-    console.log('profile Image' + profileImage);
     reader.onerror = error => {
-        console.log(error);
+        
     };
 }
 const handleUpload = () => {
@@ -66,14 +65,17 @@ const handleUpload = () => {
   Axios.post(`/auth/update/${userId}`, {
     profile: profileImage.profile,
   }).then((response) => {
+    setOpenAlert(true);
     setMessage('Profile Updated successfully!!!');
     setUpload(false);
     setReload(!reload);
  setIsUploaded(false);
   }).catch((error) => {
    if (error.response && error.response.data) {
+    setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setIsUploaded(true);
@@ -91,12 +93,11 @@ const handleUpload = () => {
       setUserId(response.data._id);
       setProfile(response.data.profile);
        }).catch((error) => {
-        console.log(error);
+        
        })
 }, [reload]);
   return (
     <BootstrapDialog
-      // fullScreen ={fullScreen}
       onClose={handleClose}
       aria-labelledby="customized-dialog-title"
       open={open}

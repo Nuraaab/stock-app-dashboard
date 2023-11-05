@@ -17,7 +17,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
   },
   '& .MuiDialog-paper': {
-    width: '100%', // Adjust the width as needed
+    width: '100%', 
   },
 }));
 const RecentSales = ({ name}) => {
@@ -39,14 +39,11 @@ const RecentSales = ({ name}) => {
     setIsApproved(true);
     Axios.post(`/sallespending/approve/${selectedrow._id}`).then((response) => {
         setOpen(false);
-        console.log(response.data);
-        console.log('Adding successfull');
         setIsApproved(false);
         setMessage(`Sale Approved successfully!!!`);
         setReload(!reload);
        }).catch((error) => {
         setOpen(true);
-        console.log(error);
         if (error.response && error.response.data) {
           setErrorMessage(error.response.data);
         } else {
@@ -67,14 +64,11 @@ const RecentSales = ({ name}) => {
     setIsCancled(true);
     Axios.delete(`/sallespending/undo/${row._id}`).then((response) => {
       setOpenCancle(false);
-      console.log(response.data);
-      console.log('Adding successfull');
       setIsCancled(false);
       setMessage(`Sale Cancled successfully!!!`);
       setReload(!reload);
      }).catch((error) => {
       setOpenCancle(true);
-      console.log(error);
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
       } else {
@@ -86,7 +80,6 @@ const RecentSales = ({ name}) => {
    useEffect(() => {
     const fetchData = async () => {
         await Axios.get("/sallespending/getall").then((response) => {
-          console.log('sale data '+ response.data.from);
           const filteredSales = response.data.filter(
             (sale) =>
               sale.from === name &&
@@ -173,7 +166,6 @@ setSelectedRow(null);
             field: "cancle",
             headerName: "cancle",
             renderCell: ({ row }) => {
-              // Render the delete button here
               return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Cancle</button>;
             },
           },
@@ -181,7 +173,6 @@ setSelectedRow(null);
             field: "approve",
             headerName: "Approve",
             renderCell: ({ row }) => {
-              // Render the delete button here
               return <button onClick={()=>handleClickOpen(row)} className="btn btn-success mx-1">Approve</button>;
             },
           },
@@ -192,7 +183,6 @@ setSelectedRow(null);
         open={open}
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        // maxWidth="md" // Set the desired width here
         fullWidth
       >
        <DialogTitle

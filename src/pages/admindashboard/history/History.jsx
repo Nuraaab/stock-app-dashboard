@@ -22,8 +22,10 @@ const History = () => {
         setLoading(false);
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setLoading(false);
@@ -83,20 +85,23 @@ const getRowId = (row) => {
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
-    // {
-    //   field: "edit",
-    //   headerName: "Edit",
-    //   renderCell: ({ row }) => {
-    //     return <button onClick={() => handleEdit(row)} className="btn btn-primary mx-1 ">Edit</button>;
-    //   },
-    // },
-    // {
-    //   field: "delete",
-    //   headerName: "Delete",
-    //   renderCell: ({ row }) => {
-    //     return <button onClick={() => handleDelete(row)} className="btn btn-danger mx-1 ">Delete</button>;
-    //   },
-    // },
+      {
+        field: "createdAt",
+        headerName: "Date",
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
+        cellClassName: "name-column--cell",
+        valueGetter: (params) => {
+          const createdAt = params.row.createdAt;
+          const date = new Date(createdAt);
+          const formattedDate = date.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          return formattedDate;
+        },
+      },
   ];
   return (
     <Box 

@@ -30,10 +30,6 @@ export default function ChangePassword() {
     setIsSubmited(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      oldPassword: data.get('oldpassword'),
-      newPassword: data.get('newpassword'),
-    });
     Axios.post('/auth/pwdchange', {
       oldPassword: data.get('oldpassword'),
       newPassword: data.get('newpassword'),
@@ -44,8 +40,10 @@ export default function ChangePassword() {
           navigate('/login');
        }).catch((error) => {
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsSubmited(false)
@@ -135,10 +133,6 @@ export default function ChangePassword() {
               }
             />
             </FormControl>
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth

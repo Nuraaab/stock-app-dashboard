@@ -80,8 +80,6 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
   const [username, setUserName] = useState('');
-  const [email, setEmail] = useState('');
-  const [profile, setProfile] =useState('');
   const [role, setRole] = useState('');
   const [isMobile, setisMobile] = useState(false);
   const [breakPoint, setBreakPoint] = useState(false);
@@ -93,14 +91,9 @@ const Sidebar = () => {
       withCredentials: true,
     }).then((response) => {
         setUserName(response.data.adminName);
-        setEmail(response.data.email);
         setRole(response.data.type);
-        setProfile(response.data.profile);
-        console.log(username);
-        console.log(email);
         setProfilLoding(false);
        }).catch((error) => {
-        console.log(error);
         setProfilLoding(false);
        })
        // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,12 +153,11 @@ const Sidebar = () => {
         },
         height: '100vh',
         width: isMobile ? '0px' : undefined,
-        pb: isMobile ? '20px' :undefined,
+        mb: isMobile ? '30px' :undefined,
       }}
     >
       <ProSidebar collapsed={isCollapsed} breakPoint={breakPoint ? 'sm': ''}>
         <Menu >
-          {/* LOGO AND MENU ICON */}
           <MenuItem
             onClick={() => handleCollapse()}
             icon={isCollapsed ? <MenuOutlinedIcon /> :undefined }
@@ -195,27 +187,21 @@ const Sidebar = () => {
 
           {!isCollapsed && (
             <Box mb="25px">
-              <Box display="flex" justifyContent="center" alignItems="center">
-              {profilLoding ?<Skeleton variant="circular" width={100} height={100} />
-                : <img
-                  alt="profile-user"
-                  width="100px"
-                  height="100px"
-                  src={profile ? profile : `../../assets/user.png`}
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                />}
-              </Box>
               <Box textAlign="center">
                 <Typography
                   variant="h3"
                   color={colors.grey[100]}
                   fontWeight="bold"
                   sx={{ m: "10px 0 10px 10px" }}
+                  style={{ display: "flex", justifyContent: "center" }}
                 >
-                 {username}
+                 {profilLoding ?
+                    <Skeleton variant="rounded" width={200} height={30} />:
+                  username}
                 </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
-                {role}
+                <Typography variant="h5" color={colors.greenAccent[500]} style={{ display: "flex", justifyContent: "center" }}>
+                {profilLoding ?
+                    <Skeleton variant="rounded" width={130} height={30} />: role}
                 </Typography>
               </Box>
             </Box>

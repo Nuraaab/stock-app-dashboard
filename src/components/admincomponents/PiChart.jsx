@@ -1,9 +1,6 @@
 
 import { ResponsivePie } from '@nivo/pie'
 const MyResponsivePie = ({data}) => {
-     console.log('fafffffffff' + data);
-   
-    
    return(
     <ResponsivePie
     data={data}

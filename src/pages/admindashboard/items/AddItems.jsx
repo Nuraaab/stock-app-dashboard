@@ -15,7 +15,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const AddItems = () => {
   const [itemType, setItemType] = useState([]);
-  const [specification, setSpecification] = useState([]);
   const [selectedSpecifications, setSelectedSpecifications] = useState([]);
   const [filteredSpecifications, setFilteredSpecifications] = useState([]);
   const [message, setMessage] = useState('');
@@ -28,13 +27,16 @@ const AddItems = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
   const theme = useTheme();
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const colors = tokens(theme.palette.mode);
   const handleFormSubmit = (values, {resetForm}) => {
     setIsAdded(true);
     if(values.itemcode === ""){
+      setOpenAlert(true);
       setErrorMessage('Item Code can not be empty!');
       setIsAdded(false);
     }else if(values.itemname === ""){
+      setOpenAlert(true);
       setErrorMessage('Item Code can not be empty!');
       setIsAdded(false);
     }else{
@@ -44,41 +46,25 @@ const AddItems = () => {
         itemCode: values.itemcode,
         specification: !isSpecificationAdded ? specii : selectedSpecifications.join("/"),
       }).then((response) => {
-        console.log(response.data);
-        console.log('Adding successful');
+        setOpenAlert(true);
         setMessage('Item Added Successfully!');
         setIsAdded(false);
         resetForm();
         navigate('/view_items');
       }).catch((error) => {
-        console.log(error);
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurred");
         }
         setIsAdded(false);
       });
     }
    
-    console.log(values);
-  };
-  const handleItemTypeChange = (event, handleChange) => {
-    const selectedItemType = event.target.value;
-    const filteredSpecs = specification
-      .filter((spec) => spec.type === selectedItemType)
-      .map((spec) => spec.specification);
-      console.log('hello');
-    console.log(filteredSpecs);
-    console.log(specification);
-    setFilteredSpecifications(filteredSpecs);
-    handleChange(event); 
   };
   const handleSpecificationChange = () => {
-    // const selectedSpec = event.target.value;
-    // const updatedSpecs = filteredSpecifications.filter(
-    //   (spec) => spec !== selectedSpec
-    // );
     setIsSpecificationAdded(false);
     const isSpecification = selectedSpecifications.includes(specii);
       if (!isSpecification) {
@@ -86,12 +72,10 @@ const AddItems = () => {
         setSpeci('');
         setIsSpecificationAdded(true);
       } else {
+        setOpenAlert(true);
         setErrorMessage('The specification is already added.');
         setIsSpecificationAdded(true);
       }
-    
-    // setFilteredSpecifications(updatedSpecs);
-    // handleChange(event); 
   };
   const handleRemoveSpecification = (specification) => {
     const updatedSpecifications = selectedSpecifications.filter(
@@ -99,29 +83,17 @@ const AddItems = () => {
     );
     setSelectedSpecifications(updatedSpecifications);
     setFilteredSpecifications([...filteredSpecifications, specification]);
-    console.log(filteredSpecifications);
-    console.log(filteredSpecifications);
   };
   useEffect(() => {
     Axios.get('/type/getall').then((response) => {
       setItemType(response.data);
-      Axios.get('/specification/getall').then((response) => {
-        setSpecification(response.data);
-        console.log('hi');
-        console.log(specification);
-        setLoading(false);
-      }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setLoading(false);
-      });
+      setLoading(false);
     }).catch((error) => {
       if (error.response && error.response.data) {
+        setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setLoading(false);
@@ -255,7 +227,7 @@ const AddItems = () => {
                 name="itemtype"
                 label="Item Type"
                 onBlur={handleBlur}
-                onChange={(event) => handleItemTypeChange(event, handleChange)}
+                onChange={handleChange}
               >
                 {itemType.map((item) => (
                   <MenuItem key={item.id} value={item.type}>{item.type}</MenuItem>
@@ -267,6 +239,7 @@ const AddItems = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
+                disabled ={!values.itemtype}
                 label={values.itemtype ? "Item Specifications" : "Item Type must be selected first"}
                 onBlur={handleBlur}
                 onChange={(e) => setSpeci(e.target.value)}
@@ -274,47 +247,25 @@ const AddItems = () => {
                 name="specification"
                 error={!!touched.specification && !!errors.specification}
                 helperText={touched.specification && errors.specification}
-                sx={{ gridColumn: "span 3" }}
+                sx={{ gridColumn: isMobile ? "span 3" : "span 3" }}
               />
-              <Box display="flex" justifyContent="end" mt="10px">
-                <Button onClick={() => handleSpecificationChange()} color="secondary" variant="contained" disabled ={!values.itemtype}>
+              <Box display="flex" justifyContent="end" >
+                <Button onClick={() => handleSpecificationChange()} color="secondary" variant="contained" disabled ={!values.itemtype || specii === ''}>
                  {isSpecificationAdded ? 'ADD MORE' : 'ADD SPECIFICATIONS'}
                 </Button>
               </Box>
-              {/* <FormControl sx={{gridColumn: "span 4" }}
-                error={!!touched.specification && !!errors.specification}>
-                <InputLabel id="demo-simple-select-helper-label">Choose Item Specification</InputLabel>
-                 <Select
-                fullWidth
-                variant="outlined"
-                error={!!touched.specification && !!errors.specification}
-                helperText={touched.specification && errors.specification}
-                sx={{ gridColumn: "span 4", color: "white" }}
-                value={values.specification}
-                name="specification"
-                label="Item Specification(more than one can be selected) "
-                onBlur={handleBlur}
-                onChange={(event) => handleSpecificationChange(event, handleChange)}
-              >
-                {filteredSpecifications.map((spec) => (
-                  <MenuItem key={spec} value={spec}>{spec}</MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>{touched.specification && errors.specification}</FormHelperText>
-              </FormControl> */}
-
-              <div className="row">
+            { selectedSpecifications.length !== 0  && <div className="row">
                 {selectedSpecifications.map((specification) => (
                   <div key={specification} className="col-auto d-flex align-items-center">
-                    <Button variant="primary" className="me-2">
+                    <Button variant="primary" >
                       {specification}
                     </Button>
                     <FontAwesomeIcon onClick={() => handleRemoveSpecification(specification)} icon={faTimes} />
                   </div>
                 ))}
-              </div>
-              <Box display="flex" justifyContent="flex-end" mt="10px" py={1} sx={{width:'100%'}}>
-                <Button type="submit" color="secondary" variant="contained" disabled ={isAdded}>
+              </div>}
+              <Box display="flex" justifyContent="flex-end"  py={1} >
+                <Button type="submit" color="secondary" variant="contained" disabled ={specii !== '' && selectedSpecifications.length !== 0}>
                  {isAdded ? <CircularProgress color="secondary" size={30}/> : 'ADD NEW ITEMS'}
                 </Button>
               </Box>

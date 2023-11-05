@@ -72,7 +72,6 @@ function CustomTabPanel(props) {
   const getRowId = (row) => {
     return row._id;
   };
-  console.log('mainstore Items' + mainstoreitems);
   const handleMove = (row) => {
     setMoveLoading(true);
     if(storeType === "Main Store"){
@@ -80,6 +79,7 @@ function CustomTabPanel(props) {
           quantity: quantityMove,  
           warehouseName: warehouseName,
        }).then((response) => {
+        setOpenAlert(true);
         setMessage(`${quantityMove}  ${row.name} moved  successfully  at Main Store to ${warehouseName}`);
         setOpenMove(false);
         setMoveLoading(false);
@@ -91,8 +91,10 @@ function CustomTabPanel(props) {
        }).catch((error) => {
         setOpenMove(true);
         if (error.response && error.response.data) {
+          setOpenAlert(true);
           setErrorMessage(error.response.data);
         } else {
+          setOpenAlert(true);
           setErrorMessage("An error occurredf" + error);
         }
         setMoveLoading(false);
@@ -102,6 +104,7 @@ function CustomTabPanel(props) {
           quantity: quantityMove,  
           warehouseName: warehouseName,
         }).then((response) => {
+          setOpenAlert(true);
           setMessage(`${quantityMove}  ${row.name} moved  successfully at Main Store to ${warehouseName}` );
           setMoveLoading(false);
           setOpenMove(false);
@@ -112,14 +115,17 @@ function CustomTabPanel(props) {
           setReload(!reload);
         }).catch((error) => {
           if (error.response && error.response.data) {
+            setOpenAlert(true);
             setErrorMessage(error.response.data);
           } else {
+            setOpenAlert(true);
             setErrorMessage("An error occurred");
           }
           setMoveLoading(false);
           setOpenMove(true);
         })
     }else{
+      setOpenAlert(true);
       setErrorMessage("Error happening!!");
       setMoveLoading(false);
     }
@@ -144,14 +150,17 @@ function CustomTabPanel(props) {
   const handleDelete = (row) => {
      setIsCancled(true);
       Axios.delete(`/mainstore/delete/${row._id}`).then((response) => {
+        setOpenAlert(true);
         setMessage("Sale Deleted successfully!");
         setIsCancled(false);
         setOpenCancle(false);
         setReload(!reload);
      }).catch((error) => {
       if (error.response && error.response.data) {
+        setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setIsCancled(false);
@@ -160,17 +169,81 @@ function CustomTabPanel(props) {
   };
   const handleSale = (selectedrow) => {
     setSaleLoading(true);
-    if(transactionType ==='credit'){
-      Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
-        quantity: quantity,
-        customerName: custName,
-        paymentMethod: transactionType,
-        amount: price,
-        phone: phone,
-        paymentDate: creditDate,
-        cheque: chequeNumber,
-      }).then((response) => {
-          setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
+    if(quantity<=0){
+      setOpenAlert(true);
+      setSaleLoading(false);
+      setErrorMessage("Invalid quantity");
+    }else{
+      if(transactionType ==='credit'){
+        Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
+          quantity: quantity,
+          customerName: custName,
+          paymentMethod: transactionType,
+          amount: price,
+          phone: phone,
+          paymentDate: creditDate,
+          cheque: chequeNumber,
+        }).then((response) => {
+          setOpenAlert(true);
+            setMessage(`${quantity}  ${selectedrow.name} solled with credit successfully!!` );
+            setSaleLoading(false);
+            setOpen(false);
+            setCustName('');
+            setPrice('');
+            setQuantity('');
+            setTransactionType('');
+            setErrorMessage('');
+            setTransfer(false);
+            setCredit(false);
+            setReload(!reload);
+          }).catch((error) => {
+            if (error.response && error.response.data) {
+              setOpenAlert(true);
+              setErrorMessage(error.response.data);
+            } else {
+              setOpenAlert(true);
+              setErrorMessage("An error occurred");
+            }
+            setSaleLoading(false);
+          })
+      }else if(transactionType ==='transfer'){
+        Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
+          quantity: quantity,
+          customerName: custName,
+          amount: price,
+          paymentMethod: `${transactionType}(Bank Name: ${bankName}, Account Number: ${accountNumber})`,
+        }).then((response) => {
+          setOpen(false);
+          setOpenAlert(true);
+          setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
+          setSaleLoading(false);
+          setCustName('');
+          setPrice('');
+          setQuantity('');
+          setTransactionType('');
+          setErrorMessage('');
+          setTransfer(false);
+          setCredit(false);
+          setReload(!reload);
+        }).catch((error) => {
+          if (error.response && error.response.data) {
+            setOpenAlert(true);
+            setErrorMessage(error.response.data);
+          } else {
+            setOpenAlert(true);
+            setErrorMessage("An error occurred");
+          }
+          setSaleLoading(false);
+        })
+      }else{
+        Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
+          quantity: quantity,
+          customerName: custName,
+          amount: price,
+          paymentMethod: transactionType,
+        }).then((response) => {
+          setOpenAlert(true);
+          setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
           setSaleLoading(false);
           setOpen(false);
           setCustName('');
@@ -183,65 +256,17 @@ function CustomTabPanel(props) {
           setReload(!reload);
         }).catch((error) => {
           if (error.response && error.response.data) {
+            setOpenAlert(true);
             setErrorMessage(error.response.data);
           } else {
+            setOpenAlert(true);
             setErrorMessage("An error occurred");
           }
           setSaleLoading(false);
         })
-    }else if(transactionType ==='transfer'){
-      Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
-        quantity: quantity,
-        customerName: custName,
-        amount: price,
-        paymentMethod: `${transactionType}(Bank Name: ${bankName}, Account Number: ${accountNumber})`,
-      }).then((response) => {
-        setOpen(false);
-        setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
-        setSaleLoading(false);
-        setCustName('');
-        setPrice('');
-        setQuantity('');
-        setTransactionType('');
-        setErrorMessage('');
-        setTransfer(false);
-        setCredit(false);
-        setReload(!reload);
-      }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setSaleLoading(false);
-      })
-    }else{
-      Axios.post(`/mainstore/holesall/${selectedrow._id}`, {
-        quantity: quantity,
-        customerName: custName,
-        amount: price,
-        paymentMethod: transactionType,
-      }).then((response) => {
-        setMessage(`${quantity}  ${selectedrow.name} solled successfully!!` );
-        setSaleLoading(false);
-        setOpen(false);
-        setCustName('');
-        setPrice('');
-        setQuantity('');
-        setTransactionType('');
-        setErrorMessage('');
-        setTransfer(false);
-        setCredit(false);
-        setReload(!reload);
-      }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-        setSaleLoading(false);
-      })
+      }
     }
+   
     }
   const handleClickOpen = (row) => {
     setOpen(true);
@@ -282,8 +307,10 @@ function CustomTabPanel(props) {
   }
     }).catch((error) => {
       if (error.response && error.response.data) {
+        setOpenAlert(true);
         setErrorMessage(error.response.data);
       } else {
+        setOpenAlert(true);
         setErrorMessage("An error occurred");
       }
       setInitialMoveLoading(false);
@@ -292,25 +319,18 @@ function CustomTabPanel(props) {
   }
   }
   const handleTransactionType = (value) => {
-    console.log('value'+ value);
         if(value === "transfer"){
           setTransfer(true);
           setCredit(false);
           setTransactionType(value);
-          console.log('from transfer');
-          console.log(transactionType);
         }else if(value === 'credit'){
           setCredit(true);
           setTransfer(false);
           setTransactionType(value);
-          console.log('from credit');
-          console.log(transactionType);
         }else{
           setTransactionType(value);
           setTransfer(false);
           setCredit(false);
-          console.log('from cash');
-          console.log(transactionType);
         }
   }
   const handleCancleClose = () => {
@@ -671,10 +691,6 @@ const columns = [
       {...other}
     >
       {value === index && (
-        // <Box sx={{ p: 3 }}>
-        //   <Typography>{children}</Typography>
-        // </Box>
-
         <Box
         margin={0}
          height="75vh"
@@ -775,7 +791,6 @@ const ViewMainStores = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     setTabName(warehouse[newValue].name);
-    console.log('tab data ' + warehouse[newValue].name);
   };
   useEffect(() => {
     Axios.get('/mainstore/getall').then((response) => {
@@ -797,14 +812,13 @@ useEffect(() => {
       setInitialWarehouse(filteredData[0].name);
       setWarehouse(filteredData);
       setLoading(false);
-      setValue(0); // Set the initial selected tab to the first tab
+      setValue(0); 
     })
     .catch((error) => {
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
       } else {
         setErrorMessage("An error occurred");
-        console.log('error' +error);
       }
       setLoading(false);
     });
@@ -832,11 +846,15 @@ useEffect(() => {
       {loading && <LinearProgress color="secondary" />}
       <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-      <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+      <Tabs value={value} onChange={handleChange}
+          variant="scrollable"
+          scrollButtons
+          allowScrollButtonsMobile
+        aria-label="basic tabs example">
         {warehouse.map((item, index) => (
           <Tab label={item.name} key={index} sx={{
             '&.Mui-selected': {
-              color: 'red', // Set your desired active color
+              color: 'red', 
             },
           }} {...a11yProps(index)} />
         ))}

@@ -10,8 +10,6 @@ import Topbar from "./components/admincomponents/Topbar";
 import Sidebar from "./components/admincomponents/Sidebar";
 import { CssBaseline, ThemeProvider, useMediaQuery } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
-import AddSpacifications from "./pages/admindashboard/spacification/AddSpacification";
-import ViewSpacifications from "./pages/admindashboard/spacification/ViewSpacification";
 import AddItems from "./pages/admindashboard/items/AddItems";
 import ViewItems from "./pages/admindashboard/items/ViewItems";
 import AddItemType from "./pages/admindashboard/itemtype/AddItemType";
@@ -30,7 +28,6 @@ import AddUsers from "./pages/admindashboard/users/AddUsers";
 import ViewUsers from "./pages/admindashboard/users/ViewUsers";
 import EditUsers from "./pages/admindashboard/users/EditUsers";
 import EditItemType from "./pages/admindashboard/itemtype/EditItemType";
-import EditSpecifications from "./pages/admindashboard/spacification/EditSpecification";
 import EditWareHouse from "./pages/admindashboard/warehouses/EditWarehouse";
 import Pending from "./pages/admindashboard/pending/Pending";
 import History from "./pages/admindashboard/history/History";
@@ -131,18 +128,7 @@ const router = createBrowserRouter([
           path: "/edit_item_type",
           element: <EditItemType />
         },
-        {
-          path: "/add_spacification",
-          element: <AddSpacifications />
-        },
-        {
-          path: "/view_spacification",
-          element: <ViewSpacifications />
-        },
-        {
-          path: "/edit_spacification",
-          element: <EditSpecifications />
-        },
+       
         {
           path: "/add_ware_house",
           element: <AddWareHouse />
