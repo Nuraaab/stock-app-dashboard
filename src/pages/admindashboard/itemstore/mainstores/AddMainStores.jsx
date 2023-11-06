@@ -196,7 +196,7 @@ const AddMainStoreItems = () => {
               >
                 {
                  filteredItemList.map((itemName) => (
-                    <MenuItem key={itemName.id} value={itemName.itemCode}>{itemName.name}</MenuItem>
+                    <MenuItem key={itemName.id} value={itemName.itemCode}>{`${itemName.itemCode} / ${itemName.name} / ${itemName.specification}`}</MenuItem>
                   ))
                 }
                 
