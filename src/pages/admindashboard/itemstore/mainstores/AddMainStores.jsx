@@ -31,7 +31,6 @@ const AddMainStoreItems = () => {
     itemCode: itemCode,
     specification: specification,
     type: values.itemtype,
-    expireDate: values.expireDate,
     company: values.company,
     quantity: values.quantity,
    }).then((response) => {
@@ -203,21 +202,7 @@ const AddMainStoreItems = () => {
               </Select>
               <FormHelperText>{touched.name && errors.name}</FormHelperText>
               </FormControl>
-              <TextField
-                fullWidth
-                variant="outlined"
-                type="date"
-                label='Expire Date'
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.expireDate}
-                name="expireDate"
-                error={!!touched.expireDate && !!errors.expireDate}
-                helperText={touched.expireDate && errors.expireDate}
-                InputLabelProps={{ shrink: true }}
-                InputProps={{ inputProps: { min: "yyyy-mm-dd" } }}
-                sx={{ gridColumn: "span 2" }}
-              />
+             
               <TextField
                 fullWidth
                 variant="outlined"
@@ -229,7 +214,7 @@ const AddMainStoreItems = () => {
                 name="quantity"
                 error={!!touched.quantity && !!errors.quantity}
                 helperText={touched.quantity && errors.quantity}
-                sx={{ gridColumn: "span 2" }}
+                sx={{ gridColumn: "span 4" }}
               />
               <Box display="flex" justifyContent="end" mt="10px" >
               <Button type="submit" color="secondary" variant="contained" disabled={loading}>
@@ -249,7 +234,6 @@ const AddMainStoreItems = () => {
 const checkoutSchema = yup.object().shape({
   itemtype: yup.string().required("Item type required!!!"),
   name: yup.string().required("Item name required!!!"),
-  expireDate: yup.string().required("Expired Date required!!!"),
   company: yup.string().required("Campany name required!!!"),
   quantity: yup.string().required("Quantity required!!!"),
 });

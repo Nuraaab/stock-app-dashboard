@@ -40,6 +40,8 @@ import { AuthContext } from "./context/Context";
 import SignIn from "./pages/auth/Login";
 import ChangePassword from "./pages/auth/ChangePassword";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import PendingExpense from "./pages/admindashboard/expense/PendingExpense";
+import ExpenseHistory from "./pages/admindashboard/expense/ExpenseHistory";
 
 function App() {
 
@@ -192,6 +194,14 @@ const router = createBrowserRouter([
         {
           path: "/import",
           element: <AddMainStoreItems />
+        },
+        {
+          path: "/pending_expense",
+          element: <PendingExpense />
+        },
+        {
+          path: "/expense_history",
+          element: <ExpenseHistory />
         },
         {
           path: "/changePass",

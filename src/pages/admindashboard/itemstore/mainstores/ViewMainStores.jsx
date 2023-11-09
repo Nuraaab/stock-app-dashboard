@@ -51,6 +51,11 @@ function CustomTabPanel(props) {
   const [storeType, setStoreType] = useState('');
   const [transfer, setTransfer] = useState(false);
   const [credit, setCredit] = useState(false);
+  const [isPtransfer, setIsPtransfer] = useState(false);
+  const [cash, setCash] = useState(false);
+  const [partialPayment, setPartialPayment] = useState(false);
+  const [paidAmount, setPaidAmount] = useState('');
+  const [cashOrTransfer, setCashOrTransfer] = useState('');
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSelected, setIsSelected] = useState(false);
@@ -87,6 +92,7 @@ function CustomTabPanel(props) {
         setWarehouseName('');
         setQuantityMove('');
         setIsSelected(false);
+        resetForm();
         setReload(!reload);
        }).catch((error) => {
         setOpenMove(true);
@@ -112,6 +118,7 @@ function CustomTabPanel(props) {
           setWarehouseName('');
           setQuantityMove('');
           setIsSelected(false);
+          resetForm();
           setReload(!reload);
         }).catch((error) => {
           if (error.response && error.response.data) {
@@ -141,10 +148,15 @@ function CustomTabPanel(props) {
     setCustName('');
     setPrice('');
     setQuantity('');
+    setPaidAmount('');
     setTransactionType('');
     setErrorMessage('');
+    setCashOrTransfer('');
     setIsSelected(false);
+    setPartialPayment(false);
+    setIsPtransfer(false);
     setTransfer(false);
+    setChecked(false);
     setCredit(false);
   };
   const handleDelete = (row) => {
@@ -195,6 +207,7 @@ function CustomTabPanel(props) {
             setErrorMessage('');
             setTransfer(false);
             setCredit(false);
+            saleResetForm();
             setReload(!reload);
           }).catch((error) => {
             if (error.response && error.response.data) {
@@ -211,7 +224,7 @@ function CustomTabPanel(props) {
           quantity: quantity,
           customerName: custName,
           amount: price,
-          paymentMethod: `${transactionType}(Bank Name: ${bankName}, Account Number: ${accountNumber})`,
+          paymentMethod: `${transactionType}(Bank N: ${bankName}, Acc No: ${accountNumber})`,
         }).then((response) => {
           setOpen(false);
           setOpenAlert(true);
@@ -224,6 +237,42 @@ function CustomTabPanel(props) {
           setErrorMessage('');
           setTransfer(false);
           setCredit(false);
+          saleResetForm();
+          setReload(!reload);
+        }).catch((error) => {
+          if (error.response && error.response.data) {
+            setOpenAlert(true);
+            setErrorMessage(error.response.data);
+          } else {
+            setOpenAlert(true);
+            setErrorMessage("An error occurred");
+          }
+          setSaleLoading(false);
+        })
+      }else if(transactionType === 'partial_payment'){
+        Axios.post(`/mainstore/holesall/${selectedrow._id}`,{
+          quantity: quantity,
+          customerName: custName,
+          paymentMethod: "halfpaid",
+          amount: price,
+          phone: phone,
+          paymentDate: creditDate,
+          cheque: chequeNumber,
+          halfPayMethod:cash ? cashOrTransfer : `${cashOrTransfer}(Bank N: ${bankName}, Acc No: ${accountNumber})`,
+          paidamount: paidAmount
+        }).then((response) => {
+          setOpenAlert(true);
+          setMessage(`${quantity}  ${selectedrow.name} solled with both ${cashOrTransfer} and credit successfully!!` );
+          setSaleLoading(false);
+          setOpen(false);
+          setCustName('');
+          setPrice('');
+          setQuantity('');
+          setTransactionType('');
+          setErrorMessage('');
+          setTransfer(false);
+          setCredit(false);
+          saleResetForm();
           setReload(!reload);
         }).catch((error) => {
           if (error.response && error.response.data) {
@@ -253,6 +302,7 @@ function CustomTabPanel(props) {
           setErrorMessage('');
           setTransfer(false);
           setCredit(false);
+          saleResetForm();
           setReload(!reload);
         }).catch((error) => {
           if (error.response && error.response.data) {
@@ -322,16 +372,34 @@ function CustomTabPanel(props) {
         if(value === "transfer"){
           setTransfer(true);
           setCredit(false);
+          setPartialPayment(false);
+          setIsPtransfer(false);
           setTransactionType(value);
         }else if(value === 'credit'){
           setCredit(true);
+          setTransfer(false);
+          setPartialPayment(false);
+          setIsPtransfer(false);
+          setTransactionType(value);
+        }else if(value === 'partial_payment'){
+          setPartialPayment(true);
+          setCredit(false);
           setTransfer(false);
           setTransactionType(value);
         }else{
           setTransactionType(value);
           setTransfer(false);
           setCredit(false);
+          setIsPtransfer(false);
+          setPartialPayment(false);
         }
+        setCashOrTransfer('');
+        setCreditDate('');
+        setPaidAmount('');
+        setPhone('');
+        setChequeNumber(null);
+        setBankName('');
+        setAccountNumber('');
   }
   const handleCancleClose = () => {
     setOpenCancle(false);
@@ -341,6 +409,18 @@ function CustomTabPanel(props) {
     setOpenCancle(true);
     setSelectedCancleRow(row);
 };
+
+const handlePaymentType = (value) => {
+  if(value === "transfer"){
+    setIsPtransfer(true);
+    setCash(false);
+    setCashOrTransfer(value);
+  }else{
+    setCash(true);
+    setIsPtransfer(false);
+    setCashOrTransfer(value);
+  }
+}
 const columns = [
 
   {
@@ -364,12 +444,6 @@ const columns = [
     {
       field: "type",
       headerName: "Item Type",
-      width:isMobile&& 120,
-      flex:!isMobile&&1,
-    },
-    {
-      field: "expireDate",
-      headerName: "Expire Date",
       width:isMobile&& 120,
       flex:!isMobile&&1,
     },
@@ -504,7 +578,7 @@ const columns = [
         }
  </DialogContent>
  <DialogActions dividers>
-       <Button style={{ color: 'white' }} onClick={() => handleMove(selectedMoveRow)}  disabled ={moveLoading}>
+       <Button style={{ color: 'white' }} onClick={() =>{ handleMove(selectedMoveRow)}}  disabled ={moveLoading}>
          {moveLoading ? <CircularProgress color="secondary" size={24}/> :  'Move'}
        </Button>
      </DialogActions>
@@ -577,27 +651,19 @@ const columns = [
          <MenuItem value="transfer">Transfer</MenuItem>
          <MenuItem value="cash">Cash</MenuItem>
          <MenuItem value="credit">Credit</MenuItem>
+         <MenuItem value="partial_payment">PartialPayment</MenuItem>
        </Select>
        </FormControl>
-       {transfer && 
-       <FormControl
-       fullWidth
-       sx={{gridColumn: "span 4" }}>
-             <InputLabel id="demo-simple-select-helper-label">Pick Bank Name</InputLabel>
-       <Select
-         required
+       { transfer &&  <TextField
+       required
          label="Bank Name"
+         type="text"
          value={bankName}
          onChange={(e) => setBankName(e.target.value)}
          fullWidth
          margin="normal"
-       >
-         <MenuItem value="cbe">CBE</MenuItem>
-         <MenuItem value="awash">Awash</MenuItem>
-         <MenuItem value="abay">Abay</MenuItem>
-       </Select>
-       </FormControl>
-       }
+       />}
+
        { transfer &&  <TextField
        required
          label="Account Number"
@@ -606,6 +672,83 @@ const columns = [
          fullWidth
          margin="normal"
        />}
+       { partialPayment &&  <TextField
+       required
+         label="Paid Amount"
+         type="text"
+         value={paidAmount}
+         onChange={(e) => setPaidAmount(e.target.value)}
+         fullWidth
+         margin="normal"
+       />}
+        {partialPayment && 
+       <FormControl
+       fullWidth
+       sx={{gridColumn: "span 4" }}>
+         <InputLabel id="demo-simple-select-helper-label">Choose Payment Type</InputLabel>
+       <Select
+         required
+         value={cashOrTransfer}
+         onChange={(e) => handlePaymentType(e.target.value)}
+         fullWidth
+         margin="normal"
+       >
+         <MenuItem value="transfer">Transfer</MenuItem>
+         <MenuItem value="cash">Cash</MenuItem>
+       </Select>
+       </FormControl>
+       }
+      
+       { isPtransfer && !cash && <TextField
+       required
+         label="Bank Name"
+         type="text"
+         value={bankName}
+         onChange={(e) => setBankName(e.target.value)}
+         fullWidth
+         margin="normal"
+       />}
+
+       { isPtransfer && !cash && <TextField
+       required
+         label="Account Number"
+         value={accountNumber}
+         onChange={(e) => setAccountNumber(e.target.value)}
+         fullWidth
+         margin="normal"
+       />}
+         {partialPayment && <TextField
+       required
+         label="phone Number"
+         value={phone}
+         onChange={(e) => setPhone(e.target.value)}
+         fullWidth
+         margin="normal"
+         type="number"
+       />}
+       {partialPayment && <FormControlLabel required control={<Checkbox onChange={handleChange} />} label="Have Cheque book?"  />}
+       {partialPayment && checked && <TextField
+         required
+         label="Enter Cheque Number?"
+         value={chequeNumber}
+         onChange={(e) => setChequeNumber(e.target.value)}
+         fullWidth
+         margin="normal"
+         type="number"
+       />}
+        {
+         partialPayment && <TextField
+         required
+         label="Payment Date"
+         type="date"
+         value={creditDate}
+         onChange={(e) => setCreditDate(e.target.value)}
+         fullWidth
+         margin="normal"
+         InputLabelProps={{ shrink: true }}
+         InputProps={{ inputProps: { min: "yyyy-mm-dd" } }}
+       />
+       }
        {credit && <FormControlLabel required control={<Checkbox onChange={handleChange} />} label="Have Cheque book?"  />}
        {credit && checked && <TextField
          required
@@ -640,7 +783,7 @@ const columns = [
        }
      </DialogContent>
      <DialogActions dividers>
-       <Button style={{ color: 'white' }} onClick={() => handleSale(selectedRow)}  disabled ={saleLoading}>
+       <Button style={{ color: 'white' }} onClick={() =>{ handleSale(selectedRow)}}  disabled ={saleLoading}>
          {saleLoading ? <CircularProgress color="secondary" size={24}/> : 'Sale'}
        </Button>
      </DialogActions>
@@ -756,6 +899,8 @@ const columns = [
              disableColumnFilter={isMobile}
              disableDensitySelector ={isMobile}
              disableColumnSelector ={isMobile}
+             
+
            />
            </div>
            }

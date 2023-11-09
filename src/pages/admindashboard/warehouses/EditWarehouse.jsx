@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, IconButton, MenuItem, Select, TextField, useTheme } from "@mui/material";
+import { Alert, Box, Button, Collapse, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField, useTheme } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -147,6 +147,9 @@ const EditWareHouse = () => {
                 helperText={touched.name && errors.name}
                 sx={{ gridColumn: "span 4" }}
               />
+              <FormControl sx={{gridColumn: "span 4" }}
+                error={!!touched.type && !!errors.type}>
+                <InputLabel id="demo-simple-select-helper-label">Select Warehouse Type</InputLabel>
               <Select
                fullWidth
                variant="outlined"
@@ -159,13 +162,12 @@ const EditWareHouse = () => {
                onBlur={handleBlur}
                onChange={handleChange}
               >
-                <MenuItem value=''>Select Warehouse</MenuItem>
                 <MenuItem value='Main Store'>Main Store</MenuItem>
                 <MenuItem value='Sub Store'>Sub Store</MenuItem>
-                <MenuItem value='Shope'>Shop</MenuItem>
+                <MenuItem value='Shop'>Shop</MenuItem>
               </Select>
-    
-              
+              <FormHelperText>{touched.type && errors.type}</FormHelperText>
+              </FormControl>
               <Box display="flex" justifyContent="end" mt="10px">
               <Button type="submit" color="secondary" variant="contained"  disabled ={isEdited}>
                 {isEdited ? <CircularProgress color="secondary" size={30}/> : 'EDIT WAREHOUSE'}

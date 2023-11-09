@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import Message from "../../../components/admincomponents/Message";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
+import { darken, lighten } from '@mui/material/styles';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -20,6 +21,41 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
   '& .MuiDialog-paper': {
     width: '100%', // Adjust the width as needed
+  },
+}));
+const getBackgroundColor = (color, mode) =>
+  mode === 'dark' ? darken(color, 0.7) : lighten(color, 0.7);
+
+const getHoverBackgroundColor = (color, mode) =>
+  mode === 'dark' ? darken(color, 0.6) : lighten(color, 0.6);
+
+const getSelectedBackgroundColor = (color, mode) =>
+  mode === 'dark' ? darken(color, 0.5) : lighten(color, 0.5);
+
+const getSelectedHoverBackgroundColor = (color, mode) =>
+  mode === 'dark' ? darken(color, 0.4) : lighten(color, 0.4);
+
+const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+  '& .super-app-theme--Filled': {
+    backgroundColor: getBackgroundColor(theme.palette.error.main, theme.palette.mode),
+    '&:hover': {
+      backgroundColor: getHoverBackgroundColor(
+        theme.palette.error.main,
+        theme.palette.mode,
+      ),
+    },
+    '&.Mui-selected': {
+      backgroundColor: getSelectedBackgroundColor(
+        theme.palette.error.main,
+        theme.palette.mode,
+      ),
+      '&:hover': {
+        backgroundColor: getSelectedHoverBackgroundColor(
+          theme.palette.error.main,
+          theme.palette.mode,
+        ),
+      },
+    },
   },
 }));
 const Credit = () => {
@@ -97,6 +133,14 @@ const Credit = () => {
   setSelectedRow(row);
 
  }
+
+ const renderCancelCell = ({ row }) => {
+  return row.approvedByCashier ? (
+    <button disabled className="btn btn-danger mx-1">Cancel</button>
+  ) : (
+    <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1">Cancel</button>
+  );
+};
   useEffect(() => {
     Axios.get('/credit/getall').then((response) => {
         setCreditList(response.data);
@@ -112,6 +156,7 @@ const Credit = () => {
         setLoading(false);
        })
 }, [reload]);
+
 const getRowId = (row) => {
     return row._id;
   };
@@ -164,14 +209,14 @@ const getRowId = (row) => {
         width:isMobile&& 120,
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
+        
       },
       {
         field: "cancle",
         headerName: "Cancle",
-        renderCell: ({ row }) => {
-          return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Cancle</button>;
-        },
+        renderCell: renderCancelCell,
       },
+     
     {
       field: "approve",
       headerName: "Approve",
@@ -292,7 +337,7 @@ const getRowId = (row) => {
           },
         }}
       >
-        <DataGrid
+        <StyledDataGrid
             rows={creditList}
             columns={columns}
             components={{ Toolbar: GridToolbar }}
@@ -306,6 +351,8 @@ const getRowId = (row) => {
             disableColumnFilter = {isMobile}
            disableDensitySelector ={isMobile}
            disableColumnSelector ={isMobile}
+           getRowClassName={(params) => params.row.approvedByCashier && 'super-app-theme--Filled'}
+
           />
       </Box>
     </Box>

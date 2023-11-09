@@ -267,7 +267,7 @@ const Topbar = () => {
     )}
 
 {showMore && (<>{notifications
-  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(3)
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(4)
   .map((message) => (
     <div key={message._id} style={styles.notification}>
       <Avatar style={{ width: '20px', height: '20px' }} />

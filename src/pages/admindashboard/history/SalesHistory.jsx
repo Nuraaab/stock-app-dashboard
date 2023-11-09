@@ -80,8 +80,8 @@ const getRowId = (row) => {
       {
         field: "paymentMethod",
         headerName: "Payment Method",
-        width:isMobile&& 120,
-        flex:!isMobile&&1,
+        width:isMobile&& 200,
+        flex:!isMobile&&3,
         cellClassName: "name-column--cell",
       },
       {

@@ -173,13 +173,6 @@ const getRowId = (row) => {
         cellClassName: "name-column--cell",
       },
       {
-        field: "expireDate",
-        headerName: "Expire Date",
-        width:isMobile&& 120,
-        flex:!isMobile&&1,
-        cellClassName: "name-column--cell",
-      },
-      {
         field: "quantity",
         headerName: "Quantity",
         width:isMobile&& 120,

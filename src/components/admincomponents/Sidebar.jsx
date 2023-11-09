@@ -310,6 +310,36 @@ const Sidebar = () => {
               }
             />
              <Itemtest
+              title="Expense"
+              icon={<i class="fa fa-history"></i>}
+              selected={selected}
+              setSelected={setSelected}
+              isCollapsed={isCollapsed}
+              isMobile={isMobile}
+              setIsCollapsed={setIsCollapsed}
+              handleSidebar={handleSidebar}
+              subMenu={
+                <Menu>
+                  <MenuItem
+                    active={selected === "On-Pending Expense"}
+                    icon ={<i className="fas fa-exchange-alt"></i>}
+                    onClick={() => setSelected("On-Pending Expense")}
+                  >
+                    <Typography>On-Pending Expense</Typography>
+                    <Link to="/pending_expense" />
+                  </MenuItem>
+                  <MenuItem
+                    active={selected === "Expense History"}
+                    icon={<i className="fas fa-history"></i>}
+                    onClick={() => setSelected("Expense History")}
+                  >
+                    <Typography>Expense History</Typography>
+                    <Link to="/expense_history" />
+                  </MenuItem>
+                </Menu>
+              }
+            />
+             <Itemtest
               title="Pending"
               icon={<i class="fa fa-clock"></i>}
               selected={selected}
