@@ -11,9 +11,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import StatCard from './StatCard';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   '& .MuiDialogActions-root': {
     padding: theme.spacing(1),
@@ -23,13 +24,14 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 const RecentSales = ({ name}) => {
-    const theme = useTheme();
+    const theme = useTheme();   const [selectedRow, setSelectedRow] = React.useState(null);
+   const [open, setOpen] = useState(false);
+
    const colors = tokens(theme.palette.mode);
    const [todaySales, setTodaySales] = useState('');
    const [errorMessage, setErrorMessage] = useState('');
-   const [selectedRow, setSelectedRow] = React.useState(null);
-   const [open, setOpen] = useState(false);
    const [openCancle, setOpenCancle] = useState(false);
+   const [openCard, setOpenCard] = useState(false);
    const [selectedCancleRow, setSelectedCancleRow] = useState(null);
    const [isApproved, setIsApproved] = useState(false);
    const [isCancled, setIsCancled] = useState(false);
@@ -38,6 +40,12 @@ const RecentSales = ({ name}) => {
    const [reload, setReload] = useState(false);
    const [total, setTotal] = useState(0);
    const isMobile = useMediaQuery('(max-width: 768px)');
+   const totalSale = Number(total.totalSale) || 0;
+   const totalSaleTransfer = Number(total.totalSaleTransfer) || 0;
+   const totalSaleCredit = Number(total.totalSaleCredit) || 0;
+   const totalExpense = Number(total.totalExpense) || 0;
+   const netIncome = (totalSale + totalSaleTransfer + totalSaleCredit) - totalExpense;
+   console.log('income' + netIncome);
    const handleApprove = (selectedrow) => {
     setIsApproved(true);
     Axios.post(`/sallespending/approve/${selectedrow._id}`).then((response) => {
@@ -63,6 +71,12 @@ const RecentSales = ({ name}) => {
     setOpenCancle(false);
     setSelectedCancleRow(null);
   };
+      const handleCardClickOpen = (row) => {
+        setOpenCard(true);
+    };
+        const handleCardClose = () => {
+        setOpenCard(false);
+      };
   const handleCancle = (row) => {
     setIsCancled(true);
     Axios.delete(`/sallespending/undo/${row._id}`).then((response) => {
@@ -104,18 +118,23 @@ const RecentSales = ({ name}) => {
   }, [reload]);
  
         useEffect(() => {
-      Axios.get('/expense/total',{
-        warehouseName: name,
-      }).then((response) => {
-        console.log('total'+ response.data.totalSale);
-       setTotal(response.data);
-      }).catch((error) => {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("An error occurred");
-        }
-      })
+          const fetchTotal = async () =>{
+            console.log('name' + name);
+          await  Axios.post('/expense/total',{
+              warehouseName: name,
+            }).then((response) => {
+              console.log('name selected' + name);
+              console.log('total'+ response.data.totalSale);
+             setTotal(response.data);
+            }).catch((error) => {
+              if (error.response && error.response.data) {
+                setErrorMessage(error.response.data);
+              } else {
+                setErrorMessage("An error occurred");
+              }
+            })
+          }
+          fetchTotal();
        // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []);
 const handleClose = () => {
@@ -196,6 +215,106 @@ setSelectedRow(null);
         ];
   return (
     <>
+    <BootstrapDialog
+        open={openCard}
+        onClose={handleCardClose}
+        aria-labelledby="customized-dialog-title"
+        fullWidth
+      >
+       <DialogTitle
+      id="customized-dialog-title"
+      style={{ textAlign: 'center' }}
+    >
+      Today's Sales From {name}
+    </DialogTitle>
+    <IconButton
+     aria-label="close"
+     onClick={() => {handleCardClose()}}
+     sx={{
+       position: 'absolute',
+       right: 8,
+       top: 8,
+       color: (theme) => theme.palette.grey[500],
+     }}
+   >
+     <CloseIcon />
+   </IconButton>
+        <DialogContent dividers  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Box
+        display="grid"
+        gridTemplateColumns="1fr"
+        gridAutoRows="120px"
+        gap="20px"
+        fullWidth
+        mt={1}
+      >
+       
+       {total && <Box
+          gridColumn={"span 3"} 
+          backgroundColor={colors.primary[600]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          
+        >
+          <Link   style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <StatCard
+            cash={total.totalSale}
+            transfer={total.totalSaleTransfer}
+            credit={total.totalSaleCredit}
+            title="Today's Sale"
+            isSale={true}
+            isExpense={false}
+            isNet={false}
+          />
+          </Link>
+        </Box>}
+        {total && <Box
+          gridColumn={"span 3"} 
+          backgroundColor={colors.primary[600]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          padding={0}
+          
+        >
+          <Link   style={{display: 'flex',  justifyContent: 'center'}}>
+          <StatCard
+            title="Today's Expense"
+            expense={total.totalExpense}
+            isSale={false}
+            isExpense={true}
+            isNet={false}
+          />
+          </Link>
+        </Box>}
+        {total && <Box
+          gridColumn={"span 3"} 
+          backgroundColor={colors.primary[600]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          padding={0}
+          
+        >
+          <Link   style={{display: 'flex',  justifyContent: 'center'}}>
+          <StatCard
+            title="Today's Income"
+            netIncome={netIncome}
+            isSale={false}
+            isExpense={false}
+            isNet={true}
+          />
+          </Link>
+        </Box>}
+        </Box>
+        </DialogContent>
+        <DialogActions dividers style={{ justifyContent: 'end' }}>
+        <Button variant="outlined" color="inherit" onClick={() => handleCardClose()} >
+            Close
+          </Button>
+        </DialogActions>
+      </BootstrapDialog>
      <BootstrapDialog
         open={open}
         onClose={handleClose}
@@ -275,11 +394,86 @@ setSelectedRow(null);
           </Button>
         </DialogActions>
       </BootstrapDialog>
-   {todaySales.length !== 0 && <Box
-           gridColumn={{ xs: "span 12", sm: "span 12" }}
-           gridRow={{ xs: 'span 3', sm: 'span 2'}}
-           backgroundColor={colors.primary[400]}
-           py={2}
+     {!isMobile &&  todaySales.length !== 0 && <Box 
+       gridColumn={{ xs: "span 1", sm: "span 12" }}
+       mt={3}
+      >
+         <Typography variant="h5" fontWeight="600" pl={1}>  
+            Recent Sales From {name}
+          </Typography>
+      {!isMobile && <Box
+        display="grid"
+        gridTemplateColumns="repeat(11, 1fr)"
+        gridAutoRows="120px"
+        gap="50px"
+        fullWidth
+        mt={1}
+      >
+       
+       {total && <Box
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          
+        >
+          <Link   style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <StatCard
+            cash={total.totalSale}
+            transfer={total.totalSaleTransfer}
+            credit={total.totalSaleCredit}
+            title="Today's Sale"
+            isSale={true}
+            isExpense={false}
+            isNet={false}
+          />
+          </Link>
+        </Box>}
+        {total && <Box
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          padding={0}
+          
+        >
+          <Link   style={{display: 'flex',  justifyContent: 'center'}}>
+          <StatCard
+            title="Today's Expense"
+            expense={total.totalExpense}
+            isSale={false}
+            isExpense={true}
+            isNet={false}
+          />
+          </Link>
+        </Box>}
+        {total && <Box
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          padding={0}
+          
+        >
+          <Link   style={{display: 'flex',  justifyContent: 'center'}}>
+          <StatCard
+            title="Today's Income"
+            netIncome={netIncome}
+            isSale={false}
+            isExpense={false}
+            isNet={true}
+          />
+          </Link>
+        </Box>}
+        </Box>}
+      </Box>}
+   
+   {!isMobile && todaySales.length !== 0 && <Box
+           gridColumn={{ xs: "span 1", sm: "span 12" }}
+           gridRow={{ xs: 'span 2', sm: 'span 2'}}
            
         sx={{
           "& .MuiDataGrid-root": {
@@ -308,69 +502,83 @@ setSelectedRow(null);
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
             color: `${colors.grey[100]} !important`,
           },
+          marginTop:'20px'
         }}
       >
-        {!isMobile && <Box
-        display="grid"
-        gridTemplateColumns="repeat(12, 1fr)"
-        gridAutoRows="140px"
-        gap="50px"
-        fullWidth
-        marginLeft={15}
-      >
+        
        
-       {total && <Box
-          gridColumn={{ xs: "span 12", sm: "span 3", }} 
-          backgroundColor={colors.primary[500]}
+          <DataGrid
+            rows={todaySales}
+            columns={columns}
+            components={{ Toolbar: GridToolbar }}
+            getRowId={getRowId}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                style: { color: "red" },
+              },
+            }}
+           disableColumnFilter = {isMobile}
+           disableDensitySelector ={isMobile}
+           disableColumnSelector ={isMobile}
+          /> 
+        
+            
+      </Box> 
+      } 
+
+
+{isMobile && todaySales.length !== 0 && <Box
+           gridColumn={ "span 12" }
+           gridRow={'span 2'}
+           
+        sx={{
+          "& .MuiDataGrid-root": {
+            border: "none",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "none",
+          },
+          "& .name-column--cell": {
+            color: colors.greenAccent[300],
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
+          "& .MuiCheckbox-root": {
+            color: `${colors.greenAccent[200]} !important`,
+          },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
+          marginTop:'20px'
+        }}
+      >
+        <Box
           display="flex"
           alignItems="center"
-          justifyContent="center"
-          
+          justifyContent="space-between"
         >
-          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <StatCard
-            cash={total.totalSale}
-            transfer={total.totalSaleTransfer}
-            credit={total.totalSaleCredit}
-          />
-          </Link>
-        </Box>}
-        {total && <Box
-          gridColumn={{ xs: "span 12", sm: "span 3", }} 
-          backgroundColor={colors.primary[500]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          
-        >
-          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <StatCard
-            cash={total.totalSale}
-            transfer={total.totalSaleTransfer}
-            credit={total.totalSaleCredit}
-          />
-          </Link>
-        </Box>}
-        {total && <Box
-          gridColumn={{ xs: "span 12", sm: "span 3", }} 
-          backgroundColor={colors.primary[500]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          
-        >
-          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <StatCard
-            cash={total.totalSale}
-            transfer={total.totalSaleTransfer}
-            credit={total.totalSaleCredit}
-          />
-          </Link>
-        </Box>}
-        </Box>}
-        <Typography variant="h5" fontWeight="600" pl={1}>  
-            Recent Sales From {name}
+          <Typography variant="h5" fontWeight="600" pl={1}>  
+            Today's Sale From {name}
           </Typography>
+          
+          {isMobile && (
+            <MoreVertIcon
+            onClick={handleCardClickOpen}
+              sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+            />
+          )}
+        </Box>
+       
           <DataGrid
             rows={todaySales}
             columns={columns}

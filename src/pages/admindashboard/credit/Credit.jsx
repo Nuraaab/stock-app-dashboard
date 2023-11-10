@@ -67,35 +67,12 @@ const Credit = () => {
   const [creditList , setCreditList] = useState([]);
   const [openAlert, setOpenAlert] = useState(true);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const [openCancle, setOpenCancle] = useState(false);
-  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
-  const [isCancled, setIsCancled] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
-  const [reload, setReload] = useState(false);
   const navigate = useNavigate();
   
-  const handleCancle = (row) => {
-    setIsCancled(true);
-        Axios.post(`/credit/cancele/${row._id}`).then((response) => {
-          setOpenAlert(true);
-          setMessage("Credit Cancled successfully!");
-          setIsCancled(false);
-          setOpenCancle(false);
-          setReload(!reload);
-       }).catch((error) => {
-        if (error.response && error.response.data) {
-          setOpenAlert(true);
-          setErrorMessage(error.response.data);
-        } else {
-          setOpenAlert(true);
-          setErrorMessage("An error occurred");
-        }
-        setIsCancled(false);
-        setOpenCancle(true);
-  })
-  };
+ 
   const handleApprove = (selectedrow) => {
     setIsApproved(true);
     Axios.post(`/credit/approve/${selectedrow._id}`).then((response) => {
@@ -120,27 +97,15 @@ const Credit = () => {
     setOpen(false);
     setSelectedRow(null);
   };
-  const handleCancleClose = () => {
-    setOpenCancle(false);
-    setSelectedCancleRow(null);
-  };
-  const handleCancleClickOpen = (row) => {
-    setOpenCancle(true);
-    setSelectedCancleRow(row);
- };
+
+
  const handleClickOpen = (row) => {
   setOpen(true);
   setSelectedRow(row);
 
  }
 
- const renderCancelCell = ({ row }) => {
-  return row.approvedByCashier ? (
-    <button disabled className="btn btn-danger mx-1">Cancel</button>
-  ) : (
-    <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1">Cancel</button>
-  );
-};
+
   useEffect(() => {
     Axios.get('/credit/getall').then((response) => {
         setCreditList(response.data);
@@ -155,7 +120,7 @@ const Credit = () => {
         }
         setLoading(false);
        })
-}, [reload]);
+}, []);
 
 const getRowId = (row) => {
     return row._id;
@@ -211,11 +176,6 @@ const getRowId = (row) => {
         cellClassName: "name-column--cell",
         
       },
-      {
-        field: "cancle",
-        headerName: "Cancle",
-        renderCell: renderCancelCell,
-      },
      
     {
       field: "approve",
@@ -265,40 +225,6 @@ const getRowId = (row) => {
           <Button  variant="contained"
             color="primary" onClick={() => handleApprove(selectedRow)}  disabled ={isApproved}>
             {isApproved ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
-          </Button>
-        </DialogActions>
-      </BootstrapDialog>
-       <BootstrapDialog
-        open={openCancle}
-        onClose={handleCancleClose}
-        aria-labelledby="costomized-dialog-title"
-        fullWidth
-      >
-      <DialogTitle id="delete-confirmation-dialog-title" >Confirm Cancle</DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={() => handleCancleClose()}
-        sx={{
-          position: 'absolute',
-          right: 8,
-          top: 8,
-          color: (theme) => theme.palette.grey[500],
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
-        <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Typography variant="body1">
-            Are you sure you want to Cancle this Credit?
-          </Typography>
-        </DialogContent>
-        <DialogActions dividers style={{ justifyContent: 'center' }}>
-        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
-            No
-          </Button>
-          <Button  variant="contained"
-            color="primary" onClick={() => handleCancle(selectedCancleRow)}  disabled ={isCancled}>
-            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
           </Button>
         </DialogActions>
       </BootstrapDialog>

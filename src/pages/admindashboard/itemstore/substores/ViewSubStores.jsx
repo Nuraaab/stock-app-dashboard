@@ -411,7 +411,20 @@ const columns = [
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
-
+    {
+      field: "pendingSaleQuantity",
+      headerName: "Pending Sale Quantity",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "pendingToshopQuantity",
+      headerName: "Pending To Shop Quantity",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
+    },
 
   {
     field: "move",

@@ -31,7 +31,6 @@ const EditUsers = () => {
     fullname: rowData.adminName,
     email: rowData.email,
     phone: rowData.phone,
-    type: rowData.type,
     warehouse: rowData.warehouseName,
     substoreController:rowData.isSubstore,
   };
@@ -41,7 +40,6 @@ const EditUsers = () => {
     adminName: values.fullname,
     email: values.email,
     phone: values.phone,
-    type:rowData.type,
     warehouseName:values.warehouse,
     isSubstore: values.substoreController,
    }).then((response) => {
@@ -183,27 +181,6 @@ const EditUsers = () => {
                 helperText={touched.phone && errors.phone}
                 sx={{ gridColumn: "span 2" }}
               />
-
-              <FormControl sx={{gridColumn: "span 2" }}
-                error={!!touched.type && !!errors.type}>
-                <InputLabel id="demo-simple-select-helper-label">Choose User Type</InputLabel>
-               <Select
-               fullWidth
-               variant="outlined"
-               error={!!touched.type && !!errors.type}
-               helperText={touched.type && errors.type}
-               sx={{ gridColumn: "span 2" ,color: "white"}}
-               value={values.type}
-               name="type"
-               label="User Type"
-               onBlur={handleBlur}
-               onChange={(e) => handleUserTypeChange(e, handleChange)}
-              >
-                <MenuItem value='admin'>Admin</MenuItem>
-                <MenuItem value='cashier'>Cashier</MenuItem>
-              </Select>
-              <FormHelperText>{touched.type && errors.type}</FormHelperText>
-              </FormControl>
               {
              !isAdmin && isCashier && <FormControl sx={{gridColumn: "span 4" }}
                  error={ isCashier && !!touched.warehouse && !!errors.warehouse}>
@@ -278,7 +255,6 @@ const checkoutSchema = yup.object().shape({
     is: true,
     then: yup.string().required('Substore controller is required'),
   }),
-  type: yup.string().required("User type required"),
   email: yup.string().email("invalid email").required("Email required"),
   phone: yup
     .string()

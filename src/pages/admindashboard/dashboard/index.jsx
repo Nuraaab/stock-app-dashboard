@@ -13,7 +13,6 @@ import Axios from 'axios';
 import { Link } from "react-router-dom";
 import RecentSales from "../../../components/admincomponents/RecentSales";
 import LinearProgress from "@mui/material/LinearProgress";
-import MyResponsivePie from "../../../components/admincomponents/PiChart";
 import Message from "../../../components/admincomponents/Message";
 const Dashboard = () => {
   const theme = useTheme();
@@ -60,14 +59,7 @@ const Dashboard = () => {
   
   useEffect(() => {
   }, [lineData]);
-    const [piData, setPiData] = useState('');
-    useEffect(() => {
-      Axios.get('/mainstore/pie').then((response) => {
-          setPiData(response.data);
-         }).catch((error) => {
-         })
-         // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+   
   useEffect(() => {
     setLoading(true);
    Axios.get('/items/getall').then((response) => {
@@ -198,7 +190,7 @@ const Dashboard = () => {
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
         gridAutoRows="140px"
-        gap="20px"
+       gap={2}
       >
         <Box
           gridColumn={{ xs: "span 12", sm: "span 3", }} 
@@ -383,18 +375,6 @@ const Dashboard = () => {
           <Box height={{xs:'250px', sm:'400px'}} m="-20px 0 0 0">
            {lineData && <LineChart isDashboard={true}  lineData={lineData}/>}
           </Box>
-        </Box>
-        <Box
-          gridColumn={{ xs: "span 12", sm: "span 12" }}
-          gridRow={{xs: 'span 2', sm: 'span 3'}}
-          backgroundColor={colors.primary[400]}
-         p={2}
-        >
-          <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-             Items Report
-            </Typography>
-         {piData && <MyResponsivePie data={piData} />}
-         
         </Box>
        {
         warehouseList.map((warehouse) => (
