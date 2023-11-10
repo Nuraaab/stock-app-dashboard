@@ -170,6 +170,7 @@ const handleClickOpen = (row) => {
     }else if(transactionType ==='transfer'){
       Axios.post(`/Shop/transaction/${selectedrow._id}`, {
         quantity: quantity,
+        amount: price,
         customerName: custName,
         paymentMethod: `${transactionType}(Bank N: ${bankName}, Acc No: ${accountNumber})`,
       }).then((response) => {
@@ -726,12 +727,11 @@ useEffect(() => {
 }, []);
   return (
     <>
-     
     <Box 
     margin={0}
     padding={0}
     >
-      <Header
+       <Header
         title="SHOP ITEMS"
       />
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
@@ -753,7 +753,6 @@ useEffect(() => {
       </Tabs>
       </Box>
       <CustomTabPanel value={value} index={value}  shopitems ={value === 0 ? shopitems.filter((item) => item.warehouseName === intialWarehouse) : shopitems.filter((item) => item.warehouseName === tabName)} setReload ={setReload} reload = {reload}>
-          
       </CustomTabPanel>
     </Box>
     </Box>

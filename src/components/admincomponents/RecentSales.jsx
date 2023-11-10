@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import React from 'react'
 import { tokens } from '../../theme';
@@ -9,6 +9,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Message from './Message';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
+import StatBox from '../StatBox';
+import { Link } from 'react-router-dom';
+import StatCard from './StatCard';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -34,6 +37,7 @@ const RecentSales = ({ name}) => {
    const [openAlert, setOpenAlert] = useState(true);
    const [message, setMessage] = useState('');
    const [reload, setReload] = useState(false);
+   const [total, setTotal] = useState(0);
    const isMobile = useMediaQuery('(max-width: 768px)');
    const handleApprove = (selectedrow) => {
     setIsApproved(true);
@@ -100,7 +104,20 @@ const RecentSales = ({ name}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload]);
  
-
+        useEffect(() => {
+      Axios.get('/expense/total',{
+        warehouseName: name,
+      }).then((response) => {
+        console.log('total'+ response.data.totalSale);
+       setTotal(response.data);
+      }).catch((error) => {
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("An error occurred");
+        }
+      })
+        }, []);
 const handleClose = () => {
 setOpen(false);
 setSelectedRow(null);
@@ -293,9 +310,100 @@ setSelectedRow(null);
           },
         }}
       >
+        {!isMobile && <Box
+        display="grid"
+        gridTemplateColumns="repeat(12, 1fr)"
+        gridAutoRows="140px"
+        gap="50px"
+        fullWidth
+        marginLeft={15}
+      >
+        <Box
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
+          backgroundColor={colors.primary[600]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          
+        >
+          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <StatBox
+            title='hi'
+            // subtitle="Items"
+            // icon={
+            //   <List 
+            //     sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+            //   />
+            // }
+          />
+          </Link>
+        </Box>
+        <Box
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
+          backgroundColor={colors.primary[300]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          
+        >
+          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <StatBox
+            title='hi'
+            // subtitle="Items"
+            // icon={
+            //   <List 
+            //     sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+            //   />
+            // }
+          />
+          </Link>
+        </Box>
+       {total && <Box
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
+          backgroundColor={colors.primary[500]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          
+        >
+          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <StatCard
+            cash={total.totalSale}
+            transfer={total.totalSaleTransfer}
+            credit={total.totalSaleCredit}
+            // subtitle="Items"
+            // icon={
+            //   <List 
+            //     sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+            //   />
+            // }
+          />
+          </Link>
+        </Box>}
+        </Box>}
         <Typography variant="h5" fontWeight="600" pl={1}>  
             Recent Sales From {name}
           </Typography>
+          {/* <Box
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          
+        >
+          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <StatBox
+            title={totalItem}
+            subtitle="Items"
+            icon={
+              <List 
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+          />
+          </Link>
+        </Box> */}
           <DataGrid
             rows={todaySales}
             columns={columns}

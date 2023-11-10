@@ -398,7 +398,7 @@ const Dashboard = () => {
         </Box>
        {
         warehouseList.map((warehouse) => (
-          <RecentSales name={warehouse.name}/>
+          <RecentSales  name={warehouse.name}/>
         ))
        }
       </Box>

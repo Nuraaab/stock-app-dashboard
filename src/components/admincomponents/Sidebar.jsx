@@ -157,7 +157,9 @@ const Sidebar = () => {
       }}
     >
       <ProSidebar collapsed={isCollapsed} breakPoint={breakPoint ? 'sm': ''}>
-        <Menu >
+        <Menu  style={{
+          marginBottom: isMobile ? '40px' : undefined,
+        }}>
           <MenuItem
             onClick={() => handleCollapse()}
             icon={isCollapsed ? <MenuOutlinedIcon /> :undefined }
