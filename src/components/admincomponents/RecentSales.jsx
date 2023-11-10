@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import React from 'react'
 import { tokens } from '../../theme';
@@ -9,7 +9,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Message from './Message';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
-import StatBox from '../StatBox';
 import { Link } from 'react-router-dom';
 import StatCard from './StatCard';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -117,6 +116,7 @@ const RecentSales = ({ name}) => {
           setErrorMessage("An error occurred");
         }
       })
+       // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []);
 const handleClose = () => {
 setOpen(false);
@@ -318,46 +318,7 @@ setSelectedRow(null);
         fullWidth
         marginLeft={15}
       >
-        <Box
-          gridColumn={{ xs: "span 12", sm: "span 3", }} 
-          backgroundColor={colors.primary[600]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          
-        >
-          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <StatBox
-            title='hi'
-            // subtitle="Items"
-            // icon={
-            //   <List 
-            //     sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-            //   />
-            // }
-          />
-          </Link>
-        </Box>
-        <Box
-          gridColumn={{ xs: "span 12", sm: "span 3", }} 
-          backgroundColor={colors.primary[300]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          
-        >
-          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <StatBox
-            title='hi'
-            // subtitle="Items"
-            // icon={
-            //   <List 
-            //     sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-            //   />
-            // }
-          />
-          </Link>
-        </Box>
+       
        {total && <Box
           gridColumn={{ xs: "span 12", sm: "span 3", }} 
           backgroundColor={colors.primary[500]}
@@ -371,12 +332,38 @@ setSelectedRow(null);
             cash={total.totalSale}
             transfer={total.totalSaleTransfer}
             credit={total.totalSaleCredit}
-            // subtitle="Items"
-            // icon={
-            //   <List 
-            //     sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-            //   />
-            // }
+          />
+          </Link>
+        </Box>}
+        {total && <Box
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
+          backgroundColor={colors.primary[500]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          
+        >
+          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <StatCard
+            cash={total.totalSale}
+            transfer={total.totalSaleTransfer}
+            credit={total.totalSaleCredit}
+          />
+          </Link>
+        </Box>}
+        {total && <Box
+          gridColumn={{ xs: "span 12", sm: "span 3", }} 
+          backgroundColor={colors.primary[500]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          
+        >
+          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <StatCard
+            cash={total.totalSale}
+            transfer={total.totalSaleTransfer}
+            credit={total.totalSaleCredit}
           />
           </Link>
         </Box>}
@@ -384,26 +371,6 @@ setSelectedRow(null);
         <Typography variant="h5" fontWeight="600" pl={1}>  
             Recent Sales From {name}
           </Typography>
-          {/* <Box
-          gridColumn={{ xs: "span 12", sm: "span 3", }} 
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          
-        >
-          <Link  to='/view_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <StatBox
-            title={totalItem}
-            subtitle="Items"
-            icon={
-              <List 
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-          </Link>
-        </Box> */}
           <DataGrid
             rows={todaySales}
             columns={columns}

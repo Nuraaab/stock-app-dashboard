@@ -1,4 +1,4 @@
-import {  Box, Button,  Checkbox,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery } from "@mui/material";
+import {  Box, Button,  Checkbox,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -60,32 +60,10 @@ function CustomTabPanel(props) {
   const [isSaled, setIsSaled] = useState(false);
   const [isMoved, setIsMoved] = useState(false);
   const [isMoveLoad, setIsMoveLoad] = useState(false);
-  const [openCancle, setOpenCancle] = useState(false);
-  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [chequeNumber, setChequeNumber] = useState(null);
-  const [isCancled, setIsCancled] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [checked, setChecked] = useState(false);
-  const handleDelete = (row) => {
-    setIsCancled(true);
-   Axios.delete(`/Substore/delete/${row._id}`).then((response) => {
-     setOpenAlert(true);
-     setMessage("Sale Deleted successfully!");
-     setIsCancled(false);
-     setOpenCancle(false);
-     setReload(!reload);
-  }).catch((error) => {
-   if (error.response && error.response.data) {
-    setOpenAlert(true);
-     setErrorMessage(error.response.data);
-   } else {
-    setOpenAlert(true);
-     setErrorMessage("An error occurred");
-   }
-   setIsCancled(false);
-   setOpenCancle(true);
-})
-};
+ 
 const handleSale = (selectedrow) => {
  setIsSaled(true);
  if(transactionType ==='credit'){
@@ -375,14 +353,6 @@ if (filteredWarehouse.length === 0) {
   })
 }
 }
-const handleCancleClose = () => {
- setOpenCancle(false);
- setSelectedCancleRow(null);
-};
-const handleCancleClickOpen = (row) => {
- setOpenCancle(true);
- setSelectedCancleRow(row);
-};
 const handleChange = (event) => {
   setChecked(event.target.checked);
   if(event.target.checked === false){
@@ -442,13 +412,7 @@ const columns = [
       cellClassName: "name-column--cell",
     },
 
-  {
-    field: "delete",
-    headerName: "Delete",
-    renderCell: ({ row }) => {
-      return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
-    },
-  },
+
   {
     field: "move",
     headerName: "Move",
@@ -760,40 +724,6 @@ const columns = [
         <DialogActions dividers>
           <Button style={{ color: 'white' }} onClick={() => {handleSale(selectedRow)}}  disabled ={isSaled}>
             {isSaled ? <CircularProgress color="secondary" size={30} /> : 'Sale'}
-          </Button>
-        </DialogActions>
-      </BootstrapDialog>
-      <BootstrapDialog
-        open={openCancle}
-        onClose={handleCancleClose}
-        aria-labelledby="customized-dialog-title"
-        fullWidth
-      >
-      <DialogTitle id="delete-confirmation-dialog-title" style={{ textAlign: 'center' }}>Confirm Delete</DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={() => handleCancleClose()} 
-        sx={{
-          position: 'absolute',
-          right: 8,
-          top: 8,
-          color: (theme) => theme.palette.grey[500],
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
-        <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Typography variant="body1">
-            Are you sure you want to delete this item?
-          </Typography>
-        </DialogContent>
-        <DialogActions dividers style={{ justifyContent: 'center' }}>
-        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
-            No
-          </Button>
-          <Button  variant="contained"
-            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
-            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
           </Button>
         </DialogActions>
       </BootstrapDialog>

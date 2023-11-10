@@ -1,4 +1,4 @@
-import {Box, Button,  Checkbox,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery } from "@mui/material";
+import {Box, Button,  Checkbox,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -51,9 +51,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSaled, setIsSaled] = useState(false);
-  const [openCancle, setOpenCancle] = useState(false);
-  const [selectedCancleRow, setSelectedCancleRow] = useState(null);
-  const [isCancled, setIsCancled] = useState(false);
   const [checked, setChecked] = React.useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const handleTransactionType = (value) => {
@@ -97,26 +94,6 @@ const handleClickOpen = (row) => {
     setOpen(false);
     setSelectedRow(null);
     };
-  const handleDelete = (row) => {
-    setIsCancled(true);
-      Axios.delete(`/Shop/delete/${row._id}`).then((response) => {
-        setOpenAlert(true);
-        setMessage("Sale Deleted successfully!");
-        setIsCancled(false);
-        setOpenCancle(false);
-        setReload(!reload);
-     }).catch((error) => {
-      if (error.response && error.response.data) {
-        setOpenAlert(true);
-        setErrorMessage(error.response.data);
-      } else {
-        setOpenAlert(true);
-        setErrorMessage("An error occurred");
-      }
-      setIsCancled(false);
-        setOpenCancle(true);
-})
-  };
   const saleResetForm = () => {
     setCustName('');
     setPrice('');
@@ -235,6 +212,7 @@ const handleClickOpen = (row) => {
        }else{
       Axios.post(`/Shop/transaction/${selectedrow._id}`, {
         quantity: quantity,
+        amount: price,
         customerName: custName,
         paymentMethod: transactionType,
       }).then((response) => {
@@ -263,14 +241,6 @@ const handleClickOpen = (row) => {
       })
     }
     }
-    const handleCancleClose = () => {
-      setOpenCancle(false);
-      setSelectedCancleRow(null);
-    };
-    const handleCancleClickOpen = (row) => {
-      setOpenCancle(true);
-      setSelectedCancleRow(row);
-  };
   const handleChange = (event) => {
     setChecked(event.target.checked);
     if(event.target.checked === false){
@@ -327,14 +297,6 @@ const handleClickOpen = (row) => {
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
-   
-    {
-      field: "delete",
-      headerName: "Delete",
-      renderCell: ({ row }) => {
-        return <button onClick={() => handleCancleClickOpen(row)} className="btn btn-danger mx-1 ">Delete</button>;
-      },
-    },
     {
         field: "sale",
         headerName: "Sale",
@@ -347,40 +309,6 @@ const handleClickOpen = (row) => {
     <>
      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
-    <BootstrapDialog
-        open={openCancle}
-        onClose={handleCancleClose}
-        aria-labelledby="Costomized-dialog-title"
-        fullWidth
-      >
-      <DialogTitle id="delete-confirmation-dialog-title" >Confirm Delete</DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={() => handleCancleClose()}
-        sx={{
-          position: 'absolute',
-          right: 8,
-          top: 8,
-          color: (theme) => theme.palette.grey[500],
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
-        <DialogContent dividers style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Typography variant="body1">
-            Are you sure you want to delete this item?
-          </Typography>
-        </DialogContent>
-        <DialogActions dividers style={{ justifyContent: 'center' }}>
-        <Button variant="outlined" color="inherit" onClick={() => handleCancleClose()} >
-            No
-          </Button>
-          <Button  variant="contained"
-            color="primary" onClick={() => handleDelete(selectedCancleRow)}  disabled ={isCancled}>
-            {isCancled ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
-          </Button>
-        </DialogActions>
-      </BootstrapDialog>
      <BootstrapDialog
         open={open}
         onClose={handleClose}
