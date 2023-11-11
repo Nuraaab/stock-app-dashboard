@@ -35,8 +35,8 @@ const ExpenseHistory = () => {
       };
     const columns = [
         {
-            field: "cashierName",
-            headerName: "Cashier Name",
+            field: "warehouseName",
+            headerName: "Shop Name",
             width:isMobile&& 120,
             flex:!isMobile&&1,
             cellClassName: "name-column--cell",

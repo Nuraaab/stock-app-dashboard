@@ -49,6 +49,9 @@ const Topbar = () => {
   const handleClickNot = (event) => {
     setAnchorE2(event.currentTarget);
   };
+  const closePopUp = (value) => {
+    setAnchorE2(value);
+  }
   const handleClickOpen = () => {
     setOpenAccount(true);
 };
@@ -242,7 +245,7 @@ const Topbar = () => {
   .map((message) => (
     <div key={message._id} style={styles.notification}>
       <Avatar style={{ width: '20px', height: '20px' }} />
-      <p style={styles.notificationInfo}>
+      <p style={styles.notificationInfo} onClick={() => closePopUp(false)}>
         <Link style={{ color: 'white' }} to='/pendingshopitems'>
           <span style={styles.cashier}>{message.cashierName}</span> requested <span style={styles.quantity}>{message.quantity}</span> {message.name} {formatDistanceToNow(new Date(message.createdAt))} ago
         </Link>
@@ -271,8 +274,8 @@ const Topbar = () => {
   .map((message) => (
     <div key={message._id} style={styles.notification}>
       <Avatar style={{ width: '20px', height: '20px' }} />
-      <p style={styles.notificationInfo}>
-        <Link style={{ color: 'white' }} to='/pendingshopitems'>
+      <p style={styles.notificationInfo} onClick={() => closePopUp(false)}>
+        <Link style={{ color: 'white' }} to='/pendingshopitems' >
           <span style={styles.cashier}>{message.cashierName}</span> requested <span style={styles.quantity}>{message.quantity}</span> {message.name} {formatDistanceToNow(new Date(message.createdAt))} ago
         </Link>
       </p>
