@@ -201,11 +201,13 @@ const handleTransactionType = (value) => {
        setPartialPayment(false);
        setIsPtransfer(false);
        setCredit(false);
+       setChequeNumber(null);
        setTransactionType(value);
      }else if(value === 'credit'){
        setCredit(true);
        setTransfer(false);
        setPartialPayment(false);
+       setChequeNumber(null);
        setIsPtransfer(false);
        setTransactionType(value);
      }else if(value === 'partial_payment'){
@@ -217,6 +219,7 @@ const handleTransactionType = (value) => {
        setTransactionType(value);
        setTransfer(false);
        setPartialPayment(false);
+       setChequeNumber(null);
        setIsPtransfer(false);
        setCredit(false);
      }

@@ -26,10 +26,9 @@ const StatCard = ({ cash, transfer, credit, expense, netIncome, title, isSale, i
             <Typography
                 variant="h6"
                 fontWeight="bold"
-                
                 sx={{ color: colors.grey[100] , ml:'5px', fontFamily: 'Roboto'}}
             >
-                {cash} Br
+                {cash} Birr
             </Typography>
             </Box>}
            {isSale && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' }}>
@@ -44,7 +43,7 @@ const StatCard = ({ cash, transfer, credit, expense, netIncome, title, isSale, i
                 fontWeight="bold"
                 sx={{ color: colors.grey[100] , ml:'5px'}}
             >
-                {transfer} Br
+                {transfer} Birr
             </Typography>
             </Box>}
            { isSale && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' }}>
@@ -60,7 +59,7 @@ const StatCard = ({ cash, transfer, credit, expense, netIncome, title, isSale, i
                 sx={{ color: colors.grey[100] }}
                 style={{marginLeft:'10px'}}
             >
-                {credit} Br
+                {credit} Birr
             </Typography>
             </Box>}
             {isExpense && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center' }}>
@@ -69,7 +68,7 @@ const StatCard = ({ cash, transfer, credit, expense, netIncome, title, isSale, i
                 fontWeight="bold"
                 sx={{ color: colors.grey[100] , ml:'5px'}}
             >
-                {expense} Br
+                {expense} Birr
             </Typography>
             </Box>}
             {isNet && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center' }}>
@@ -78,7 +77,7 @@ const StatCard = ({ cash, transfer, credit, expense, netIncome, title, isSale, i
                 fontWeight="bold"
                 sx={{ color: colors.grey[100] , ml:'5px'}}
             >
-                {netIncome} Br
+                {netIncome} Birr
             </Typography>
             </Box>}
         </Box>

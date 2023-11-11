@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import { Collapse } from "@mui/material";
 const Item = ({ title, to, icon, selected, setSelected, isCollapsed, isMobile, setIsCollapsed, handleSidebar }) => {
   const handleClick = (title) =>{
@@ -313,7 +314,7 @@ const Sidebar = () => {
             />
              <Itemtest
               title="Expense"
-              icon={<i class="fa fa-history"></i>}
+              icon={<ShoppingCartCheckoutIcon/>}
               selected={selected}
               setSelected={setSelected}
               isCollapsed={isCollapsed}
@@ -324,7 +325,7 @@ const Sidebar = () => {
                 <Menu>
                   <MenuItem
                     active={selected === "On-Pending Expense"}
-                    icon ={<i className="fas fa-exchange-alt"></i>}
+                    icon ={<i class="fa fa-clock"></i>}
                     onClick={() => setSelected("On-Pending Expense")}
                   >
                     <Typography>On-Pending Expense</Typography>

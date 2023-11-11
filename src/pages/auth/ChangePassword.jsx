@@ -73,7 +73,7 @@ export default function ChangePassword() {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src={`../../assets/user.png`}
+                  src={`../../assets/user.ico`}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
           </Avatar>

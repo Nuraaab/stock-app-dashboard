@@ -14,7 +14,7 @@ import StatCard from './StatCard';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
-    padding: theme.spacing(1),
+    padding: theme.spacing(2),
   },
   '& .MuiDialogActions-root': {
     padding: theme.spacing(1),
@@ -45,7 +45,6 @@ const RecentSales = ({ name}) => {
    const totalSaleCredit = Number(total.totalSaleCredit) || 0;
    const totalExpense = Number(total.totalExpense) || 0;
    const netIncome = (totalSale + totalSaleTransfer + totalSaleCredit) - totalExpense;
-   console.log('income' + netIncome);
    const handleApprove = (selectedrow) => {
     setIsApproved(true);
     Axios.post(`/sallespending/approve/${selectedrow._id}`).then((response) => {
@@ -119,12 +118,9 @@ const RecentSales = ({ name}) => {
  
         useEffect(() => {
           const fetchTotal = async () =>{
-            console.log('name' + name);
           await  Axios.post('/expense/total',{
               warehouseName: name,
             }).then((response) => {
-              console.log('name selected' + name);
-              console.log('total'+ response.data.totalSale);
              setTotal(response.data);
             }).catch((error) => {
               if (error.response && error.response.data) {
@@ -244,7 +240,7 @@ setSelectedRow(null);
         display="grid"
         gridTemplateColumns="1fr"
         gridAutoRows="120px"
-        gap="20px"
+        gap="10px"
         fullWidth
         mt={1}
       >
@@ -262,7 +258,7 @@ setSelectedRow(null);
             cash={total.totalSale}
             transfer={total.totalSaleTransfer}
             credit={total.totalSaleCredit}
-            title="Today's Sale"
+            title="TODAY'S SALE"
             isSale={true}
             isExpense={false}
             isNet={false}
@@ -280,7 +276,7 @@ setSelectedRow(null);
         >
           <Link   style={{display: 'flex',  justifyContent: 'center'}}>
           <StatCard
-            title="Today's Expense"
+            title="TODAY'S EXPENSE"
             expense={total.totalExpense}
             isSale={false}
             isExpense={true}
@@ -299,7 +295,7 @@ setSelectedRow(null);
         >
           <Link   style={{display: 'flex',  justifyContent: 'center'}}>
           <StatCard
-            title="Today's Income"
+            title="TODAY'S INCOME"
             netIncome={netIncome}
             isSale={false}
             isExpense={false}
@@ -309,7 +305,7 @@ setSelectedRow(null);
         </Box>}
         </Box>
         </DialogContent>
-        <DialogActions dividers style={{ justifyContent: 'end' }}>
+        <DialogActions dividers style={{ justifyContent:isMobile ?  'flex-end': 'flex-end' }}>
         <Button variant="outlined" color="inherit" onClick={() => handleCardClose()} >
             Close
           </Button>
@@ -423,7 +419,7 @@ setSelectedRow(null);
             cash={total.totalSale}
             transfer={total.totalSaleTransfer}
             credit={total.totalSaleCredit}
-            title="Today's Sale"
+            title="TODAY'S SALE"
             isSale={true}
             isExpense={false}
             isNet={false}
@@ -441,7 +437,7 @@ setSelectedRow(null);
         >
           <Link   style={{display: 'flex',  justifyContent: 'center'}}>
           <StatCard
-            title="Today's Expense"
+            title="TODAY'S EXPENSE"
             expense={total.totalExpense}
             isSale={false}
             isExpense={true}
@@ -460,7 +456,7 @@ setSelectedRow(null);
         >
           <Link   style={{display: 'flex',  justifyContent: 'center'}}>
           <StatCard
-            title="Today's Income"
+            title="TODAY'S INCOME"
             netIncome={netIncome}
             isSale={false}
             isExpense={false}
@@ -574,7 +570,7 @@ setSelectedRow(null);
           {isMobile && (
             <MoreVertIcon
             onClick={handleCardClickOpen}
-              sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              sx={{ color: 'white', fontSize: "30px", marginRight: '5px' }}
             />
           )}
         </Box>

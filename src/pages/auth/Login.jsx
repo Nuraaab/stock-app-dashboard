@@ -86,7 +86,7 @@ export default function SignIn() {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src={`../../assets/user.png`}
+                  src={`../../assets/user.ico`}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
           </Avatar>
@@ -101,8 +101,8 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
+              id="text"
+              label="Username"
               name="email"
               autoComplete="email"
               autoFocus

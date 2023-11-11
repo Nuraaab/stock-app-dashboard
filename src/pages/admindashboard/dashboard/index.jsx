@@ -349,12 +349,14 @@ const Dashboard = () => {
           />
           </Link>
         </Box>
-        <Box
+       
+      { <Box
           gridColumn={{ xs: "span 12", sm: "span 12" }} 
           gridRow={{xs:'span 2', sm: 'span 3'}}
           backgroundColor={colors.primary[400]}
         >
-          <Box
+           {lineData.length === 0 && <LinearProgress color="secondary"/>}
+        { lineData.length !== 0 &&  <Box
             mt="25px"
             p="0 30px"
             display="flex "
@@ -371,11 +373,11 @@ const Dashboard = () => {
               </Typography>
              
             </Box>
-          </Box>
-          <Box height={{xs:'250px', sm:'400px'}} m="-20px 0 0 0">
+          </Box>}
+         { lineData.length !== 0 &&  <Box height={{xs:'250px', sm:'400px'}} m="-20px 0 0 0">
            {lineData && <LineChart isDashboard={true}  lineData={lineData}/>}
-          </Box>
-        </Box>
+          </Box>}
+        </Box>}
        {
         warehouseList.map((warehouse) => (
           <RecentSales  name={warehouse.name}/>
