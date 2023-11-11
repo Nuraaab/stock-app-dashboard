@@ -45,6 +45,8 @@ const RecentSales = ({ name}) => {
    const totalSaleCredit = Number(total.totalSaleCredit) || 0;
    const totalExpense = Number(total.totalExpense) || 0;
    const netIncome = (totalSale + totalSaleTransfer + totalSaleCredit) - totalExpense;
+   const netSale = totalSale + totalSaleTransfer + totalSaleCredit;
+   const netCash = totalSale -totalExpense;
    const handleApprove = (selectedrow) => {
     setIsApproved(true);
     Axios.post(`/sallespending/approve/${selectedrow._id}`).then((response) => {
@@ -216,13 +218,15 @@ setSelectedRow(null);
         onClose={handleCardClose}
         aria-labelledby="customized-dialog-title"
         fullWidth
+        marginTop ='10px'
       >
        <DialogTitle
       id="customized-dialog-title"
-      style={{ textAlign: 'center' }}
+      style={{ textAlign: 'start' }}
     >
       Today's Sales From {name}
     </DialogTitle>
+
     <IconButton
      aria-label="close"
      onClick={() => {handleCardClose()}}
@@ -297,6 +301,8 @@ setSelectedRow(null);
           <StatCard
             title="TODAY'S INCOME"
             netIncome={netIncome}
+            netSale={netSale}
+            netCash={netCash}
             isSale={false}
             isExpense={false}
             isNet={true}
@@ -458,6 +464,8 @@ setSelectedRow(null);
           <StatCard
             title="TODAY'S INCOME"
             netIncome={netIncome}
+            netSale={netSale}
+            netCash={netCash}
             isSale={false}
             isExpense={false}
             isNet={true}

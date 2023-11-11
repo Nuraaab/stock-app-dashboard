@@ -1,7 +1,7 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../theme";
-
-const StatBox = ({ title, subtitle, icon }) => {
+import CircularProgress from "@mui/material/CircularProgress";
+const StatBox = ({ title, subtitle, icon, loading }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -13,9 +13,11 @@ const StatBox = ({ title, subtitle, icon }) => {
           <Typography
             variant="h4"
             fontWeight="bold"
+            display='flex'
+            alignItems='center'
             sx={{ color: colors.grey[100] }}
           >
-            {title}
+            {loading ? <CircularProgress style={{marginLeft:'5px'}} color="secondary" size={12} /> : title}
           </Typography>
         </Box>
       </Box>

@@ -1,7 +1,7 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 
-const StatCard = ({ cash, transfer, credit, expense, netIncome, title, isSale, isExpense, isNet }) => {
+const StatCard = ({ cash, transfer, credit, expense, netIncome, netSale, netCash, title, isSale, isExpense, isNet }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
  console.log('isSale' + isSale);
@@ -62,8 +62,14 @@ const StatCard = ({ cash, transfer, credit, expense, netIncome, title, isSale, i
                 {credit} Birr
             </Typography>
             </Box>}
-            {isExpense && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center' }}>
+            {isExpense && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between'  }}>
+           
             <Typography
+                variant="h5"
+                sx={{ color: colors.grey[200] , ml:'5px', fontFamily: 'Roboto', fontSize:"15px"}}
+            >
+                Net Expense:
+                </Typography> <Typography
                 variant="h6"
                 fontWeight="bold"
                 sx={{ color: colors.grey[100] , ml:'5px'}}
@@ -71,13 +77,49 @@ const StatCard = ({ cash, transfer, credit, expense, netIncome, title, isSale, i
                 {expense} Birr
             </Typography>
             </Box>}
-            {isNet && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center' }}>
+            {isNet && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between'  }}>
+            <Typography
+                variant="h5"
+                sx={{ color: colors.grey[200] , ml:'5px', fontFamily: 'Roboto', fontSize:"15px"}}
+            >
+                Net Sale:
+                </Typography>
+            <Typography
+                variant="h6"
+                fontWeight="bold"
+                sx={{ color: colors.grey[100] , ml:'5px'}}
+            >
+                {netSale} Birr
+            </Typography>
+            </Box>}
+            {isNet && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between'  }}>
+            <Typography
+                variant="h5"
+                sx={{ color: colors.grey[200] , ml:'5px', fontFamily: 'Roboto', fontSize:"15px"}}
+            >
+                Net Income:
+                </Typography>
             <Typography
                 variant="h6"
                 fontWeight="bold"
                 sx={{ color: colors.grey[100] , ml:'5px'}}
             >
                 {netIncome} Birr
+            </Typography>
+            </Box>}
+            {isNet && <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'space-between'  }}>
+            <Typography
+                variant="h5"
+                sx={{ color: colors.grey[200] , ml:'5px', fontFamily: 'Roboto', fontSize:"15px"}}
+            >
+                Net Cash:
+                </Typography>
+            <Typography
+                variant="h6"
+                fontWeight="bold"
+                sx={{ color: colors.grey[100] , ml:'5px'}}
+            >
+                {netCash} Birr
             </Typography>
             </Box>}
         </Box>

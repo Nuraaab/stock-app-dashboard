@@ -185,7 +185,6 @@ const Dashboard = () => {
     mb={isMobile ? 10 : undefined}
     >
     <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
-      {loading && <LinearProgress  color="secondary"/>}
       <Box
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
@@ -204,6 +203,7 @@ const Dashboard = () => {
           <StatBox
             title={totalItem}
             subtitle="Items"
+            loading={loading}
             icon={
               <List 
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -222,6 +222,7 @@ const Dashboard = () => {
            <Link  to='/view_users' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalUsers}
+            loading={loading}
             subtitle="Users"
             icon={
               <PersonAddIcon
@@ -242,6 +243,7 @@ const Dashboard = () => {
           <Link  to='/pending' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalPending}
+            loading={loading}
             subtitle="Pendings"
             icon={
               <LockClockOutlined
@@ -263,6 +265,7 @@ const Dashboard = () => {
           <Link  to='/view_ware_house' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalWarehouse}
+            loading={loading}
             subtitle="WareHouses"
             icon={
               <Shop2Outlined
@@ -283,6 +286,7 @@ const Dashboard = () => {
           <Link  to='/saleshistory' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalSale}
+            loading={loading}
             subtitle="Sales"
             icon={
               <HistoryOutlined
@@ -302,6 +306,7 @@ const Dashboard = () => {
           <Link  to='/mainstore' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalMainStoreItems}
+            loading={loading}
             subtitle="Main Store Items"
             icon={
               <Store
@@ -321,6 +326,7 @@ const Dashboard = () => {
            <Link  to='/sub_store_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalSubStoreItems}
+            loading={loading}
             subtitle="Sub Store Items"
             icon={
               <Store
@@ -340,6 +346,7 @@ const Dashboard = () => {
            <Link  to='/shop_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalShopItems}
+            loading={loading}
             subtitle="Shop Items"
             icon={
               <Store

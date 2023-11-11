@@ -430,8 +430,8 @@ const Sidebar = () => {
         </Menu>
       </ProSidebar>
       <IconButton sx={{
-        marginTop: '30px',
         marginLeft: '5px',
+        marginTop:'15px'
       }} className={display} onClick={() => handleSidebar()}>
                 <MenuOutlinedIcon />
        </IconButton>
