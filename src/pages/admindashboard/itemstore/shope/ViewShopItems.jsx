@@ -263,19 +263,20 @@ const handleClickOpen = (row) => {
   };
   const columns = [
     {
+      field: "itemCode",
+      headerName: "Item Code",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
+    },
+    {
       field: "name",
       headerName: "Item Name",
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
-    {
-        field: "itemCode",
-        headerName: "Item Code",
-        width:isMobile&& 120,
-        flex:!isMobile&&1,
-        cellClassName: "name-column--cell",
-      },
+   
       {
         field: "specification",
         headerName: "Item Specification",

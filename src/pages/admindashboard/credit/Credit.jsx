@@ -127,6 +127,13 @@ const getRowId = (row) => {
   };
   const columns = [
     {
+      field: "itemCode",
+      headerName: "Item Code",
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
+      cellClassName: "name-column--cell",
+    },
+    {
       field: "customerName",
       headerName: "Customer Name",
       width:isMobile&& 120,
@@ -136,13 +143,6 @@ const getRowId = (row) => {
     {
         field: "amount",
         headerName: "Amount",
-        width:isMobile&& 120,
-        flex:!isMobile&&1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "itemCode",
-        headerName: "Item Code",
         width:isMobile&& 120,
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",

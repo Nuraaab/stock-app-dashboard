@@ -23,6 +23,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     width: '100%', 
   },
 }));
+
 const RecentSales = ({ name}) => {
     const theme = useTheme();   const [selectedRow, setSelectedRow] = React.useState(null);
    const [open, setOpen] = useState(false);
@@ -47,6 +48,18 @@ const RecentSales = ({ name}) => {
    const netIncome = (totalSale + totalSaleTransfer + totalSaleCredit) - totalExpense;
    const netSale = totalSale + totalSaleTransfer + totalSaleCredit;
    const netCash = totalSale -totalExpense;
+   const BootstrapDialogCard = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+      padding: theme.spacing(2),
+      backgroundColor:`${colors.primary[700]}`
+    },
+    '& .MuiDialogActions-root': {
+      padding: theme.spacing(1),
+    },
+    '& .MuiDialog-paper': {
+      width: '100%', 
+    },
+  }));
    const handleApprove = (selectedrow) => {
     setIsApproved(true);
     Axios.post(`/sallespending/approve/${selectedrow._id}`).then((response) => {
@@ -213,16 +226,17 @@ setSelectedRow(null);
         ];
   return (
     <>
-    <BootstrapDialog
+    <BootstrapDialogCard
         open={openCard}
         onClose={handleCardClose}
         aria-labelledby="customized-dialog-title"
         fullWidth
         marginTop ='10px'
+        
       >
        <DialogTitle
       id="customized-dialog-title"
-      style={{ textAlign: 'start' }}
+      style={{ textAlign: 'start', backgroundColor:`${colors.primary[700]}` }}
     >
       Today's Sales From {name}
     </DialogTitle>
@@ -251,10 +265,14 @@ setSelectedRow(null);
        
        {total && <Box
           gridColumn={"span 3"} 
-          backgroundColor={colors.primary[600]}
+          backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
+          sx={{
+            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+            borderRadius: '5px',
+          }}
           
         >
           <Link   style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
@@ -271,11 +289,15 @@ setSelectedRow(null);
         </Box>}
         {total && <Box
           gridColumn={"span 3"} 
-          backgroundColor={colors.primary[600]}
+          backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
           padding={0}
+          sx={{
+            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+            borderRadius: '5px',
+          }}
           
         >
           <Link   style={{display: 'flex',  justifyContent: 'center'}}>
@@ -290,16 +312,20 @@ setSelectedRow(null);
         </Box>}
         {total && <Box
           gridColumn={"span 3"} 
-          backgroundColor={colors.primary[600]}
+          backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
           padding={0}
+          sx={{
+            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+            borderRadius: '5px',
+          }}
           
         >
           <Link   style={{display: 'flex',  justifyContent: 'center'}}>
           <StatCard
-            title="TODAY'S INCOME"
+            title="TODAY'S NET"
             netIncome={netIncome}
             netSale={netSale}
             netCash={netCash}
@@ -311,12 +337,12 @@ setSelectedRow(null);
         </Box>}
         </Box>
         </DialogContent>
-        <DialogActions dividers style={{ justifyContent:isMobile ?  'flex-end': 'flex-end' }}>
+        <DialogActions dividers style={{ justifyContent:isMobile ?  'flex-end': 'flex-end', backgroundColor:`${colors.primary[700]}` }}>
         <Button variant="outlined" color="inherit" onClick={() => handleCardClose()} >
             Close
           </Button>
         </DialogActions>
-      </BootstrapDialog>
+      </BootstrapDialogCard>
      <BootstrapDialog
         open={open}
         onClose={handleClose}
@@ -418,7 +444,10 @@ setSelectedRow(null);
           display="flex"
           alignItems="center"
           justifyContent="center"
-          
+          sx={{
+            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+            borderRadius: '5px',
+          }}
         >
           <Link   style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatCard
@@ -439,6 +468,10 @@ setSelectedRow(null);
           alignItems="center"
           justifyContent="center"
           padding={0}
+          sx={{
+            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+            borderRadius: '5px',
+          }}
           
         >
           <Link   style={{display: 'flex',  justifyContent: 'center'}}>
@@ -458,11 +491,15 @@ setSelectedRow(null);
           alignItems="center"
           justifyContent="center"
           padding={0}
+          sx={{
+            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+            borderRadius: '5px',
+          }}
           
         >
           <Link   style={{display: 'flex',  justifyContent: 'center'}}>
           <StatCard
-            title="TODAY'S INCOME"
+            title="TODAY'S NET"
             netIncome={netIncome}
             netSale={netSale}
             netCash={netCash}
@@ -477,7 +514,7 @@ setSelectedRow(null);
    
    {!isMobile && todaySales.length !== 0 && <Box
            gridColumn={{ xs: "span 1", sm: "span 12" }}
-           gridRow={{ xs: 'span 2', sm: 'span 2'}}
+           gridRow={{ xs: 'span 7', sm: 'span 7'}}
            
         sx={{
           "& .MuiDataGrid-root": {
@@ -525,6 +562,9 @@ setSelectedRow(null);
            disableColumnFilter = {isMobile}
            disableDensitySelector ={isMobile}
            disableColumnSelector ={isMobile}
+           pagination
+           pageSize={10} 
+           rowsPerPageOptions={[5, 10, 20]} 
           /> 
         
             
@@ -578,7 +618,7 @@ setSelectedRow(null);
           {isMobile && (
             <MoreVertIcon
             onClick={handleCardClickOpen}
-              sx={{ color: 'white', fontSize: "30px", marginRight: '5px' }}
+              sx={{ color: colors.greenAccent, fontSize: "30px", marginRight: '5px' }}
             />
           )}
         </Box>

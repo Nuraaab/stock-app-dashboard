@@ -4,7 +4,6 @@ import { tokens } from "../../theme";
 const StatCard = ({ cash, transfer, credit, expense, netIncome, netSale, netCash, title, isSale, isExpense, isNet }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
- console.log('isSale' + isSale);
   return (
     <Box width="100%" m="0 30px" padding={0}>
       <Box display="flex" justifyContent="center">

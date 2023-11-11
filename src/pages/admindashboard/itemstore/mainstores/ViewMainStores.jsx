@@ -393,19 +393,19 @@ const handlePaymentType = (value) => {
   }
 }
 const columns = [
-
+  {
+    field: "itemCode",
+    headerName: "Item Code",
+    width:isMobile&& 120,
+    flex:!isMobile&&1,
+  },
   {
     field: "name",
     headerName: "Item Name",
     width:isMobile&& 120,
     flex:!isMobile&&1,
   },
-  {
-      field: "itemCode",
-      headerName: "Item Code",
-      width:isMobile&& 120,
-      flex:!isMobile&&1,
-    },
+ 
     {
       field: "specification",
       headerName: "Item Specification",
