@@ -69,7 +69,7 @@ const Credit = () => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
-
+  const [reload, setReload] = useState(false);
   const handleApprove = (selectedrow) => {
     setIsApproved(true);
     Axios.post(`/credit/approve/${selectedrow._id}`).then((response) => {
@@ -77,6 +77,7 @@ const Credit = () => {
         setIsApproved(false);
         setOpenAlert(true);
         setMessage(`Approving  successfull!`);
+        setReload(!reload);
        }).catch((error) => {
         setOpen(true);
         if (error.response && error.response.data) {
@@ -116,7 +117,7 @@ const Credit = () => {
         }
         setLoading(false);
        })
-}, []);
+}, [reload]);
 
 const getRowId = (row) => {
     return row._id;

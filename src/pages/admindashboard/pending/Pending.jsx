@@ -69,7 +69,8 @@ const Pending = () => {
         setOpen(false);
         setIsApproved(false);
         setOpenAlert(true);
-        setMessage(`Adding ${response.data.name} is successfull!`);
+        setMessage(`Approving is successfull!`);
+        setReload(!reload);
        }).catch((error) => {
         setOpen(true);
         if (error.response && error.response.data) {
