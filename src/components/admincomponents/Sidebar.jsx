@@ -68,7 +68,7 @@ const Itemtest = ({ title, to, icon, selected, setSelected, subMenu , isCollapse
       </MenuItem>
       {subMenu && (
         <Collapse in={isSubMenuOpen}>
-          <div onClick={() => handleIsMobile()} style={{ display: "flex", marginLeft: '20px', backgroundColor: colors.primary[500],justifyContent: 'space-between' }}>{subMenu}</div>
+          <div onClick={() => handleIsMobile()} style={{ display: "flex", marginLeft: '20px', marginRight:'5px', justifyContent: 'space-between' ,  border: '1px solid #9e9e9e',boxSizing: 'border-box' }}>{subMenu}</div>
         </Collapse>
       )}
     </>
@@ -155,6 +155,7 @@ const Sidebar = () => {
         height: '100vh',
         width: isMobile ? '0px' : undefined,
         mb: isMobile ? '30px' :undefined,
+        scrollbarWidth:'none',
       }}
     >
       <ProSidebar collapsed={isCollapsed} breakPoint={breakPoint ? 'sm': ''}>

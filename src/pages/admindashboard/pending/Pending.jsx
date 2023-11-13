@@ -5,7 +5,6 @@ import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import * as React from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -31,7 +30,6 @@ const Pending = () => {
   const [pendingList , setPendingList] = useState([]);
   const [warehouseName, setWarehouseName] = useState('');
   const [filteredWarehouseList, setFilteredWarehouseList] = useState([]);
-  const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -72,7 +70,6 @@ const Pending = () => {
         setIsApproved(false);
         setOpenAlert(true);
         setMessage(`Adding ${response.data.name} is successfull!`);
-        navigate('/mainstore');
        }).catch((error) => {
         setOpen(true);
         if (error.response && error.response.data) {

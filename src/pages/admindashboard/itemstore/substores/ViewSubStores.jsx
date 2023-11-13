@@ -102,6 +102,7 @@ const handleSale = (selectedrow) => {
  }else if(transactionType ==='transfer'){
    Axios.post(`/Substore/holesall/${selectedrow._id}`, {
      quantity: quantity,
+     amount: price,
      customerName: custName,
      paymentMethod: `${transactionType}(Bank N: ${bankName}, Acc No: ${accountNumber})`,
    }).then((response) => {
@@ -167,6 +168,7 @@ const handleSale = (selectedrow) => {
    }else{
    Axios.post(`/Substore/holesall/${selectedrow._id}`, {
      quantity: quantity,
+     amount: price,
      customerName: custName,
      paymentMethod: transactionType,
    }).then((response) => {
@@ -416,14 +418,14 @@ const columns = [
     },
     {
       field: "pendingSaleQuantity",
-      headerName: "Pending Sale Quantity",
+      headerName: "Items sold from the shop",
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
       field: "pendingToshopQuantity",
-      headerName: "Pending To Shop Quantity",
+      headerName: "Items ordered from the shop",
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",

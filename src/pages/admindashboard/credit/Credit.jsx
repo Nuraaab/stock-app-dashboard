@@ -10,7 +10,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { styled } from '@mui/material/styles';
 import Message from "../../../components/admincomponents/Message";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useNavigate } from "react-router-dom";
 import { darken, lighten } from '@mui/material/styles';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -70,9 +69,7 @@ const Credit = () => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
-  const navigate = useNavigate();
-  
- 
+
   const handleApprove = (selectedrow) => {
     setIsApproved(true);
     Axios.post(`/credit/approve/${selectedrow._id}`).then((response) => {
@@ -80,7 +77,6 @@ const Credit = () => {
         setIsApproved(false);
         setOpenAlert(true);
         setMessage(`Approving  successfull!`);
-        navigate('/saleshistory');
        }).catch((error) => {
         setOpen(true);
         if (error.response && error.response.data) {

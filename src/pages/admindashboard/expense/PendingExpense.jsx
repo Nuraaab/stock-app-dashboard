@@ -10,7 +10,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Message from "../../../components/admincomponents/Message";
 import { styled } from '@mui/material/styles';
 import CircularProgress from "@mui/material/CircularProgress";
-import { useNavigate } from "react-router-dom";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
       padding: theme.spacing(2),
@@ -34,7 +33,6 @@ const PendingExpense = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const navigate = useNavigate();
     useEffect(() => {
         Axios.get('/expense/getall').then((response) => {
             setExpenseList(response.data);
@@ -61,8 +59,6 @@ const PendingExpense = () => {
             setIsApproved(false);
             setOpenAlert(true);
             setMessage(`Approving  successfull!`);
-            console.log('status'+ response.data);
-            navigate('/expense_history');
            }).catch((error) => {
             setOpen(true);
             if (error.response && error.response.data) {

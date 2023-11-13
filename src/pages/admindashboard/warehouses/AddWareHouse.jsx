@@ -79,8 +79,6 @@ const AddWareHouse = () => {
               gap="30px"
               gridTemplateColumns="repeat(4, minmax(0, 1fr))"
               sx={{
-                marginLeft: '20px',
-                marginRight: '20px',
                 marginBottom:'30px',
                 boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
                 borderRadius: '10px',

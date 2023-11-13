@@ -163,49 +163,49 @@ setSelectedRow(null);
         {
           field: "name",
           headerName: "Name",
-          width:isMobile&& 120,
+          width:isMobile&& 100,
           flex:!isMobile&&1,
           cellClassName: "name-column--cell",
         },
         {
             field: "itemCode",
             headerName: "Item Code",
-            width:isMobile&& 120,
+            width:isMobile&& 100,
             flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "specification",
             headerName: "Specification",
-            width:isMobile&& 120,
+            width:isMobile&& 100,
             flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "type",
             headerName: "Item Type",
-            width:isMobile&& 120,
+            width:isMobile&& 100,
             flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "quantity",
             headerName: "Quantity",
-            width:isMobile&& 120,
+            width:isMobile&& 100,
             flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "to",
             headerName: "To",
-            width:isMobile&& 120,
+            width:isMobile&& 100,
             flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
           {
             field: "paymentMethod",
             headerName: "Payment Method",
-            width:isMobile&& 120,
+            width:isMobile&& 100,
             flex:!isMobile&&1,
             cellClassName: "name-column--cell",
           },
@@ -367,10 +367,12 @@ setSelectedRow(null);
    >
      <CloseIcon />
    </IconButton>
-        <DialogTitle>
+        {message && <DialogTitle>
         <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+        </DialogTitle>}
+        {errorMessage && <DialogTitle>
         <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
-        </DialogTitle>
+        </DialogTitle>}
         <DialogContent dividers  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Typography variant="body1">
          Do yo want to approve this sale?
@@ -513,8 +515,8 @@ setSelectedRow(null);
       </Box>}
    
    {!isMobile && todaySales.length !== 0 && <Box
-           gridColumn={{ xs: "span 1", sm: "span 12" }}
-           gridRow={{ xs: 'span 7', sm: 'span 7'}}
+           gridColumn={ "span 12"}
+           gridRow={'span 3'}
            
         sx={{
           "& .MuiDataGrid-root": {
@@ -574,7 +576,7 @@ setSelectedRow(null);
 
 {isMobile && todaySales.length !== 0 && <Box
            gridColumn={ "span 12" }
-           gridRow={'span 2'}
+           gridRow={'span 3'}
            
         sx={{
           "& .MuiDataGrid-root": {

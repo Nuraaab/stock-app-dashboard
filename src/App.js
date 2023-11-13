@@ -20,9 +20,6 @@ import AddMainStoreItems from "./pages/admindashboard/itemstore/mainstores/AddMa
 import ViewMainStores from "./pages/admindashboard/itemstore/mainstores/ViewMainStores";
 import ViewSubStoreItems from "./pages/admindashboard/itemstore/substores/ViewSubStores";
 import ViewShopItems from "./pages/admindashboard/itemstore/shope/ViewShopItems";
-import EditMainStoreItems from "./pages/admindashboard/itemstore/mainstores/EditMainStores";
-import EditSubStoreItems from "./pages/admindashboard/itemstore/substores/EditSubStores";
-import EditShopItems from "./pages/admindashboard/itemstore/shope/EditShopItems";
 import EditItems from "./pages/admindashboard/items/EditItems";
 import AddUsers from "./pages/admindashboard/users/AddUsers";
 import ViewUsers from "./pages/admindashboard/users/ViewUsers";
@@ -148,24 +145,12 @@ const router = createBrowserRouter([
           element: <ViewMainStores />
         },
         {
-          path: "/edit_main_store_items",
-          element: <EditMainStoreItems />
-        },
-        {
           path: "/sub_store_items",
           element: <ViewSubStoreItems />
         },
         {
-          path: "/edit_sub_store_items",
-          element: <EditSubStoreItems />
-        },
-        {
           path: "/shop_items",
           element: <ViewShopItems />
-        },
-        {
-          path: "/edit_shop_items",
-          element: <EditShopItems />
         },
         {
           path: "/pending",

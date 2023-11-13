@@ -122,7 +122,8 @@ const getRowId = (row) => {
     {
       field: "itemCode",
       headerName: "Item Code",
-      flex: 1,
+      width:isMobile&& 120,
+      flex:!isMobile&&1,
       cellClassName: "name-column--cell",
     },
     {
@@ -157,7 +158,8 @@ const getRowId = (row) => {
       {
         field: "quantity",
         headerName: "Quantity",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
       {
