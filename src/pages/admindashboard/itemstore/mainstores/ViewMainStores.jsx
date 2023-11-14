@@ -413,12 +413,6 @@ const columns = [
       flex:!isMobile&&1,
     },
     {
-      field: "type",
-      headerName: "Item Type",
-      width:isMobile&& 120,
-      flex:!isMobile&&1,
-    },
-    {
       field: "warehouseName",
       headerName: "Warehouse Name",
       width:isMobile&& 120,

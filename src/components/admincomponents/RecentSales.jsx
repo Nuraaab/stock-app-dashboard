@@ -182,13 +182,6 @@ setSelectedRow(null);
             cellClassName: "name-column--cell",
           },
           {
-            field: "type",
-            headerName: "Item Type",
-            width:isMobile&& 100,
-            flex:!isMobile&&1,
-            cellClassName: "name-column--cell",
-          },
-          {
             field: "quantity",
             headerName: "Quantity",
             width:isMobile&& 100,

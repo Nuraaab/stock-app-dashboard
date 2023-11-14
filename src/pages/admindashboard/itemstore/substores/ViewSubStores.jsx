@@ -14,6 +14,7 @@ import Message from "../../../../components/admincomponents/Message";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -403,13 +404,6 @@ const columns = [
       cellClassName: "name-column--cell",
     },
     {
-      field: "type",
-      headerName: "Item Type",
-      width:isMobile&& 120,
-      flex:!isMobile&&1,
-      cellClassName: "name-column--cell",
-    },
-    {
       field: "quantity",
       headerName: "Quantity",
       width:isMobile&& 120,
@@ -422,6 +416,11 @@ const columns = [
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",
+      renderCell: (params) => (
+        <Link to={`/pendingshopsales`} style={{color:'white', cursor:'pointer'}}>
+          {params.value}
+        </Link>
+      ),
     },
     {
       field: "pendingToshopQuantity",
@@ -429,6 +428,11 @@ const columns = [
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",
+      renderCell: (params) => (
+        <Link to={`/pendingshopitems`} style={{color:'white', cursor:'pointer'}}>
+          {params.value}
+        </Link>
+      ),
     },
 
   {

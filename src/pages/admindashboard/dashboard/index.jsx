@@ -25,9 +25,16 @@ const Dashboard = () => {
   const [totalMainStoreItems, setTotalMainStoreItems] = useState(0);
   const [totalSubStoreItems, setTotalSubStoreItems] = useState(0);
   const [totalShopItems, setTotalShopItems] = useState(0);
+  const [itemLoading, setItemLoading] =useState(false);
+  const [userLoading, setUserLoading] = useState(false);
+  const [pendingLoading, setPendingLoading] = useState(false);
+  const [warLoading, setWarLoading] =useState(false);
+  const [saleLoading, setSaleLoading] =useState(false);
+  const [mainLoading, setMainLoading] =useState(false);
+  const [subLoading, setSubloading]= useState(false);
+  const [shopLoading, setShopLoading] = useState(false);
   const [warehouseList, setWarehouseList] =useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(true);
   const [lineData, setLineData] = useState([]);
   const [openAlert, setOpenAlert] = useState(true);
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -56,15 +63,12 @@ const Dashboard = () => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
-  useEffect(() => {
-  }, [lineData]);
    
   useEffect(() => {
-    setLoading(true);
+    setItemLoading(true);
    Axios.get('/items/getall').then((response) => {
      setTotalItem(response.data.length);
-     setLoading(false);
+     setItemLoading(false);
    }).catch((error) => {
     if (error.response && error.response.data) {
       setOpenAlert(true);
@@ -73,12 +77,13 @@ const Dashboard = () => {
       setOpenAlert(true);
       setErrorMessage("An error occurred");
     }
-    setLoading(false);
+    setItemLoading(false);
    })
   }, []);
   useEffect(() => {
-    setLoading(true);
+    setUserLoading(true);
     Axios.get('/auth/getall').then((response) => {
+      setUserLoading(false);
       setTotalUsers(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
@@ -88,12 +93,13 @@ const Dashboard = () => {
       setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
-     setLoading(false);
+     setUserLoading(false);
     })
    }, []);
    useEffect(() => {
-    setLoading(true);
+    setPendingLoading(true);
     Axios.get('/pending/getall').then((response) => {
+      setPendingLoading(false);
       setTotalPending(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
@@ -103,12 +109,13 @@ const Dashboard = () => {
       setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
-     setLoading(false);
+     setPendingLoading(false);
     })
    }, []);
    useEffect(() => {
-    setLoading(true);
+    setWarLoading(true);
     Axios.get('/warehouse/getall').then((response) => {
+      setWarLoading(false);
       setTotalWarehouse(response.data.length);
       setWarehouseList(response.data);
     }).catch((error) => {
@@ -119,12 +126,13 @@ const Dashboard = () => {
       setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
-     setLoading(false);
+     setWarLoading(false);
     })
    }, []);
    useEffect(() => {
-    setLoading(true);
+    setSaleLoading(true);
     Axios.get('/salleshistory/getall').then((response) => {
+      setSaleLoading(false);
       setTotalSale(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
@@ -134,12 +142,13 @@ const Dashboard = () => {
       setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
-     setLoading(false);
+     setSaleLoading(false);
     })
    }, []);
    useEffect(() => {
-    setLoading(true);
+    setMainLoading(true);
     Axios.get('/mainstore/getall').then((response) => {
+      setMainLoading(false);
       setTotalMainStoreItems(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
@@ -149,12 +158,13 @@ const Dashboard = () => {
       setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
-     setLoading(false);
+     setMainLoading(false);
     })
    }, []);
    useEffect(() => {
-    setLoading(true);
+    setSubloading(true);
     Axios.get('/Substore/getall').then((response) => {
+      setSubloading(false);
       setTotalSubStoreItems(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
@@ -162,12 +172,13 @@ const Dashboard = () => {
      } else {
        setErrorMessage("An error occurred");
      }
-     setLoading(false);
+     setSubloading(false);
     })
    }, []);
    useEffect(() => {
-    setLoading(true);
+    setShopLoading(true);
     Axios.get('/Shop/getall').then((response) => {
+      setShopLoading(false);
       setTotalShopItems(response.data.length);
     }).catch((error) => {
      if (error.response && error.response.data) {
@@ -177,7 +188,7 @@ const Dashboard = () => {
       setOpenAlert(true);
        setErrorMessage("An error occurred");
      }
-     setLoading(false);
+     setShopLoading(false);
     })
    }, []);
   return (
@@ -203,7 +214,7 @@ const Dashboard = () => {
           <StatBox
             title={totalItem}
             subtitle="Items"
-            loading={loading}
+            loading={itemLoading}
             icon={
               <List 
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -222,7 +233,7 @@ const Dashboard = () => {
            <Link  to='/view_users' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalUsers}
-            loading={loading}
+            loading={userLoading}
             subtitle="Users"
             icon={
               <PersonAddIcon
@@ -243,7 +254,7 @@ const Dashboard = () => {
           <Link  to='/pending' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalPending}
-            loading={loading}
+            loading={pendingLoading}
             subtitle="Pendings"
             icon={
               <LockClockOutlined
@@ -265,7 +276,7 @@ const Dashboard = () => {
           <Link  to='/view_ware_house' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalWarehouse}
-            loading={loading}
+            loading={warLoading}
             subtitle="WareHouses"
             icon={
               <Shop2Outlined
@@ -286,7 +297,7 @@ const Dashboard = () => {
           <Link  to='/saleshistory' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalSale}
-            loading={loading}
+            loading={saleLoading}
             subtitle="Sales"
             icon={
               <HistoryOutlined
@@ -306,7 +317,7 @@ const Dashboard = () => {
           <Link  to='/mainstore' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalMainStoreItems}
-            loading={loading}
+            loading={mainLoading}
             subtitle="Main Store Items"
             icon={
               <Store
@@ -326,7 +337,7 @@ const Dashboard = () => {
            <Link  to='/sub_store_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalSubStoreItems}
-            loading={loading}
+            loading={subLoading}
             subtitle="Sub Store Items"
             icon={
               <Store
@@ -346,7 +357,7 @@ const Dashboard = () => {
            <Link  to='/shop_items' style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <StatBox
             title={totalShopItems}
-            loading={loading}
+            loading={shopLoading}
             subtitle="Shop Items"
             icon={
               <Store

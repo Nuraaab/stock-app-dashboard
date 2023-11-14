@@ -164,13 +164,6 @@ const getRowId = (row) => {
         cellClassName: "name-column--cell",
       },
       {
-        field: "type",
-        headerName: "Item Type",
-        width:isMobile&& 120,
-        flex:!isMobile&&1,
-        cellClassName: "name-column--cell",
-      },
-      {
         field: "quantity",
         headerName: "Quantity",
         width:isMobile&& 120,
