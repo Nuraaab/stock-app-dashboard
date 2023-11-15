@@ -14,6 +14,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from '@mui/material/CircularProgress';
 import Message from "../../../../components/admincomponents/Message";
 import { styled } from '@mui/material/styles';
+import { Link } from "react-router-dom";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -293,10 +294,15 @@ const handleClickOpen = (row) => {
       },
       {
         field: "pendingSaleQuantity",
-        headerName: "Pending Sale Quantity",
+        headerName: "Items sold from the shop",
         width:isMobile&& 120,
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
+        renderCell: (params) => (
+          <Link to={`/pendingshopsales`} style={{color:'white', cursor:'pointer'}}>
+            {params.value}
+          </Link>
+        ),
       },
     {
         field: "sale",
