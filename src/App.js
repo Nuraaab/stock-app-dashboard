@@ -16,6 +16,7 @@ import AddItemType from "./pages/admindashboard/itemtype/AddItemType";
 import ViewItemType from "./pages/admindashboard/itemtype/ViewItemType";
 import AddWareHouse from "./pages/admindashboard/warehouses/AddWareHouse";
 import ViewWareHouses from "./pages/admindashboard/warehouses/ViewWareHouse";
+import NewOrder from "./pages/admindashboard/itemstore/mainstores/NewOrder";
 import AddMainStoreItems from "./pages/admindashboard/itemstore/mainstores/AddMainStores";
 import ViewMainStores from "./pages/admindashboard/itemstore/mainstores/ViewMainStores";
 import ViewSubStoreItems from "./pages/admindashboard/itemstore/substores/ViewSubStores";
@@ -178,6 +179,14 @@ const router = createBrowserRouter([
         },
         {
           path: "/import",
+          element: <NewOrder />
+        },
+        {
+          path: "/add_to_main_store",
+          element: <AddMainStoreItems />
+        },
+        {
+          path: "/add_to_sub_store",
           element: <AddMainStoreItems />
         },
         {

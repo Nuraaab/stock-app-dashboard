@@ -14,6 +14,7 @@ const AddMainStoreItems = () => {
   const [itemType , setItemType] = useState([]);
   const [itemList, setItemList] = useState([]);
   const [filteredItemList, setFilteredItemList] = useState([]);
+  const [warehouseName, setWarehouseName] = useState([]);
   const [specification, setSpecification] = useState([]);
   const [itemName, setItemName] = useState([]);
   const [itemCode, setItemCode] = useState([]);
@@ -26,16 +27,16 @@ const AddMainStoreItems = () => {
   const [loading, setLoading] = useState(false);
   const handleFormSubmit = (values, { resetForm }) => {
     setLoading(true);
-   Axios.post('/pending/add', {
+    Axios.post('/mainstore/add', {
     name: itemName,
     itemCode: itemCode,
     specification: specification,
     type: values.itemtype,
-    company: values.company,
+    warehouseName: values.warehouseName,
     quantity: values.quantity,
    }).then((response) => {
     setOpenAlert(true);
-    setMessage(`Adding ${response.data.name} is in pending!`);
+    setMessage(` ${response.data}`);
     setLoading(false);
     resetForm();
    }).catch((error) => {
@@ -97,6 +98,20 @@ const AddMainStoreItems = () => {
        })
        // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
+  useEffect(() => {
+    Axios.get('/warehouse/getall').then((response) => {
+      const filteredWarehouse = response.data.filter((warehouse) => warehouse.type === "Main Store");
+      setWarehouseName(filteredWarehouse);
+    }).catch((error) => {
+      if (error.response && error.response.data) {
+        setOpenAlert(true);
+        setErrorMessage(error.response.data);
+      } else {
+        setOpenAlert(true);
+        setErrorMessage("An error occurred");
+      }
+    })
+  }, []);
 
 
   return (
@@ -141,19 +156,6 @@ const AddMainStoreItems = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
-              <TextField
-                fullWidth
-                variant="outlined"
-                type="text"
-                label="Company Name"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.company}
-                name="company"
-                error={!!touched.company && !!errors.company}
-                helperText={touched.company && errors.company}
-                sx={{ gridColumn: "span 4" }}
-              />
               <FormControl sx={{gridColumn: "span 4" }}
                 error={!!touched.itemtype && !!errors.itemtype}>
                 <InputLabel id="demo-simple-select-helper-label">Choose Item Type</InputLabel>
@@ -194,10 +196,10 @@ const AddMainStoreItems = () => {
                onChange={(event) => handleItemNameChange(event, handleChange)}
               >
                 {
-                 filteredItemList.map((itemName) => (
+                  filteredItemList.map((itemName) => (
                     <MenuItem key={itemName.id} value={itemName.itemCode}>{`${itemName.itemCode} / ${itemName.name} / ${itemName.specification}`}</MenuItem>
-                  ))
-                }
+                    ))
+                  }
                 
               </Select>
               <FormHelperText>{touched.name && errors.name}</FormHelperText>
@@ -216,6 +218,29 @@ const AddMainStoreItems = () => {
                 helperText={touched.quantity && errors.quantity}
                 sx={{ gridColumn: "span 4" }}
               />
+              <FormControl sx={{ gridColumn: "span 4" }}
+                error={!!touched.warehouseName && !!errors.warehouseName}>
+                <InputLabel id="demo-simple-select-helper-label">{'Choose warehouse Name'}</InputLabel>
+                <Select
+                  fullWidth
+                  variant="outlined"
+                  error={!!touched.warehouseName && !!errors.warehouseName}
+                  helperText={touched.warehouseName && errors.warehouseName}
+                  sx={{ gridColumn: "span 4", color: "white" }}
+                  value={values.warehouseName}
+                  name="warehouseName"
+                  label="warehouse name"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                >
+                  {
+                    warehouseName.map((warehouse) => (
+                      <MenuItem key={warehouse.id} value={warehouse.name}>{warehouse.name}</MenuItem>
+                    ))
+                  }
+                </Select>
+                <FormHelperText>{touched.warehouseName && errors.warehouseName}</FormHelperText>
+              </FormControl>
               <Box display="flex" justifyContent="end" mt="10px" >
               <Button type="submit" color="secondary" variant="contained" disabled={loading}>
               {loading ? <CircularProgress color="secondary" size={24} /> : 'ADD ITEMS'}
@@ -234,7 +259,7 @@ const AddMainStoreItems = () => {
 const checkoutSchema = yup.object().shape({
   itemtype: yup.string().required("Item type required!!!"),
   name: yup.string().required("Item name required!!!"),
-  company: yup.string().required("Campany name required!!!"),
+  warehouseName: yup.string().required("warehouse name required!!!"),
   quantity: yup.string().required("Quantity required!!!"),
 });
 const initialValues = {
@@ -242,7 +267,7 @@ const initialValues = {
   name: "",
   code: "",
   specification: "",
-  company: "",
+  warehouseName: "",
   quantity: "",
  
 };
