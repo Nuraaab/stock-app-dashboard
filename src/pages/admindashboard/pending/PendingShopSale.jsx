@@ -151,19 +151,6 @@ const getRowId = (row) => {
         cellClassName: "name-column--cell",
       },
       {
-        field: "warehouseType",
-        headerName: "Warehouse Type",
-        width:isMobile&& 120,
-        flex:!isMobile&&1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "paymentMethod",
-        headerName: "Payment Methods",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-      {
         field: "from",
         headerName: "From",
         width:isMobile&& 120,
@@ -177,7 +164,20 @@ const getRowId = (row) => {
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
       },
+      {
+        field: "paymentMethod",
+        headerName: "Payment Methods",
+        flex: 1,
+        cellClassName: "name-column--cell",
+    },
     {
+      field: "amount",
+      headerName: "Amount",
+      width: isMobile && 120,
+      flex: !isMobile && 1,
+      cellClassName: "name-column--cell",
+    },
+      {
       field: "cancle",
       headerName: "cancle",
       renderCell: ({ row }) => {

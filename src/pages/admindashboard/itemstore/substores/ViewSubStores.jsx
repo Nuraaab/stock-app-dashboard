@@ -412,7 +412,7 @@ const columns = [
     },
     {
       field: "pendingSaleQuantity",
-      headerName: "Items sold from the shop",
+      headerName: "Pending Sales",
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",
@@ -424,7 +424,7 @@ const columns = [
     },
     {
       field: "pendingToshopQuantity",
-      headerName: "Items ordered from the shop",
+      headerName: "Pending Orders",
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",

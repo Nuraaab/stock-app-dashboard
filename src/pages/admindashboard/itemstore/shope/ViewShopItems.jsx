@@ -294,7 +294,7 @@ const handleClickOpen = (row) => {
       },
       {
         field: "pendingSaleQuantity",
-        headerName: "Items sold from the shop",
+        headerName: "Pending Sales",
         width:isMobile&& 120,
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
