@@ -44,7 +44,6 @@ function CustomTabPanel(props) {
   const [bankName, setBankName] = useState('');
   const [phone, setPhone] = useState('');
   const [chequeNumber, setChequeNumber] = useState(null);
-  const [creditDate, setCreditDate] = useState('');
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedMoveRow, setSelectedMoveRow] = useState(null);
   const [selectedAddRow, setSelectedAddRow] = useState(null);
@@ -200,7 +199,6 @@ function CustomTabPanel(props) {
           paymentMethod: transactionType,
           amount: price,
           phone: phone,
-          paymentDate: creditDate,
           cheque: chequeNumber,
         }).then((response) => {
           setOpenAlert(true);
@@ -263,7 +261,6 @@ function CustomTabPanel(props) {
           paymentMethod: "halfpaid",
           amount: price,
           phone: phone,
-          paymentDate: creditDate,
           cheque: chequeNumber,
           halfPayMethod: cash ? cashOrTransfer : `${cashOrTransfer}(Bank N: ${bankName}, Acc No: ${accountNumber})`,
           paidamount: paidAmount
@@ -410,7 +407,6 @@ function CustomTabPanel(props) {
       setPartialPayment(false);
     }
     setCashOrTransfer('');
-    setCreditDate('');
     setPaidAmount('');
     setPhone('');
     setChequeNumber(null);
@@ -783,19 +779,6 @@ function CustomTabPanel(props) {
               margin="normal"
               type="number"
             />}
-            {
-              partialPayment && <TextField
-                required
-                label="Payment Date"
-                type="date"
-                value={creditDate}
-                onChange={(e) => setCreditDate(e.target.value)}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{ shrink: true }}
-                InputProps={{ inputProps: { min: "yyyy-mm-dd" } }}
-              />
-            }
             {credit && <FormControlLabel required control={<Checkbox onChange={handleChange} />} label="Have Cheque book?" />}
             {credit && checked && <TextField
               required
@@ -815,19 +798,6 @@ function CustomTabPanel(props) {
               margin="normal"
               type="number"
             />}
-            {
-              credit && <TextField
-                required
-                label="Payment Date"
-                type="date"
-                value={creditDate}
-                onChange={(e) => setCreditDate(e.target.value)}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{ shrink: true }}
-                InputProps={{ inputProps: { min: "yyyy-mm-dd" } }}
-              />
-            }
           </DialogContent>
           <DialogActions dividers>
             <Button style={{ color: 'white' }} onClick={() => { handleSale(selectedRow) }} disabled={saleLoading}>

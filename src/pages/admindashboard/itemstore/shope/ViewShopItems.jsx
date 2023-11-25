@@ -40,7 +40,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   const [bankName, setBankName] = useState('');
   const [phone, setPhone] = useState('');
   const [chequeNumber, setChequeNumber] = useState(null);
-  const [creditDate, setCreditDate] = useState('');
   const [credit, setCredit] = useState(false);
   const [transfer, setTransfer] = useState(false);
   const [isPtransfer, setIsPtransfer] = useState(false);
@@ -79,8 +78,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
           setIsPtransfer(false);
           setCredit(false);
         }
-        setCashOrTransfer('');
-        setCreditDate('');
         setPaidAmount('');
         setPhone('');
         setChequeNumber(null);
@@ -119,7 +116,6 @@ const handleClickOpen = (row) => {
         paymentMethod: transactionType,
         amount: price,
         phone: phone,
-        paymentDate: creditDate,
         cheque: chequeNumber,
       }).then((response) => {
           setIsSaled(false);
@@ -182,7 +178,6 @@ const handleClickOpen = (row) => {
         paymentMethod: "halfpaid",
         amount: price,
         phone: phone,
-        paymentDate: creditDate,
         cheque: chequeNumber,
         halfPayMethod:cash ? cashOrTransfer : `${cashOrTransfer}(Bank N: ${bankName}, Acc No: ${accountNumber})`,
         paidamount: paidAmount
@@ -467,19 +462,6 @@ const handleClickOpen = (row) => {
          margin="normal"
          type="number"
        />}
-        {
-         partialPayment && <TextField
-         required
-         label="Payment Date"
-         type="date"
-         value={creditDate}
-         onChange={(e) => setCreditDate(e.target.value)}
-         fullWidth
-         margin="normal"
-         InputLabelProps={{ shrink: true }}
-         InputProps={{ inputProps: { min: "yyyy-mm-dd" } }}
-       />
-       }
           {credit && <FormControlLabel required control={<Checkbox onChange={handleChange} />} label="Have Cheque book?"  />}
           {credit && checked && <TextField
          required
@@ -498,19 +480,6 @@ const handleClickOpen = (row) => {
             fullWidth
             margin="normal"
           />}
-          {
-            credit && <TextField
-            required
-            label="Payment Date"
-            type="date"
-            value={creditDate}
-            onChange={(e) => setCreditDate(e.target.value)}
-            fullWidth
-            margin="normal"
-            InputLabelProps={{ shrink: true }}
-            InputProps={{ inputProps: { min: "yyyy-mm-dd" } }}
-          />
-          }
         </DialogContent>
         <DialogActions>
           <Button style={{ color: 'white' }} onClick={() => {handleSale(selectedRow)}} disabled ={isSaled}>

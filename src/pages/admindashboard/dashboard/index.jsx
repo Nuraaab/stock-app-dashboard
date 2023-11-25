@@ -255,7 +255,7 @@ const Dashboard = () => {
           <StatBox
             title={totalPending}
             loading={pendingLoading}
-            subtitle="Pendings"
+            subtitle="Orderd Pendings"
             icon={
               <LockClockOutlined
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
