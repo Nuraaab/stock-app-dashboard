@@ -59,12 +59,17 @@ function CustomTabPanel(props) {
   const [isSelected, setIsSelected] = useState(false);
   const [isSaled, setIsSaled] = useState(false);
   const [isMoved, setIsMoved] = useState(false);
+  const [initialMoveLoading, setInitialMoveLoading] = useState(false);
+  const [AddLoading, setAddLoading] = useState(false)
   const [isMoveLoad, setIsMoveLoad] = useState(false);
   const [chequeNumber, setChequeNumber] = useState(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [checked, setChecked] = useState(false);
   const [openHover, setOpenHover] = useState(false);
   const [data, setData] = useState(null);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [selectedAddRow, setSelectedAddRow] = useState(null);
+  const [Additionalquantity, setAdditionalQuantity] = useState('');
 const handleSale = (selectedrow) => {
  setIsSaled(true);
  if(transactionType ==='credit'){
@@ -196,6 +201,31 @@ const handleSale = (selectedrow) => {
    })
  }
  }
+
+ const handleAdd = (row) => {
+  setAddLoading(true);
+    Axios.post(`/Substore/update/${row._id}`, {
+      quantity: Additionalquantity,
+    }).then((response) => {
+      setOpenAlert(true);
+      setMessage(`${Additionalquantity} additional ${row.name} added  successfully  at Main Store to ${row.warehouseName}`);
+      setOpenAdd(false);
+      setAddLoading(false);
+      setAdditionalQuantity('');
+      resetForm();
+      setReload(!reload);
+    }).catch((error) => {
+      setOpenAdd(true);
+      if (error.response && error.response.data) {
+        setOpenAlert(true);
+        setErrorMessage(error.response.data);
+      } else {
+        setOpenAlert(true);
+        setErrorMessage("An error occurredf");
+      }
+      setAddLoading(false);
+    })
+};
 const handleTransactionType = (value) => {
      if(value === "transfer"){
        setTransfer(true);
@@ -237,6 +267,7 @@ const resetForm = () => {
  setQuantityMove('');
  setIsSelected(false);
  setErrorMessage('');
+ setAdditionalQuantity('');
 };
 const saleResetForm = () => {
  setCustName('');
@@ -323,10 +354,12 @@ const handleMove = (row) => {
  }
 };
 const handleStoreType = (value, row) => {
+  setInitialMoveLoading(true);
  setIsMoveLoad(true);
  setStoreType(value);
  if(value === ''){
   setOpenAlert(true);
+  setInitialMoveLoading(false);
  setErrorMessage("The selected store type is invalid!!");
  setIsSelected(false);
  setIsMoveLoad(false);
@@ -336,10 +369,12 @@ const handleStoreType = (value, row) => {
 if (filteredWarehouse.length === 0) {
   setOpenAlert(true);
   setErrorMessage("No warehouses found for the selected Store Type!!");
+  setInitialMoveLoading(false);
   setIsSelected(false);
   setIsMoveLoad(false);
 } else {
   setwarehouseNameList(filteredWarehouse);
+  setInitialMoveLoading(false);
   setIsSelected(true);
   setIsMoveLoad(false);
 }
@@ -353,6 +388,7 @@ if (filteredWarehouse.length === 0) {
    }
    setIsMoveLoad(false);
    setIsSelected(false);
+   setInitialMoveLoading(false);
   })
 }
 }
@@ -373,6 +409,15 @@ const handlePaymentType = (value) => {
     setCashOrTransfer(value);
   }
 }
+const handleAddClickOpen = (row) => {
+  setOpenAdd(true);
+  setSelectedAddRow(row);
+};
+const handleAddClose = () => {
+  setReload(!reload);
+  setOpenAdd(false);
+  setSelectedAddRow(null);
+};
 const handleCloseHover = () => {
   setOpenHover(false);
   setData(null);
@@ -444,7 +489,14 @@ const columns = [
         </Link>
       ),
     },
-
+    {
+      field: "addQuantity",
+      headerName: "Add Quantity",
+      renderCell: ({ row }) => {
+        // Render the edit button here
+        return <button onClick={() => handleAddClickOpen(row)} className="btn btn-primary mx-1 ">Add</button>;
+      },
+    },
   {
     field: "move",
     headerName: "Move",
@@ -488,6 +540,51 @@ const columns = [
         </Typography>
         </DialogContent>
       </BootstrapDialog>
+      <BootstrapDialog
+          open={openAdd}
+          onClose={handleAddClose}
+          aria-labelledby="customized-dialog-title"
+        >
+          <DialogTitle
+            id="customized-dialog-title"
+          >
+            Adding additional {selectedAddRow && selectedAddRow.itemCode+" "+ selectedAddRow.name}
+          </DialogTitle>
+          <IconButton
+            aria-label="close"
+            onClick={() => { handleAddClose(); resetForm() }}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          {(errorMessage || initialMoveLoading) &&
+            <DialogTitle>
+              <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error' />
+            </DialogTitle>}
+          <DialogContent dividers>
+
+            <TextField
+              required
+              label={`Enter additional quantity of ${selectedAddRow && selectedAddRow.itemCode+" "+selectedAddRow.name} ?`}
+              value={Additionalquantity}
+              onChange={(e) => setAdditionalQuantity(e.target.value)}
+              fullWidth
+              type="number"
+              margin="normal"
+            />
+
+          </DialogContent>
+          <DialogActions dividers>
+            <Button style={{ color: 'white' }} onClick={() => { handleAdd(selectedAddRow) }} disabled={AddLoading}>
+              {AddLoading ? <CircularProgress color="secondary" size={24} /> : 'update'}
+            </Button>
+          </DialogActions>
+        </BootstrapDialog>
 <BootstrapDialog
         open={openMove}
         onClose={handleMoveClose}
