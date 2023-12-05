@@ -1,4 +1,4 @@
-import {  Box, Button,  Checkbox,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, useMediaQuery } from "@mui/material";
+import {  Box, Button,  Checkbox,  Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -63,7 +63,8 @@ function CustomTabPanel(props) {
   const [chequeNumber, setChequeNumber] = useState(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [checked, setChecked] = useState(false);
- 
+  const [openHover, setOpenHover] = useState(false);
+  const [data, setData] = useState(null);
 const handleSale = (selectedrow) => {
  setIsSaled(true);
  if(transactionType ==='credit'){
@@ -372,6 +373,14 @@ const handlePaymentType = (value) => {
     setCashOrTransfer(value);
   }
 }
+const handleCloseHover = () => {
+  setOpenHover(false);
+  setData(null);
+};
+const handleHoverOpen = (data) => {
+  setOpenHover(true);
+  setData(data);
+  };
 const getRowId = (row) => {
   return row._id;
 };
@@ -398,6 +407,11 @@ const columns = [
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",
+      renderCell: function (params) {
+        return (
+          <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+        );
+      }
     },
     {
       field: "quantity",
@@ -450,6 +464,30 @@ const columns = [
     <>
      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
     <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
+    <BootstrapDialog
+        open={openHover}
+        onClose={handleCloseHover}
+        aria-labelledby="customized-dialog-title"
+        fullWidth
+      >
+    <IconButton
+        aria-label="close"
+        onClick={() => handleCloseHover()} 
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', textAlign:'center' }}>
+        <Typography variant="body1">
+         {data && data}
+        </Typography>
+        </DialogContent>
+      </BootstrapDialog>
 <BootstrapDialog
         open={openMove}
         onClose={handleMoveClose}

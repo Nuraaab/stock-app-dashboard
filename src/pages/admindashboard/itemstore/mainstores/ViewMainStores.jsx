@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, useMediaQuery } from "@mui/material";
+import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../../theme";
 import Header from "../../../../components/Header";
@@ -67,7 +67,8 @@ function CustomTabPanel(props) {
   const [initialMoveLoading, setInitialMoveLoading] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [checked, setChecked] = React.useState(false);
-
+  const [openHover, setOpenHover] = useState(false);
+  const [data, setData] = useState(null);
   const handleChange = (event) => {
     setChecked(event.target.checked);
     if (event.target.checked === false) {
@@ -77,6 +78,15 @@ function CustomTabPanel(props) {
   const getRowId = (row) => {
     return row._id;
   };
+
+  const handleCloseHover = () => {
+    setOpenHover(false);
+    setData(null);
+  };
+  const handleHoverOpen = (data) => {
+    setOpenHover(true);
+    setData(data);
+    };
   const handleMove = (row) => {
     setMoveLoading(true);
     if (storeType === "Main Store") {
@@ -445,6 +455,11 @@ function CustomTabPanel(props) {
       headerName: "Item Specification",
       width: isMobile && 120,
       flex: !isMobile && 1,
+      renderCell: function (params) {
+        return (
+          <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+        );
+      }
     },
     {
       field: "warehouseName",
@@ -488,6 +503,30 @@ function CustomTabPanel(props) {
       <Message message={message} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='success' />
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error' />
       <div>
+      <BootstrapDialog
+        open={openHover}
+        onClose={handleCloseHover}
+        aria-labelledby="customized-dialog-title"
+        fullWidth
+      >
+    <IconButton
+        aria-label="close"
+        onClick={() => handleCloseHover()} 
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', textAlign:'center' }}>
+        <Typography variant="body1">
+         {data && data}
+        </Typography>
+        </DialogContent>
+      </BootstrapDialog>
         <BootstrapDialog
           open={openAdd}
           onClose={handleAddClose}

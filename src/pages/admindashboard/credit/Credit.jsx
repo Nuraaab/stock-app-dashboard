@@ -70,6 +70,8 @@ const Credit = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
   const [reload, setReload] = useState(false);
+  const [openHover, setOpenHover] = useState(false);
+  const [data, setData] = useState(null);
   const handleApprove = (selectedrow) => {
     setIsApproved(true);
     Axios.post(`/credit/approve/${selectedrow._id}`).then((response) => {
@@ -118,7 +120,14 @@ const Credit = () => {
         setLoading(false);
        })
 }, [reload]);
-
+const handleCloseHover = () => {
+  setOpenHover(false);
+  setData(null);
+};
+const handleHoverOpen = (data) => {
+  setOpenHover(true);
+  setData(data);
+  };
 const getRowId = (row) => {
     return row._id;
   };
@@ -136,6 +145,11 @@ const getRowId = (row) => {
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",
+      renderCell: function (params) {
+        return (
+          <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+        );
+      }
     },
     {
         field: "amount",
@@ -164,6 +178,11 @@ const getRowId = (row) => {
         width:isMobile&& 120,
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
+        renderCell: function (params) {
+          return (
+            <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+          );
+        }
     },
     {
       field: "creditedDate",
@@ -171,16 +190,11 @@ const getRowId = (row) => {
       width: isMobile && 120,
       flex: !isMobile && 2,
       cellClassName: "name-column--cell",
-      valueGetter: (params) => {
-        const creditedDate = params.row.creditedDate;
-        const date = new Date(creditedDate);
-        const formattedDate = date.toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-        return formattedDate;
-      },
+      renderCell: function (params) {
+        return (
+          <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+        );
+      }
     },
      
     {
@@ -200,6 +214,30 @@ const getRowId = (row) => {
       <Header
         title="CREDIT INFORMATION"
       />
+       <BootstrapDialog
+        open={openHover}
+        onClose={handleCloseHover}
+        aria-labelledby="customized-dialog-title"
+        fullWidth
+      >
+    <IconButton
+        aria-label="close"
+        onClick={() => handleCloseHover()} 
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', textAlign:'center' }}>
+        <Typography variant="body1">
+         {data && data}
+        </Typography>
+        </DialogContent>
+    </BootstrapDialog>
        <BootstrapDialog
         open={open}
         onClose={handleClose}

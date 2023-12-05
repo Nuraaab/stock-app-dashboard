@@ -3,6 +3,9 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
 import { useTheme } from "@mui/material";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import PropTypes from 'prop-types';
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 import * as React from 'react';
@@ -22,21 +25,22 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     width: '100%', // Adjust the width as needed
   },
 }));
-const PendingShopSale = () => {
+
+function CustomTabPanel(props){
+  const { children, value, index, pendingitems, setReload, reload, ...other } = props;
   const [open, setOpen] = useState(false);
+  const [openHover, setOpenHover] = useState(false);
+  const [data, setData] = useState(null);
   const [openCancle, setOpenCancle] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [pendingList , setPendingList] = useState([]);
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(true);
   const [isApproved, setIsApproved] = useState(false);
   const [isCancled, setIsCancled] = useState(false);
-  const [reload, setReload] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const handleCancle = (row) => {
     setIsCancled(true);
@@ -82,6 +86,17 @@ const PendingShopSale = () => {
             setOpen(true);
             setSelectedRow(row);
   };
+
+  const handleHoverOpen = (data) => {
+    setOpenHover(true);
+    setData(data);
+    };
+
+    const handleCloseHover = () => {
+      setOpenHover(false);
+      setData(null);
+    };
+
   const handleCancleClickOpen = (row) => {
     setOpenCancle(true);
     setSelectedCancleRow(row);
@@ -95,22 +110,6 @@ const PendingShopSale = () => {
     setSelectedCancleRow(null);
   };
 
-  useEffect(() => {
-    Axios.get('/sallespending/getall').then((response) => {
-        setPendingList(response.data);
-        setLoading(false);
-       }).catch((error) => {
-        if (error.response && error.response.data) {
-          setOpenAlert(true);
-          setErrorMessage(error.response.data);
-        } else {
-          setOpenAlert(true);
-          setErrorMessage("An error occurred");
-        }
-        setLoading(false);
-       })
-}, [reload]);
-
 const getRowId = (row) => {
     return row._id;
   };
@@ -119,69 +118,73 @@ const getRowId = (row) => {
       field: "itemCode",
       headerName: "Item Code",
       width:isMobile&& 120,
-      flex:!isMobile&&1,
+      flex:!isMobile&&2,
       cellClassName: "name-column--cell",
     },
     {
         field: "name",
         headerName: "Item Name",
         width:isMobile&& 120,
-        flex:!isMobile&&1,
+        flex:!isMobile&&2,
         cellClassName: "name-column--cell",
       },
-    {
+      {
         field: "specification",
         headerName: "Specification",
-        width:isMobile&& 120,
-        flex:!isMobile&&1,
+        width: isMobile ? 120 : undefined,
+        flex: !isMobile && 2,
         cellClassName: "name-column--cell",
+        renderCell: function (params) {
+          return (
+            <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+          );
+        }
       },
       {
         field: "cashierName",
         headerName: "Cashier Name",
         width:isMobile&& 120,
-        flex:!isMobile&&1,
+        flex:!isMobile&&2,
         cellClassName: "name-column--cell",
       },
       {
         field: "quantity",
         headerName: "Quantity",
         width:isMobile&& 120,
-        flex:!isMobile&&1,
-        cellClassName: "name-column--cell",
-      },
-      {
-        field: "from",
-        headerName: "From",
-        width:isMobile&& 120,
-        flex:!isMobile&&1,
+        flex:!isMobile&&2,
         cellClassName: "name-column--cell",
       },
       {
         field: "to",
         headerName: "To",
         width:isMobile&& 120,
-        flex:!isMobile&&1,
+        flex:!isMobile&&2,
         cellClassName: "name-column--cell",
       },
       {
         field: "paymentMethod",
         headerName: "Payment Methods",
-        flex: 1,
+        width:isMobile&& 120,
+        flex:!isMobile&&2,
         cellClassName: "name-column--cell",
-    },
+        renderCell: function (params) {
+          return (
+            <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+          );
+        }
+     },
     {
       field: "amount",
       headerName: "Amount",
       width: isMobile && 120,
-      flex: !isMobile && 1,
+      flex: !isMobile && 2,
       cellClassName: "name-column--cell",
     },
     {
       field: "createdAt",
       headerName: "Date",
       width: isMobile && 120,
-      flex: !isMobile && 1,
+      flex: !isMobile && 2,
       cellClassName: "name-column--cell",
       valueGetter: (params) => {
         const createdAt = params.row.createdAt;
@@ -193,6 +196,11 @@ const getRowId = (row) => {
         });
         return formattedDate;
       },
+      renderCell: function (params) {
+        return (
+          <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+        );
+      }
     },
       {
       field: "cancle",
@@ -209,9 +217,32 @@ const getRowId = (row) => {
         },
       },
   ];
-  return (
+  return(
     <>
-     <div>
+    <BootstrapDialog
+        open={openHover}
+        onClose={handleCloseHover}
+        aria-labelledby="customized-dialog-title"
+        fullWidth
+      >
+    <IconButton
+        aria-label="close"
+        onClick={() => handleCloseHover()} 
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', textAlign:'center' }}>
+        <Typography variant="body1">
+         {data && data}
+        </Typography>
+        </DialogContent>
+      </BootstrapDialog>
      <BootstrapDialog
         open={open}
         onClose={handleClose}
@@ -223,6 +254,8 @@ const getRowId = (row) => {
     >
       Approve Sales From Shop
     </DialogTitle> 
+    <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+    <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
     <IconButton
         aria-label="close"
         onClick={() => handleClose()} 
@@ -248,7 +281,8 @@ const getRowId = (row) => {
             {isApproved ? <CircularProgress color="secondary" size={30}/> : 'Yes'}
           </Button>
         </DialogActions>
-      </BootstrapDialog>
+     </BootstrapDialog>
+
       <BootstrapDialog
         open={openCancle}
         onClose={handleCancleClose}
@@ -258,6 +292,8 @@ const getRowId = (row) => {
       <DialogTitle id="customized-dialog-title" >
           Cancel Sale
         </DialogTitle>
+        <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
+        <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
         <IconButton
         aria-label="close"
         onClick={() => handleCancleClose()}
@@ -285,7 +321,154 @@ const getRowId = (row) => {
           </Button>
         </DialogActions>
       </BootstrapDialog>
-    </div>
+   {pendingitems && <div
+    role="tabpanel"
+    hidden={value !== index}
+    id={`simple-tabpanel-${index}`}
+    aria-labelledby={`simple-tab-${index}`}
+    {...other}
+  >
+    {value === index && (
+      <Box
+      margin={0}
+       height="75vh"
+       sx={{
+         "& .MuiDataGrid-root": {
+           border: "none",
+         },
+         "& .MuiDataGrid-cell": {
+           borderBottom: "none",
+         },
+         "& .name-column--cell": {
+           color: colors.greenAccent[300],
+         },
+         "& .MuiDataGrid-columnHeaders": {
+           backgroundColor: colors.blueAccent[700],
+           borderBottom: "none",
+         },
+         "& .MuiDataGrid-virtualScroller": {
+           backgroundColor: colors.primary[400],
+         },
+         "& .MuiDataGrid-footerContainer": {
+           borderTop: "none",
+           backgroundColor: colors.blueAccent[700],
+         },
+         "& .MuiCheckbox-root": {
+           color: `${colors.greenAccent[200]} !important`,
+         },
+         "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+           color: `${colors.grey[100]} !important`,
+         },
+         flexGrow: '1',
+         overflowX: 'auto',
+         scrollbarWidth: 'none',
+         msOverflowStyle: 'none',
+         '&::-webkit-scrollbar': {
+           width: '0.4em', 
+         },
+         '&::-webkit-scrollbar-thumb': {
+           backgroundColor: 'transparent', 
+         },
+        padding:'0px'
+       }}
+     
+     >
+     {
+       <div style={{ height: 400, width: '100%' }}>
+       <DataGrid
+           rows={pendingitems}
+           columns={columns}
+           components={{ Toolbar: GridToolbar }}
+           getRowId={getRowId}
+           slotProps={{
+             toolbar: {
+               showQuickFilter: true,
+               style: { color: "red" },
+             },
+           }}
+           initialState={{
+             pagination: {
+               paginationModel: { page: 0, pageSize: 5 },
+             },
+           }}
+           disableColumnFilter={isMobile}
+           disableDensitySelector ={isMobile}
+           disableColumnSelector ={isMobile}
+         />
+         </div>
+         }
+     </Box>
+    )}
+  </div>}
+  </>
+  )
+}
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+const PendingShopSale = () => {
+  const [openAlert, setOpenAlert] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(false);
+  const [warehouse, setWarehouse] = useState([]);
+  const [pendingList, setPendingList] = useState('');
+  const [value, setValue] = React.useState(0);
+  const [tabName, setTabName] = useState('');
+  const [intialWarehouse, setInitialWarehouse] = useState('');
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    setTabName(warehouse[newValue].name);
+  };
+ 
+  useEffect(() => {
+    Axios.get('/sallespending/getall').then((response) => {
+        setPendingList(response.data);
+        setLoading(false);
+       }).catch((error) => {
+        if (error.response && error.response.data) {
+          setOpenAlert(true);
+          setErrorMessage(error.response.data);
+        } else {
+          setOpenAlert(true);
+          setErrorMessage("An error occurred");
+        }
+        setLoading(false);
+       })
+}, [reload]);
+
+useEffect(() => {
+  Axios.get('/warehouse/getall')
+    .then((response) => {
+      const filteredData = response.data.filter((data) => data.type === "Shop");
+      if(filteredData && filteredData.length !== 0){
+        setInitialWarehouse(filteredData[0].name);
+        setWarehouse(filteredData);
+      }
+      setLoading(false);
+      setValue(0);
+    })
+    .catch((error) => {
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        setErrorMessage("An error occurred");
+      }
+      setLoading(false);
+    });
+}, []);
+
+  return (
+    <>
     <Box 
     padding={0}
     margin={0}
@@ -293,57 +476,27 @@ const getRowId = (row) => {
       <Header
         title="PENDING SHOP ITEMS SALE" 
       />
-      <Message message={message} openAlert={openAlert}  setOpenAlert={setOpenAlert} severity='success'/>
       <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>
     {loading && <LinearProgress color="secondary" />}
-      <Box
-       margin={0}
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-        }}
-      >
-        <DataGrid
-            rows={pendingList}
-            columns={columns}
-            components={{ Toolbar: GridToolbar }}
-            getRowId={getRowId}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                style: { color: "red" },
-              },
-            }}
-           disableColumnFilter = {isMobile}
-           disableDensitySelector ={isMobile}
-           disableColumnSelector ={isMobile}
-          />
+   { <Box sx={{ width: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Tabs value={value} onChange={handleChange}
+          variant="scrollable"
+          scrollButtons
+          allowScrollButtonsMobile
+         aria-label="basic tabs example">
+        {warehouse.map((item, index) => (
+          <Tab label={item.name} key={index} sx={{
+            '&.Mui-selected': {
+              color: 'red', 
+            },
+          }} {...a11yProps(index)} />
+        ))}
+      </Tabs>
       </Box>
+      {pendingList && <CustomTabPanel value={value} index={value}  pendingitems ={value === 0 ? pendingList.filter((item) => item.from === intialWarehouse) : pendingList.filter((item) => item.from === tabName)} setReload ={setReload} reload = {reload}>
+      </CustomTabPanel>}
+    </Box>}
     </Box>
     </>
   );

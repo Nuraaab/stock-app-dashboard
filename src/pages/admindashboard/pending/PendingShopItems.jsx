@@ -22,6 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     width: '100%', // Adjust the width as needed
   },
 }));
+
 const PendingShopItem = () => {
   const [open, setOpen] = useState(false);
   const [openAlert, setOpenAlert] = useState(true);
@@ -38,6 +39,8 @@ const PendingShopItem = () => {
   const [selectedCancleRow, setSelectedCancleRow] = useState(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [reload, setReload] = useState(false);
+  const [openHover, setOpenHover] = useState(false);
+  const [data, setData] = useState(null);
   const handleDelete = (row) => {
     setIsCancled(true);
     Axios.delete(`/ToShopPending/undo/${row._id}`).then((response) => {
@@ -115,6 +118,14 @@ const handleCancleClose = () => {
        })
 }, [reload]);
 
+    const handleCloseHover = () => {
+      setOpenHover(false);
+      setData(null);
+    };
+    const handleHoverOpen = (data) => {
+      setOpenHover(true);
+      setData(data);
+      };
 const getRowId = (row) => {
     return row._id;
   };
@@ -140,6 +151,11 @@ const getRowId = (row) => {
         width:isMobile&& 120,
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
+        renderCell: function (params) {
+          return (
+            <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+          );
+        }
       },
       {
         field: "cashierName",
@@ -147,6 +163,11 @@ const getRowId = (row) => {
         width:isMobile&& 120,
         flex:!isMobile&&1,
         cellClassName: "name-column--cell",
+        renderCell: function (params) {
+          return (
+            <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+          );
+        }
       },
       {
         field: "quantity",
@@ -185,6 +206,11 @@ const getRowId = (row) => {
         });
         return formattedDate;
       },
+      renderCell: function (params) {
+        return (
+          <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+        );
+      }
     },
     {
       field: "delete",
@@ -204,6 +230,30 @@ const getRowId = (row) => {
   return (
     <>
      <div>
+     <BootstrapDialog
+        open={openHover}
+        onClose={handleCloseHover}
+        aria-labelledby="customized-dialog-title"
+        fullWidth
+      >
+    <IconButton
+        aria-label="close"
+        onClick={() => handleCloseHover()} 
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', textAlign:'center' }}>
+        <Typography variant="body1">
+         {data && data}
+        </Typography>
+        </DialogContent>
+    </BootstrapDialog>
      <BootstrapDialog
         open={open}
         onClose={handleClose}

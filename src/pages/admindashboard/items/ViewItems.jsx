@@ -27,6 +27,8 @@ const ViewItems = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [loading, setLoading] = useState(true);
+  const [openHover, setOpenHover] = useState(false);
+  const [data, setData] = useState(null);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [openAlert, setOpenAlert] = useState(true);
@@ -84,6 +86,14 @@ const ViewItems = () => {
        })
        // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [reload]);
+const handleCloseHover = () => {
+  setOpenHover(false);
+  setData(null);
+};
+const handleHoverOpen = (data) => {
+  setOpenHover(true);
+  setData(data);
+  };
 const getRowId = (row) => {
     return row._id;
   };
@@ -115,6 +125,11 @@ const getRowId = (row) => {
       width:isMobile&& 120,
       flex:!isMobile&&1,
       cellClassName: "name-column--cell",
+      renderCell: function (params) {
+        return (
+          <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+        );
+      }
     },
     {
       field: "edit",
@@ -154,6 +169,30 @@ const getRowId = (row) => {
           </Button>
         </Box>
     {loading && <LinearProgress color="secondary"/>}
+    <BootstrapDialog
+        open={openHover}
+        onClose={handleCloseHover}
+        aria-labelledby="customized-dialog-title"
+        fullWidth
+      >
+    <IconButton
+        aria-label="close"
+        onClick={() => handleCloseHover()} 
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', textAlign:'center' }}>
+        <Typography variant="body1">
+         {data && data}
+        </Typography>
+        </DialogContent>
+    </BootstrapDialog>
     <BootstrapDialog
         open={openCancle}
         onClose={handleCancleClose}

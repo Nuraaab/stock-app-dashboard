@@ -1,4 +1,4 @@
-import { Box,useMediaQuery } from "@mui/material";
+import { Box,Dialog,DialogContent,IconButton,Typography,useMediaQuery } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import Header from "../../../components/Header";
@@ -6,7 +6,20 @@ import { useTheme } from "@mui/material";
 import Axios from 'axios';
 import { useEffect, useState } from "react";
 import LinearProgress from '@mui/material/LinearProgress';
+import { styled } from '@mui/material/styles';
+import CloseIcon from '@mui/icons-material/Close';
 import Message from "../../../components/admincomponents/Message";
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+  '& .MuiDialog-paper': {
+    width: '100%', // Adjust the width as needed
+  },
+}));
 const SalesHistory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -15,6 +28,8 @@ const SalesHistory = () => {
   const [salesHistoryList , setSalesHistory] = useState([]);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [openAlert, setOpenAlert] = useState(true);
+  const [openHover, setOpenHover] = useState(false);
+  const [data, setData] = useState(null);
   useEffect(() => {
     Axios.get('/salleshistory/getall').then((response) => {
         setSalesHistory(response.data);
@@ -30,6 +45,14 @@ const SalesHistory = () => {
         setLoading(false);
        })
 }, []);
+const handleCloseHover = () => {
+  setOpenHover(false);
+  setData(null);
+};
+const handleHoverOpen = (data) => {
+  setOpenHover(true);
+  setData(data);
+  };
 const getRowId = (row) => {
     return row._id;
   };
@@ -55,6 +78,11 @@ const getRowId = (row) => {
         width:isMobile&& 120,
         flex:!isMobile&&3,
         cellClassName: "name-column--cell",
+        renderCell: function (params) {
+          return (
+            <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+          );
+        }
       },
       {
         field: "from",
@@ -76,6 +104,11 @@ const getRowId = (row) => {
         width:isMobile&& 200,
         flex:!isMobile&&3,
         cellClassName: "name-column--cell",
+        renderCell: function (params) {
+          return (
+            <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+          );
+        }
       },
       {
         field: "quantity",
@@ -107,6 +140,11 @@ const getRowId = (row) => {
           });
           return formattedDate;
         },
+        renderCell: function (params) {
+          return (
+            <div style={{color:'white', cursor:'pointer'}} onClick={() => handleHoverOpen(params.value)}>{params.value}</div>
+          );
+        }
       },
   ];
   return (
@@ -119,6 +157,30 @@ const getRowId = (row) => {
       />
       {errorMessage && <Message message={errorMessage} openAlert={openAlert} setOpenAlert={setOpenAlert} severity='error'/>}
     {loading && <LinearProgress color="secondary" />}
+    <BootstrapDialog
+        open={openHover}
+        onClose={handleCloseHover}
+        aria-labelledby="customized-dialog-title"
+        fullWidth
+      >
+    <IconButton
+        aria-label="close"
+        onClick={() => handleCloseHover()} 
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+        <DialogContent dividers style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', textAlign:'center' }}>
+        <Typography variant="body1">
+         {data && data}
+        </Typography>
+        </DialogContent>
+    </BootstrapDialog>
       <Box
         margin={0}
         height="75vh"
