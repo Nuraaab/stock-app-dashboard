@@ -449,10 +449,9 @@ const PendingShopSale = () => {
 useEffect(() => {
   Axios.get('/warehouse/getall')
     .then((response) => {
-      const filteredData = response.data.filter((data) => data.type === "Shop");
-      if(filteredData && filteredData.length !== 0){
-        setInitialWarehouse(filteredData[0].name);
-        setWarehouse(filteredData);
+      if(response.data && response.data.length !== 0){
+        setInitialWarehouse(response.data[0].name);
+        setWarehouse(response.data);
       }
       setLoading(false);
       setValue(0);
